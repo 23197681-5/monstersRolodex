@@ -1,5 +1,5 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app), was used chakra-ui.js.
-In order to chakra-ui work with nextjs some libraries:  yarn add framer-motion@3.10.6
+In order to chakra-ui work with nextjs some libraries: yarn add framer-motion@3.10.6
 
 ## Getting Started
 
