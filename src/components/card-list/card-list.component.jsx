@@ -1,26 +1,14 @@
 import { Component } from 'react';
-import styles from '../../../styles/Home.module.css';
-
+import styles from './card-list.module.css';
+import Card from '../card-component/card.component';
 class CardList extends Component {
   render() {
+    const styleCss = styles.cardList;
     const { monsters } = this.props;
     return (
-      <div className={styles.grid}>
+      <div className={styleCss}>
         {monsters.map((monster) => {
-          return (
-            <div
-              key={monster.id}
-              href="https://nextjs.org/docs"
-              className={`${styles.card} card-container`}
-            >
-              <img
-                alt={`monster ${monster.name}`}
-                src={`https://robohash.org/${monster.id}?set=set2&size=180x180`}
-              ></img>
-              <h2>{monster.name} &rarr;</h2>
-              <p>{monster.phone}</p>
-            </div>
-          );
+          return <Card monster={monster}></Card>;
         })}
       </div>
     );
