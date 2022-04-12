@@ -2,10 +2,8 @@ import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import React, { useEffect, useState } from 'react';
 import { Input } from '@chakra-ui/react';
-import { Box, Center, Image, Flex, Badge, Text } from '@chakra-ui/react';
-import { MdStar } from 'react-icons/md';
-import { Grid, GridItem } from '@chakra-ui/react';
-
+import Image from 'next/image';
+import CardList from '../src/components/card-list/card-list.component';
 export default function Home() {
   const [monsters, setMonsters] = useState(null);
   const [searchField, setSearchField] = useState(null);
@@ -28,10 +26,10 @@ export default function Home() {
     return monster.name.toLocaleLowerCase().includes(searchField);
   });
 
-  onSearchChange = (event) => {
+  var onSearchChange = (event) => {
     var searchField = event.target.value.toLocaleLowerCase();
     setSearchField(searchField);
-  }
+  };
 
   return (
     <>
@@ -54,21 +52,9 @@ export default function Home() {
               onChange={onSearchChange}
             />
           </p>
+          <CardList monsters={filteredMonsters}></CardList>
 
-          <div className={styles.grid}>
-            {filteredMonsters.map((monster) => {
-              return (
-                <a
-                  key={monster.name}
-                  href="https://nextjs.org/docs"
-                  className={styles.card}
-                >
-                  <h2>{monster.name} &rarr;</h2>
-                  <p>{monster.phone}</p>
-                </a>
-              );
-            })}
-          </div>
+          {/* */}
         </main>
 
         <footer className={styles.footer}>

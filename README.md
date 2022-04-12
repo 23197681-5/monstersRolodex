@@ -30,8 +30,10 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Taught by
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Andrei Neagoie. His graduates have moved on to work for some of the biggest tech companies around the world like Apple, Google, Amazon, JP Morgan, IBM, UNIQLO etc... He has been working as a senior software developer in Silicon Valley and Toronto for many years
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Yihua Zhang. He has been working as a software developer for numerous years in Toronto for some of the largest tech companies in the world. He has also been working as an instructor for more than a decade. 
+
+Using the latest ES6/ES7/ES8/ES9/ES10/ES11 JavaScript to write clean code
