@@ -2,6 +2,19 @@
   padding: 0 2rem;
 }
 
+.monstersTitle{
+  margin-top:75p;
+  margin-bottom: 50px;
+  font-size: 76px;
+  color: #0ccac4;
+  font-family: 'Bigelow Rules';
+}
+
+.monsterly{
+  font-family: "Inconsolata", Helvetica, sans-serif;
+  background-color: #000000;
+  background-image: radial-gradient(#11581e, #041607);
+}
 .main {
   min-height: 100vh;
   padding: 4rem 0;
