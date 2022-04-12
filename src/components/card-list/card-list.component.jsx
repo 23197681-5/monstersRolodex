@@ -8,14 +8,18 @@ class CardList extends Component {
       <div className={styles.grid}>
         {monsters.map((monster) => {
           return (
-            <a
+            <div
               key={monster.id}
               href="https://nextjs.org/docs"
-              className={styles.card}
+              className={`${styles.card} card-container`}
             >
+              <img
+                alt={`monster ${monster.name}`}
+                src={`https://robohash.org/${monster.id}?set=set2&size=180x180`}
+              ></img>
               <h2>{monster.name} &rarr;</h2>
               <p>{monster.phone}</p>
-            </a>
+            </div>
           );
         })}
       </div>

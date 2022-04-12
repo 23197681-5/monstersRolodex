@@ -1,9 +1,9 @@
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import React, { useEffect, useState } from 'react';
-import { Input } from '@chakra-ui/react';
 import Image from 'next/image';
 import CardList from '../src/components/card-list/card-list.component';
+import SearchBox from '../src/components/search-box/search-box.component';
 export default function Home() {
   const [monsters, setMonsters] = useState(null);
   const [searchField, setSearchField] = useState(null);
@@ -43,15 +43,10 @@ export default function Home() {
           <h1 className={styles.title}>
             Welcome to <a href="https://nextjs.org">Monsters.js!</a>
           </h1>
-
-          <p className={styles.description}>
-            <Input
-              htmlSize={4}
-              width="320px"
-              placeholder="Search for a monster"
-              onChange={onSearchChange}
-            />
-          </p>
+          <SearchBox
+            placeholder={'Search for a monster'}
+            onChangeHandler={onSearchChange}
+          ></SearchBox>
           <CardList monsters={filteredMonsters}></CardList>
 
           {/* */}
