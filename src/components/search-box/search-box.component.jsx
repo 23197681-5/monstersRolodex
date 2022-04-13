@@ -5,8 +5,8 @@ class SearchBox extends Component {
   render() {
     return (
       <p>
-        <Input
-          className={`searchBox ${this.props.cssClass}`}
+        <input
+          className={`searchBox ${styles.searchBox}`}
           type="search"
           htmlSize={4}
           width="320px"

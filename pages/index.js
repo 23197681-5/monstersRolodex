@@ -4,12 +4,14 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import CardList from '../src/components/card-list/card-list.component';
 import SearchBox from '../src/components/search-box/search-box.component';
-export default function Home() {
-  const [monsters, setMonsters] = useState(null);
-  const [searchField, setSearchField] = useState(null);
 
+export default function Home() {
+  const [monsters, setMonsters] = useState([]);
+  const [filteredMonsters, setFilteredMonsters] = useState(monsters);
+  const [searchField, setSearchField] = useState('');
   const [isLoading, setLoading] = useState(false);
 
+  console.log('render');
   useEffect(() => {
     setLoading(true);
     fetch('https://jsonplaceholder.typicode.com/users')
@@ -20,11 +22,15 @@ export default function Home() {
       });
   }, []);
 
+  useEffect(() => {
+    const newfilteredMonsters = monsters.filter((monster) => {
+      return monster.name.toLocaleLowerCase().includes(searchField);
+    });
+    setFilteredMonsters(newfilteredMonsters);
+  }, [monsters, searchField]);
+
   if (isLoading) return <p>Looking for monsters...</p>;
   if (!monsters) return <p>No monsters around here</p>;
-  const filteredMonsters = monsters.filter((monster) => {
-    return monster.name.toLocaleLowerCase().includes(searchField);
-  });
 
   var onSearchChange = (event) => {
     var searchField = event.target.value.toLocaleLowerCase();
