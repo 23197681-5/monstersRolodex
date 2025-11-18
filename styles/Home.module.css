@@ -3,17 +3,20 @@
 }
 
 .monstersTitle{
-  margin-top:75p;
+  margin-top: 75px;
   margin-bottom: 50px;
   font-size: 76px;
-  color: #0ccac4;
-  font-family: 'Bigelow Rules';
+  color: #DB4437;  /* Google Red */
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
 }
 
 .monsterly{
-  font-family: "Inconsolata", Helvetica, sans-serif;
-  background-color: #000000;
-  background-image: radial-gradient(#11581e, #041607);
+  /* macOS-like font stack and soft gray background */
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: #f5f5f7; /* macOS light grey */
+  background-image: none;
+  color: #111;
 }
 .main {
   min-height: 100vh;
@@ -125,5 +128,20 @@
   .grid {
     width: 100%;
     flex-direction: column;
+  }
+}
+
+/* three equal columns layout for homepage */
+.threeCol {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  width: 100%;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .threeCol {
+    grid-template-columns: 1fr;
   }
 }
