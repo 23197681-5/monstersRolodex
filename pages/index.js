@@ -4,7 +4,9 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import SearchBox from '../src/components/search-box/search-box.component';
 import MapaBazi from '../src/components/mapa-compoonent/mapa-bazi.component';
+import Statistics from './statistics.component';
 import BaziPage from './bazi';
+import NextGames from './next-games.component';
 
 export default function Home() {
   const [monsters, setMonsters] = useState([]);
@@ -13,6 +15,7 @@ export default function Home() {
   const [searchFieldA, setSearchFieldA] = useState('');
   const [searchFieldB, setSearchFieldB] = useState('');
   const [isLoading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('wuXing');
 
   console.log('render');
   useEffect(() => {
@@ -45,6 +48,34 @@ export default function Home() {
     setSearchFieldB(value);
   };
 
+  const tabButtonStyle = {
+    fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    fontSize: '16px',
+    padding: '10px 20px',
+    borderRadius: '8px',
+    border: '1px solid #d1d1d1',
+    background: 'linear-gradient(to bottom, #ffffff, #f0f0f0)',
+    color: '#333',
+    cursor: 'pointer',
+    boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+    margin: '0 5px',
+    outline: 'none',
+    transition: 'all 0.2s ease-in-out',
+  };
+
+  const activeTabButtonStyle = {
+    ...tabButtonStyle,
+    background: 'linear-gradient(to bottom, #e8e8e8, #d1d1d1)',
+    boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.1)',
+    color: '#000',
+    fontWeight: '600',
+  };
+
+  const getButtonStyle = (tabName) => {
+    return activeTab === tabName ? activeTabButtonStyle : tabButtonStyle;
+  };
+
+
   return (
     <>
       <div
@@ -68,30 +99,53 @@ export default function Home() {
           />
         </Head>
         <main className={styles.main}>
-
-          <div className={styles.threeCol}>
-            <div>
-              <SearchBox
-                placeholder={'Search for a team (A)'}
-                onChangeHandler={onSearchChangeA}
-              ></SearchBox>
-              <MapaBazi filter={searchFieldA}></MapaBazi>
-            </div>
-            <div>
-              <BaziPage />
-            </div>
-            <div>
-              <SearchBox
-                placeholder={'Search for a team (B)'}
-                onChangeHandler={onSearchChangeB}
-              ></SearchBox>
-              <MapaBazi filter={searchFieldB}></MapaBazi>
-            </div>
+          <div className={styles.tabs}>
+            <button
+              style={getButtonStyle('wuXing')}
+              onClick={() => setActiveTab('wuXing')}
+            >
+              Wu Xing
+            </button>
+            <button
+              style={getButtonStyle('statistics')}
+              onClick={() => setActiveTab('statistics')}
+            >
+              Estatísticas
+            </button>
+            <button
+              style={getButtonStyle('nextGames')}
+              onClick={() => setActiveTab('nextGames')}
+            >
+              Next Games
+            </button>
           </div>
-            <hr style={{ width: '90%', margin: '2rem auto' }} />
-            {/* Embedded Bazi calculator */}
-         
 
+          {activeTab === 'wuXing' && (
+            <div className={styles.threeCol}>
+              <div>
+                <SearchBox
+                  placeholder={'Search for a team (A)'}
+                  onChangeHandler={onSearchChangeA}
+                ></SearchBox>
+                <MapaBazi filter={searchFieldA}></MapaBazi>
+              </div>
+              <div>
+                <BaziPage />
+              </div>
+              <div>
+                <SearchBox
+                  placeholder={'Search for a team (B)'}
+                  onChangeHandler={onSearchChangeB}
+                ></SearchBox>
+                <MapaBazi filter={searchFieldB}></MapaBazi>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'statistics' && <Statistics />}
+          {activeTab === 'nextGames' && <NextGames />}
+
+          <hr style={{ width: '90%', margin: '2rem auto' }} />
           <h1 className={styles.monstersTitle}>86</h1>
           {/* */}
         </main>

@@ -11,18 +11,23 @@ import {
 const stems = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
 const branches = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
 
-export default function BaziPage() {
+export default function BaziPage({ initialDateTime }) {
   // default: today at 19:00
-  const _defaultDt = new Date();
-  _defaultDt.setHours(19, 0, 0, 0);
+  const getDefaultDateTime = () => {
+    const dt = initialDateTime ? new Date(initialDateTime) : new Date();
+    if (!initialDateTime) {
+      dt.setHours(19, 0, 0, 0);
+    }
+    return dt;
+  };
+
+  const _defaultDt = getDefaultDateTime();
   const [datetime, setDatetime] = useState(formatDateTime(_defaultDt));
   const [result, setResult] = useState(null);
 
-  // on mount, compute for today's date at 19:00 by default
   useEffect(() => {
-    computeBazi(_defaultDt);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    computeBazi(initialDateTime || _defaultDt);
+  }, [initialDateTime]);
 
   // parse input in dd/mm/yyyy hh:mm -> Date
   function parseDateTimeInput(str) {
@@ -86,16 +91,16 @@ function computeBazi(isoDatetime) {
         console.error("Erro: A data de entrada é inválida.");
         return null; 
     }
-const year = 2025;
-const month = 11; // November
-const day = 18;
-const hour = 19;
+// const year = 2025;
+// const month = 11; // November
+// const day = 18;
+// const hour = 19;
 
     // 2. Extrai componentes UTC
-    // const year = dt.getUTCFullYear();
-    // const month = dt.getUTCMonth();   // 0 (Jan) a 11 (Dez)
-    // const day = dt.getUTCDate();      // 1 a 31
-    // const hour = dt.getUTCHours();    // 0 a 23
+    const year = dt.getUTCFullYear();
+    const month = dt.getUTCMonth() +1;   // 0 (Jan) a 11 (Dez)
+    const day = dt.getUTCDate();      // 1 a 31
+    const hour = dt.getUTCHours();    // 0 a 23
 
     // 3. Log da data/hora formatada (Correção de formatação de console)
     const formattedMonth = String(month).padStart(2, '0');

@@ -1,0 +1,46 @@
+.tableContainer {
+    margin: 2rem auto;
+    width: 90%;
+    overflow-x: auto;
+  }
+  
+  .title {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #333;
+    text-align: center;
+  }
+  
+  .statsTable {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .statsTable th,
+  .statsTable td {
+    border: 1px solid #ddd;
+    padding: 0.75rem;
+    text-align: center;
+    vertical-align: middle;
+  }
+  
+  .statsTable th {
+    background-color: #f8f8f8;
+    font-weight: bold;
+  }
+  
+  .teamCell {
+    text-align: left;
+    display: flex;
+    align-items: center;
+  }
+  
+  .teamLogo {
+    margin-right: 10px;
+  }
+  
+  .successCell { color: green; font-weight: bold; }
+  .errorCell { color: red; font-weight: bold; }
+  
