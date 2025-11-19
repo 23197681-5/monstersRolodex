@@ -27,24 +27,6 @@ function computeHourGanzhiFromDayAndHour(dayGz, hour) {
   return stems[(hourStemIndex+10)%10] + branches[(hourBranchIndex+12)%12];
 }
 
-// Target: 2025-11-18 19:00 UTC
-const y = 2025;
-const m = 11; // November
-const d = 18;
-const hour = 19;
-
-const day = computeDayGanzhiFromUTC(y, m, d);
-const hourGz = computeHourGanzhiFromDayAndHour(day.gz, hour);
-
-console.log('UTC datetime: %s-%02d-%02d %02d:00', y, m, d, hour);
-console.log('JDN (UTC 00:00):', day.jd);
-console.log('Day Ganzhi:', day.gz, `(stemIdx=${day.sIdx}, branchIdx=${day.bIdx})`);
-console.log('Hour Ganzhi (@ hour', hour + '):', hourGz);
-
-// Also print the underlying stem/branch separately
-console.log('Day stem:', day.gz.charAt(0), 'Day branch:', day.gz.charAt(1));
-console.log('Hour stem:', hourGz.charAt(0), 'Hour branch:', hourGz.charAt(1));
-
 // Year ganzhi (simple astronomical mapping: (year - 4) mod 10/12)
 function computeYearGanzhi(year) {
   const sIdx = (year - 4) % 10;
@@ -72,6 +54,25 @@ function computeMonthGanzhiFromLunar(lunarMonth, gzYearStr) {
   const b = branches[(bIdx + 12) % 12];
   return s + b;
 }
+
+// Target: 2025-11-18 19:00 UTC
+const y = 2025;
+const m = 11; // November
+const d = 18;
+const hour = 19;
+
+const day = computeDayGanzhiFromUTC(y, m, d);
+const hourGz = computeHourGanzhiFromDayAndHour(day.gz, hour);
+
+console.log('UTC datetime: %s-%02d-%02d %02d:00', y, m, d, hour);
+console.log('JDN (UTC 00:00):', day.jd);
+console.log('Day Ganzhi:', day.gz, `(stemIdx=${day.sIdx}, branchIdx=${day.bIdx})`);
+console.log('Hour Ganzhi (@ hour', hour + '):', hourGz);
+
+// Also print the underlying stem/branch separately
+console.log('Day stem:', day.gz.charAt(0), 'Day branch:', day.gz.charAt(1));
+console.log('Hour stem:', hourGz.charAt(0), 'Hour branch:', hourGz.charAt(1));
+
 
 const yearGz = computeYearGanzhi(y);
 // For this quick check we'll use the Gregorian month as a fallback lunar month
