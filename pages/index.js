@@ -7,6 +7,7 @@ import MapaBazi from '../src/components/mapa-compoonent/mapa-bazi.component';
 import Statistics from './statistics.component';
 import BaziPage from './bazi';
 import NextGames from './next-games.component';
+import CadastrarTime from './cadastrar-time';
 
 export default function Home() {
   const [monsters, setMonsters] = useState([]);
@@ -118,6 +119,12 @@ export default function Home() {
             >
               Next Games
             </button>
+            <button
+              style={getButtonStyle('cadastrarTime')}
+              onClick={() => setActiveTab('cadastrarTime')}
+            >
+              Cadastrar Time
+            </button>
           </div>
 
           {activeTab === 'wuXing' && (
@@ -144,6 +151,7 @@ export default function Home() {
 
           {activeTab === 'statistics' && <Statistics />}
           {activeTab === 'nextGames' && <NextGames />}
+          {activeTab === 'cadastrarTime' && <CadastrarTime />}
 
           <hr style={{ width: '90%', margin: '2rem auto' }} />
           <h1 className={styles.monstersTitle}>86</h1>

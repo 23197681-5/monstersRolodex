@@ -1,30 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import styles from './next-games.module.css';
 import BaziPage from './bazi';
-
-const getNextDate = (day, hour) => {
-    const date = new Date();
-    date.setDate(date.getDate() + day);
-    date.setHours(hour, 0, 0, 0);
-    return date.toISOString();
-  };
-  
-  export const upcomingGames = [
-    // Série A
-    { teamA: 'Flamengo', teamB: 'Palmeiras', datetime: getNextDate(1, 21) },
-    { teamA: 'Corinthians', teamB: 'São Paulo', datetime: getNextDate(2, 19) },
-    { teamA: 'Vasco da Gama', teamB: 'Fluminense', datetime: getNextDate(3, 16) },
-    { teamA: 'Grêmio', teamB: 'Internacional', datetime: getNextDate(4, 20) },
-    { teamA: 'Atlético-MG', teamB: 'Cruzeiro', datetime: getNextDate(5, 18) },
-  
-    // Série B
-    { teamA: 'Sport', teamB: 'Vitória', datetime: getNextDate(1, 19) },
-    { teamA: 'Ceará', teamB: 'Fortaleza', datetime: getNextDate(2, 21) },
-    { teamA: 'Guarani', teamB: 'Ponte Preta', datetime: getNextDate(3, 20) },
-    { teamA: 'Avaí', teamB: 'Chapecoense', datetime: getNextDate(4, 17) },
-    { teamA: 'CRB', teamB: 'ABC', datetime: getNextDate(5, 16) },
-  ];
   
 const serieA = [
     { name: 'América-MG', logo: 'https://s.sde.globo.com/media/organizations/2019/02/28/America-MG-VERDE-2019-01.svg' },
@@ -63,7 +40,7 @@ const serieA = [
     { name: 'Juventude', logo: 'https://s.sde.globo.com/media/organizations/2022/03/29/juventude-2022.svg' },
     { name: 'Londrina', logo: 'https://s.sde.globo.com/media/organizations/2018/03/11/londrina.svg' },
     { name: 'Mirassol', logo: 'https://s.sde.globo.com/media/organizations/2018/03/11/mirassol.svg' },
-    { name: 'Novorizontino', logo: 'https://s.sde.globo.com/media/organizations/2018/03/11/novorizontino.svg' },
+    { name: 'Novorizontino', logo: 'https://s.sde.globo.com/media/organizations/2019/01/08/Novohorizontino.svg' },
     { name: 'Ponte Preta', logo: 'https://s.sde.globo.com/media/organizations/2018/03/11/ponte-preta.svg' },
     { name: 'Sampaio Corrêa', logo: 'https://s.sde.globo.com/media/organizations/2018/03/12/sampaio-correa.svg' },
     { name: 'Sport', logo: 'https://s.sde.globo.com/media/organizations/2018/03/12/sport.svg' },
@@ -80,6 +57,29 @@ const getTeamLogo = (teamName) => {
 
 const NextGames = () => {
   const [selectedGame, setSelectedGame] = useState(null);
+  const [upcomingGames, setUpcomingGames] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchGames = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/get-upcoming-games');
+        if (!response.ok) {
+          throw new Error('Falha ao buscar os jogos.', response);
+        }
+        const data = await response.json();
+        setUpcomingGames(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchGames();
+  }, []);
 
   const handleGameSelect = (game) => {
     setSelectedGame(game);
@@ -89,44 +89,51 @@ const NextGames = () => {
     <div className={styles.container}>
       <div className={styles.gamesList}>
         <h2 className={styles.title}>Próximos Jogos (Próxima Semana)</h2>
-        {upcomingGames.map((game, index) => (
-          <div
-            key={index}
-            className={`${styles.gameItem} ${
-              selectedGame && selectedGame.datetime === game.datetime
-                ? styles.selected
-                : ''
-            }`}
-            onClick={() => handleGameSelect(game)}
-          >
-            <div className={styles.teams}>
-              <Image
-                src={getTeamLogo(game.teamA)}
-                alt={game.teamA}
-                width={30}
-                height={30}
-              />
-              <span className={styles.vs}>vs</span>
-              <Image
-                src={getTeamLogo(game.teamB)}
-                alt={game.teamB}
-                width={30}
-                height={30}
-              />
+        {isLoading && <p>Buscando jogos...</p>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {!isLoading && !error && upcomingGames.length === 0 && <p>Nenhum jogo encontrado para a próxima semana.</p>}
+        {!isLoading && !error &&
+          upcomingGames.map((game, index) => (
+            <div
+              key={index}
+              className={`${styles.gameItem} ${
+                selectedGame && selectedGame.datetime === game.datetime
+                  ? styles.selected
+                  : ''
+              }`}
+              onClick={() => handleGameSelect(game)}
+            >
+              <div className={styles.teams}>
+                <Image
+                  src={getTeamLogo(game.teamA)}
+                  alt={game.teamA}
+                  width={30}
+                  height={30}
+                />
+                <span className={styles.vs}>vs</span>
+                <Image
+                  src={getTeamLogo(game.teamB)}
+                  alt={game.teamB}
+                  width={30}
+                  height={30}
+                />
+              </div>
+              <div className={styles.gameInfo}>
+                <span
+                  className={styles.teamNames}
+                >{`${game.teamA} x ${game.teamB}`}</span>
+                <span className={styles.datetime}>
+                  {new Date(game.datetime).toLocaleString('pt-BR', {
+                    weekday: 'short',
+                    day: '2-digit',
+                    month: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </span>
+              </div>
             </div>
-            <div className={styles.gameInfo}>
-              <span
-                className={styles.teamNames}
-              >{`${game.teamA} x ${game.teamB}`}</span>
-              <span className={styles.datetime}>
-                {new Date(game.datetime).toLocaleString('pt-BR', {
-                  dateStyle: 'short',
-                  timeStyle: 'short',
-                })}
-              </span>
-            </div>
-          </div>
-        ))}
+          ))}
       </div>
       <div className={styles.baziContainer}>
         {selectedGame ? (
