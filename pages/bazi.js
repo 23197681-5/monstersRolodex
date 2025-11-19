@@ -100,7 +100,7 @@ function computeBazi(isoDatetime) {
     const year = dt.getUTCFullYear();
     const month = dt.getUTCMonth() +1;   // 0 (Jan) a 11 (Dez)
     const day = dt.getUTCDate();      // 1 a 31
-    const hour = dt.getUTCHours();    // 0 a 23
+    const hour = dt.getHours();    // 0 a 23, in local time
 
     // 3. Log da data/hora formatada (Correção de formatação de console)
     const formattedMonth = String(month).padStart(2, '0');
@@ -228,7 +228,7 @@ function computeDayGanzhiFromUTC(y, m1to12, d) {
 }
 
 
-  // format a Date object as YYYY-MM-DD HH:mm UT (UTC)
+  // format a Date object as YYYY-MM-DDTHH:mm for datetime-local input (values are UTC 0)
   function formatDateTime(d) {
     if (!d) return '';
     try {
@@ -237,7 +237,7 @@ function computeDayGanzhiFromUTC(y, m1to12, d) {
       const dd = String(d.getUTCDate()).padStart(2, '0');
       const hh = String(d.getUTCHours()).padStart(2, '0');
       const min = String(d.getUTCMinutes()).padStart(2, '0');
-      return `${yyyy}-${mm}-${dd} ${hh}:${min} UT`;
+      return `${yyyy}-${mm}-${dd}T${hh}:${min}`;
     } catch (e) {
       return '';
     }
