@@ -13,19 +13,19 @@
     "@chakra-ui/react": "^3.29.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
+    "@lich-nhu-y/lunar": "^0.4.0",
     "framer-motion": "^11.2.6",
     "next": "^16.0.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "@lich-nhu-y/lunar": "^0.4.0",
     "react-icons": "^5.2.1"
   },
   "devDependencies": {
-    "eslint": "^8.57.0",
-    "prettier": "^3.2.5",
     "babel-jest": "^29.7.0",
+    "eslint": "^8.57.1",
     "eslint-config-next": "^16.0.3",
-    "identity-obj-proxy": "^3.0.0"
+    "identity-obj-proxy": "^3.0.0",
+    "prettier": "^3.2.5"
   },
   "jest": {
     "testEnvironment": "jsdom",
