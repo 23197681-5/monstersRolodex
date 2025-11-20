@@ -3,7 +3,9 @@ import styles from './card.module.css';
 
 const Card = ({ team }) => {
   const { name, email, id, img, terra, metal, agua, arvore, fogo } = team || {};
-  const imgSrc = img ? `/imagens/${img}` : `https://robohash.org/${id || name}?set=set2&size=180x180`;
+  // Se a URL da imagem já for completa (do Supabase), usa-a diretamente.
+  // Caso contrário, monta o caminho para a imagem local.
+  const imgSrc = (img && img.startsWith('https')) ? img : `/imagens/${img}`;
   const [flipped, setFlipped] = useState(false);
 
   const innerClass = flipped ? `${styles.cardInner} ${styles.flipped}` : styles.cardInner;
