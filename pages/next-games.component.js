@@ -111,7 +111,7 @@ const NextGames = ({ onCalculateWuXing }) => {
               <div className={styles.teams}>
                 <Image
                   src={getTeamLogo(game.teamA)}
-                  alt={game.teamA}
+                  alt={game.teamA+'team'}
                   width={30}
                   height={30}
                 />

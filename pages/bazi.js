@@ -11,7 +11,7 @@ import {
 const stems = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
 const branches = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
 
-export default function BaziPage({ initialDateTime }) {
+export default function BaziPage({ initialDateTime, onBaziCalculated }) {
   // default: today at 19:00
   const getDefaultDateTime = () => {
     const dt = initialDateTime ? new Date(initialDateTime) : new Date();
@@ -45,7 +45,6 @@ function computeHourGanzhiFromDayAndHour(dayGz, hour) {
  * @param {string | Date} isoDatetime Uma string no formato ISO 8601 (e.g., "2025-11-18T23:00:00.000Z") ou um objeto Date.
  */
 function computeBazi(isoDatetime) {
-    console.log('computeBazi for input:', isoDatetime);
 
     // 1. Cria e valida o objeto Date
     const dt = typeof isoDatetime === 'string' 
@@ -68,7 +67,6 @@ function computeBazi(isoDatetime) {
     let day = dt.getDate();      // 1 a 31
   
         if(getDefaultDateTime() != isoDatetime){
-          console.log(day, dt.getUTCDate());
           // day = day -6 ;
           // day = day + 1;
       
@@ -79,7 +77,6 @@ function computeBazi(isoDatetime) {
     const formattedMonth = String(month).padStart(2, '0');
     const formattedDay = String(day).padStart(2, '0');
     const formattedHour = String(hour).padStart(2, '0');
-    console.log(`UTC datetime: ${year}-${formattedMonth}-${formattedDay} ${formattedHour}:00`);
 
     // --- CÁLCULO DOS PILARES (Ganzhi) ---
 
@@ -108,17 +105,12 @@ function computeBazi(isoDatetime) {
     const gzMonth = computeMonthGanzhiFromLunar(lunarMonthFallback, gzYear);
 
 
-    // --- SAÍDA E RESULTADOS ---
-
-    console.log('--- Resultados dos Pilares (Ganzhi) ---');
-    console.log('JDN (UTC 00:00):', dayData.jd);
-    console.log('Pilar do Dia (UTC):', gzDay, `(stemIdx=${dayData.sIdx}, branchIdx=${dayData.bIdx})`);
-    console.log('Pilar da Hora (UTC):', gzHour);
-    console.log(`Pilar do Ano (${year}):`, gzYear);
-    console.log(`Pilar do Mês (Aprox. Lunar ${lunarMonthFallback}):`, gzMonth);
-    
-    // Set final result
-    setResult({ dt, gzYear, gzMonth, gzDay, gzHour });
+     // Set final result
+    const baziResult = { dt, gzYear, gzMonth, gzDay, gzHour };
+    setResult(baziResult);
+    if (onBaziCalculated) {
+      onBaziCalculated({ gzYear, gzMonth, gzDay, gzHour });
+    }
 }
   function computeYearGanzhi(year) {
     if (!year || year == undefined)
@@ -329,7 +321,6 @@ function computeDayGanzhiFromUTC(y, m1to12, d) {
                 // show Portuguese name plus the Chinese branch character
                 return pt ? `${pt} (${b})` : '';
               };
-              console.log(result);
               const cols = [
                 { label: 'Hora', gz: result.gzHour },
                 { label: 'Dia', gz: result.gzDay },
