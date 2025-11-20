@@ -65,7 +65,9 @@ const NextGames = ({ onCalculateWuXing }) => {
         setIsLoading(true);
         const response = await fetch('/api/get-upcoming-games');
         if (!response.ok) {
-          throw new Error('Falha ao buscar os jogos.', response);
+
+          setUpcomingGames(getFallbackGames());
+          console.log('Falha ao buscar os jogos.', response);
         }
         const data = await response.json();
         if (data && data.length > 0) {
