@@ -29,41 +29,6 @@ export default function BaziPage({ initialDateTime }) {
     computeBazi(initialDateTime || _defaultDt);
   }, [initialDateTime]);
 
-  // parse input in dd/mm/yyyy hh:mm -> Date
-  function parseDateTimeInput(str) {
-    if (!str || typeof str !== 'string') return null;
-    const s = str.trim();
-    // Accept ISO-like input from <input type="datetime-local"> (e.g. 2025-11-18T19:00 or 2025-11-18 19:00)
-    const isoMatch = s.match(/^(\d{4})-(\d{2})-(\d{2})[T\s](\d{2}):(\d{2})/);
-    if (isoMatch) {
-      const yyyy = parseInt(isoMatch[1], 10);
-      const mm = parseInt(isoMatch[2], 10) - 1; // monthIndex
-      const dd = parseInt(isoMatch[3], 10);
-      const hh = parseInt(isoMatch[4], 10);
-      const min = parseInt(isoMatch[5], 10);
-      if ([dd, mm, yyyy, hh, min].some((n) => Number.isNaN(n))) return null;
-      // Interpret as UTC as requested
-      return new Date(Date.UTC(yyyy, mm, dd, hh, min, 0, 0));
-    }
-
-    // fallback: expected format: dd/mm/yyyy hh:mm
-    const parts = s.split(' ');
-    if (parts.length < 2) return null;
-    const datePart = parts[0];
-    const timePart = parts[1];
-    const dateBits = datePart.split('/');
-    const timeBits = timePart.split(':');
-    if (dateBits.length !== 3 || timeBits.length < 2) return null;
-    const dd = parseInt(dateBits[0], 10);
-    const mm = parseInt(dateBits[1], 10) - 1; // monthIndex
-    const yyyy = parseInt(dateBits[2], 10);
-    const hh = parseInt(timeBits[0], 10);
-    const min = parseInt(timeBits[1], 10);
-    if ([dd, mm, yyyy, hh, min].some((n) => Number.isNaN(n))) return null;
-    // Create a Date in UTC (user requested universal time 0)
-    return new Date(Date.UTC(yyyy, mm, dd, hh, min, 0, 0));
-  }
-
 
 function computeHourGanzhiFromDayAndHour(dayGz, hour) {
   const hourBranchIndex = Math.floor((hour + 1) / 2) % 12;
@@ -98,8 +63,12 @@ function computeBazi(isoDatetime) {
 
     // 2. Extrai componentes UTC
     const year = dt.getUTCFullYear();
-    const month = dt.getUTCMonth() +1;   // 0 (Jan) a 11 (Dez)
+
+    let month = dt.getUTCMonth() +1;   // 0 (Jan) a 11 (Dez)
     const day = dt.getUTCDate();      // 1 a 31
+    if(month == 10 && day >= 20){
+      month = 11;
+    }
     const hour = dt.getHours();    // 0 a 23, in local time
 
     // 3. Log da data/hora formatada (Correção de formatação de console)

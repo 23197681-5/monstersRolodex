@@ -162,14 +162,14 @@ export default function CadastrarTime() {
     <div style={pillarStyle}>
       <div>
         <label style={labelStyle}>Elemento {pillarName}</label>
-        <select name={`elemento_${pillarName.toLowerCase()}`} onChange={handleChange} value={formData[`elemento_${pillarName.toLowerCase()}`]} style={inputStyle}>
+        <select name={`elemento_${pillarName.toLowerCase()}`} onChange={handleChange} value={formData[`elemento_${pillarName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()}`]} style={inputStyle}>
           <option value="">Selecione</option>
           {heavenlyStems.map(stem => <option key={stem.value} value={stem.value}>{stem.label}</option>)}
         </select>
       </div>
       <div>
         <label style={labelStyle}>Animal {pillarName}</label>
-        <select name={`animal_${pillarName.toLowerCase()}`} onChange={handleChange} value={formData[`animal_${pillarName.toLowerCase()}`]} style={inputStyle}>
+        <select name={`animal_${pillarName.toLowerCase()}`} onChange={handleChange} value={formData[`animal_${pillarName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()}`]} style={inputStyle}>
           <option value="">Selecione</option>
           {earthlyBranches.map(branch => <option key={branch.value} value={branch.value}>{branch.label}</option>)}
         </select>
@@ -190,12 +190,12 @@ export default function CadastrarTime() {
         <label style={labelStyle}>História</label>
         <textarea name="historia" onChange={handleChange} value={formData.historia} style={inputStyle} rows="4"></textarea>
 
-        <label style={labelStyle}>Escudo do Time</label>
+        <label style={labelStyle}>Bazi do Time</label>
         <input type="file" name="img" onChange={handleFileChange} accept="image/*" style={inputStyle} />
 
         <h3>Pilares do Destino (Bazi)</h3>
         {renderPillar('Ano')}
-        {renderPillar('Mês')}
+        {renderPillar('Mes')}
         {renderPillar('Dia')}
         {renderPillar('Hora')}
 
