@@ -73,6 +73,14 @@ export default function Home() {
     });
   };
 
+  // Efeito para limpar os resultados ao sair da aba "Wu Xing"
+  useEffect(() => {
+    if (activeTab !== 'wuXing') {
+      setWuXingResult(null);
+      setAnalysisResult(null);
+    }
+  }, [activeTab]);
+
   // Efeito para disparar o cálculo automático quando vindo da tela "Next Games"
   useEffect(() => {
     if (triggerCalculation && selectedTeamA && selectedTeamB && gameBaziData) {

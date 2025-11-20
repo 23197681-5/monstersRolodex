@@ -47,6 +47,7 @@ const getFallbackGames = () => {
     { teamA: 'Vasco da Gama', teamB: 'Internacional', datetime: parseDate('Nov 28', '18:30') },
     { teamA: 'Santos', teamB: 'Sport', datetime: parseDate('Nov 28', '20:30') },
     { teamA: 'Vitória', teamB: 'Mirassol', datetime: parseDate('Nov 29', '15:00') },
+    { teamA: 'Palmeiras', teamB: 'Flamengo', datetime: parseDate('Nov 29', '16:00') },
     { teamA: 'Ceará', teamB: 'Cruzeiro', datetime: parseDate('Nov 29', '19:30') },
     { teamA: 'Fortaleza', teamB: 'Atlético-MG', datetime: parseDate('Nov 30', '17:30') },
     { teamA: 'Corinthians', teamB: 'Botafogo', datetime: parseDate('Nov 30', '15:00') },

@@ -52,18 +52,18 @@ export const hardcodedTeams = [
         elemento_dia: "甲",
         animal_dia: "午"
     },
+    // {
+    //     nome: "Flamengo",
+    //     img: "image007.png",
+    //     elemento_ano: "乙",
+    //     animal_ano: "未",
+    //     elemento_mes: "丙",
+    //     animal_mes: "戌",
+    //     elemento_dia: "丙",
+    //     animal_dia: "寅"
+    // },
     {
         nome: "Flamengo",
-        img: "image007.png",
-        elemento_ano: "乙",
-        animal_ano: "未",
-        elemento_mes: "丙",
-        animal_mes: "戌",
-        elemento_dia: "丙",
-        animal_dia: "寅"
-    },
-    {
-        nome: "Flamengo 2",
         img: "image008.png",
         elemento_ano: "乙",
         animal_ano: "未",
