@@ -16,6 +16,8 @@ export default function Home() {
   const [searchFieldA, setSearchFieldA] = useState('');
   const [searchFieldB, setSearchFieldB] = useState('');
   const [isLoading, setLoading] = useState(false);
+  const [filteredTeamsACount, setFilteredTeamsACount] = useState(0);
+  const [filteredTeamsBCount, setFilteredTeamsBCount] = useState(0);
   const [selectedGameForBazi, setSelectedGameForBazi] = useState(null);
   const [activeTab, setActiveTab] = useState('wuXing');
 
@@ -142,17 +144,39 @@ export default function Home() {
                   placeholder={'Search for a team (A)'}
                   onChangeHandler={onSearchChangeA}
                 ></SearchBox>
-                <MapaBazi filter={searchFieldA}></MapaBazi>
+                <MapaBazi filter={searchFieldA} onFilterCountChange={setFilteredTeamsACount}></MapaBazi>
               </div>
               <div>
                 <BaziPage />
+                {filteredTeamsACount === 1 && filteredTeamsBCount === 1 && (
+                  <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                    <button
+                      style={{
+                        padding: '12px 18px',
+                        fontSize: '16px',
+                        borderRadius: '12px',
+                        background: '#007aff',
+                        color: '#fff',
+                        border: 'none',
+                        boxShadow: '0 6px 14px rgba(0,122,255,0.2)',
+                        cursor: 'pointer',
+                        fontWeight: 600,
+                        fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                        width: '100%'
+                      }}
+                      // onClick={() => { /* Adicione a lógica do clique aqui */ }}
+                    >
+                      Calcular Wu Xing
+                    </button>
+                  </div>
+                )}
               </div>
               <div>
                 <SearchBox
                   placeholder={'Search for a team (B)'}
                   onChangeHandler={onSearchChangeB}
                 ></SearchBox>
-                <MapaBazi filter={searchFieldB}></MapaBazi>
+                <MapaBazi filter={searchFieldB} onFilterCountChange={setFilteredTeamsBCount}></MapaBazi>
               </div>
             </div>
           )}

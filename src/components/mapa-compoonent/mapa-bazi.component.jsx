@@ -4,7 +4,7 @@ import { supabase } from "../../lib/supabaseClient";
 
 import styles from './mapa-bazi.module.css';
 
-export default function MapaBazi({ filter = '', selectedTeam, onTeamHover, selectionColor }) {
+export default function MapaBazi({ filter = '', selectedTeam, onTeamHover, selectionColor, onFilterCountChange }) {
     const [allTeams, setAllTeams] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -102,6 +102,13 @@ export default function MapaBazi({ filter = '', selectedTeam, onTeamHover, selec
         if (!filter) return true;
         return t.name.toLowerCase().includes(filter.toLowerCase());
     });
+
+    useEffect(() => {
+        // Informa o componente pai sobre a contagem de times filtrados.
+        if (onFilterCountChange) {
+            onFilterCountChange(filteredTeams.length);
+        }
+    }, [filteredTeams.length, onFilterCountChange]);
 
     return (
         <div className="w-full flex flex-col items-center p-12">
