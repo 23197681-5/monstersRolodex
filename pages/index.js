@@ -179,26 +179,26 @@ export default function Home() {
               <div>
                 <BaziPage />
                 {filteredTeamsACount === 1 && filteredTeamsBCount === 1 && (
-                  <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                    <button
-                      style={{
-                        padding: '12px 18px',
-                        fontSize: '16px',
-                        borderRadius: '12px',
-                        background: '#007aff',
-                        color: '#fff',
-                        border: 'none',
-                        boxShadow: '0 6px 14px rgba(0,122,255,0.2)',
-                        cursor: 'pointer',
-                        fontWeight: 600,
-                        fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-                        width: '100%'
-                      }}
-                      // onClick={() => { /* Adicione a lógica do clique aqui */ }}
-                    >
-                      Calcular Wu Xing
-                    </button>
-                  </div>
+                  // <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                  //  /***  <button
+                  //     style={{
+                  //       padding: '12px 18px',
+                  //       fontSize: '16px',
+                  //       borderRadius: '12px',
+                  //       background: '#007aff',
+                  //       color: '#fff',
+                  //       border: 'none',
+                  //       boxShadow: '0 6px 14px rgba(0,122,255,0.2)',
+                  //       cursor: 'pointer',
+                  //       fontWeight: 600,
+                  //       fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                  //       width: '100%'
+                  //     }}
+                  //     // onClick={() => { /* Adicione a lógica do clique aqui */ }}
+                  //   >
+                  //     Calcular Wu Xing
+                  //   </button>*/ 
+                  // </div>
                 )}
                 {analysisResult && (
                   <div style={{ marginTop: '20px', padding: '15px', background: '#fff', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
