@@ -1,5 +1,4 @@
 export const serieA = [
-    { name: 'América-MG', logo: 'https://s.sde.globo.com/media/organizations/2024/05/07/AMRICA-mg-30.png' },
     { name: 'Athletico-PR', logo: 'https://s.sde.globo.com/media/organizations/2019/09/09/Athletico-PR.svg' },
     { name: 'Atlético-MG', logo: 'https://s.sde.globo.com/media/organizations/2018/03/10/atletico-mg.svg' },
     { name: 'Bahia', logo: 'https://s.sde.globo.com/media/organizations/2018/03/11/bahia.svg' },
@@ -14,6 +13,7 @@ export const serieA = [
     { name: 'Goiás', logo: 'https://s.sde.globo.com/media/organizations/2021/03/01/GOIAS-2021.svg' },
     { name: 'Grêmio', logo: 'https://s.sde.globo.com/media/organizations/2018/03/12/gremio.svg' },
     { name: 'Internacional', logo: 'https://s.sde.globo.com/media/organizations/2018/03/11/internacional.svg' },
+    { name: 'Juventude', logo: 'https://s.sde.globo.com/media/organizations/2021/04/29/Juventude-2021-01.svg' },
     { name: 'Palmeiras', logo: 'https://s.sde.globo.com/media/organizations/2019/07/06/Palmeiras.svg' },
     { name: 'Bragantino', logo: 'https://s.sde.globo.com/media/organizations/2021/06/28/bragantino.svg' },
     { name: 'Santos', logo: 'https://s.sde.globo.com/media/organizations/2018/03/12/santos.svg' },
@@ -25,6 +25,7 @@ export const serieA = [
   
   export const serieB = [
     { name: 'Amazonas', logo: 'https://s.sde.globo.com/media/organizations/2024/08/20/Amazonas_2024.svg' },
+    { name: 'América-MG', logo: 'https://s.sde.globo.com/media/organizations/2024/05/07/AMRICA-mg-30.png' },
     { name: 'Atlético-GO', logo: 'https://s.sde.globo.com/media/organizations/2020/07/02/atletico-go-2020.svg' },
     { name: 'Avaí', logo: 'https://s.sde.globo.com/media/organizations/2024/05/12/avaí.svg' },
     { name: 'Botafogo-SP', logo: 'https://s.sde.globo.com/media/organizations/2024/05/15/BFC.svg' },
@@ -34,7 +35,6 @@ export const serieA = [
     { name: 'Criciúma', logo: 'https://s.sde.globo.com/media/organizations/2018/03/11/criciuma.svg' },
     { name: 'Guarani', logo: 'https://s.sde.globo.com/media/organizations/2018/03/11/guarani.svg' },
     { name: 'Ferroviaria', logo: 'https://s.sde.globo.com/media/organizations/2019/01/08/Ferroviaria_Araraquara.svg' },
-    { name: 'Juventude', logo: 'https://s.sde.globo.com/media/organizations/2021/04/29/Juventude-2021-01.svg' },
     { name: 'Londrina', logo: 'https://s.sde.globo.com/media/organizations/2018/03/11/londrina.svg' },
     { name: 'Novorizontino', logo: 'https://s.sde.globo.com/media/organizations/2019/01/08/Novohorizontino.svg' },
     { name: 'Ponte Preta', logo: 'https://s.sde.globo.com/media/organizations/2018/03/11/ponte-preta.svg' },

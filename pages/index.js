@@ -16,6 +16,7 @@ export default function Home() {
   const [searchFieldA, setSearchFieldA] = useState('');
   const [searchFieldB, setSearchFieldB] = useState('');
   const [isLoading, setLoading] = useState(false);
+  const [selectedGameForBazi, setSelectedGameForBazi] = useState(null);
   const [activeTab, setActiveTab] = useState('wuXing');
 
   console.log('render');
@@ -47,6 +48,13 @@ export default function Home() {
   var onSearchChangeB = (event) => {
     var value = event.target.value.toLocaleLowerCase();
     setSearchFieldB(value);
+  };
+
+  const handleCalculateWuXing = (game) => {
+    setSearchFieldA(game.teamA);
+    setSearchFieldB(game.teamB);
+    setSelectedGameForBazi(game); // Passa a data do jogo para o BaziPage central
+    setActiveTab('wuXing');
   };
 
   const tabButtonStyle = {
@@ -150,7 +158,7 @@ export default function Home() {
           )}
 
           {activeTab === 'statistics' && <Statistics />}
-          {activeTab === 'nextGames' && <NextGames />}
+          {activeTab === 'nextGames' && <NextGames onCalculateWuXing={handleCalculateWuXing} />}
           {activeTab === 'cadastrarTime' && <CadastrarTime />}
 
           <hr style={{ width: '90%', margin: '2rem auto' }} />

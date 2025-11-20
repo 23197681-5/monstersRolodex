@@ -53,7 +53,7 @@ const getFallbackGames = () => {
   ];
 };
 
-const NextGames = () => {
+const NextGames = ({ onCalculateWuXing }) => {
   const [selectedGame, setSelectedGame] = useState(null);
   const [upcomingGames, setUpcomingGames] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -140,12 +140,34 @@ const NextGames = () => {
       </div>
       <div className={styles.baziContainer}>
         {selectedGame ? (
+          <div>
           <BaziPage initialDateTime={selectedGame.datetime} />
+          <button
+            onClick={() => onCalculateWuXing(selectedGame)}
+            style={{
+              padding: '12px 18px',
+              fontSize: '16px',
+              borderRadius: '12px',
+              background: '#007aff',
+              color: '#fff',
+              border: 'none',
+              boxShadow: '0 6px 14px rgba(0,122,255,0.2)',
+              cursor: 'pointer',
+              fontWeight: 600,
+              fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+              marginTop: '20px',
+              width: '100%'
+            }}
+          >
+            Calcular Wu Xing
+          </button>
+          </div>
         ) : (
           <div className={styles.placeholder}>
             Selecione um jogo para ver o Bazi
           </div>
         )}
+          
       </div>
     </div>
   );
