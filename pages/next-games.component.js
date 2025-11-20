@@ -10,6 +10,49 @@ const getTeamLogo = (teamName) => {
   return team ? team.logo : '/favicon.ico'; // Fallback logo
 };
 
+const getFallbackGames = () => {
+  const currentYear = new Date().getFullYear();
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  const parseDate = (dateStr, timeStr) => {
+    const [hour, minute] = timeStr.split(':');
+    let date;
+    if (dateStr === 'Tomorrow') {
+      date = new Date(tomorrow);
+      date.setHours(hour, minute, 0, 0);
+    } else {
+      date = new Date(`${dateStr}, ${currentYear} ${timeStr}`);
+    }
+    return date.toISOString();
+  };
+
+  return [
+    { teamA: 'Corinthians', teamB: 'São Paulo', datetime: parseDate('Tomorrow', '18:30') },
+    { teamA: 'Ceará', teamB: 'Internacional', datetime: parseDate('Tomorrow', '20:30') },
+    { teamA: 'Botafogo', teamB: 'Grêmio', datetime: parseDate('Nov 22', '18:30') },
+    { teamA: 'Palmeiras', teamB: 'Fluminense', datetime: parseDate('Nov 22', '20:30') },
+    { teamA: 'Flamengo', teamB: 'Bragantino', datetime: parseDate('Nov 22', '20:30') },
+    { teamA: 'Bahia', teamB: 'Vasco da Gama', datetime: parseDate('Nov 23', '15:00') },
+    { teamA: 'São Paulo', teamB: 'Juventude', datetime: parseDate('Nov 23', '15:00') },
+    { teamA: 'Sport', teamB: 'Vitória', datetime: parseDate('Nov 23', '17:30') },
+    { teamA: 'Cruzeiro', teamB: 'Corinthians', datetime: parseDate('Nov 23', '19:30') },
+    { teamA: 'Mirassol', teamB: 'Ceará', datetime: parseDate('Nov 24', '18:00') },
+    { teamA: 'Internacional', teamB: 'Santos', datetime: parseDate('Nov 24', '20:00') },
+    { teamA: 'Atlético-MG', teamB: 'Flamengo', datetime: parseDate('Nov 25', '20:30') },
+    { teamA: 'Grêmio', teamB: 'Palmeiras', datetime: parseDate('Nov 25', '20:30') },
+    { teamA: 'Bragantino', teamB: 'Fortaleza', datetime: parseDate('Nov 26', '18:00') },
+    { teamA: 'Fluminense', teamB: 'São Paulo', datetime: parseDate('Nov 27', '19:30') },
+    { teamA: 'Juventude', teamB: 'Bahia', datetime: parseDate('Nov 28', '18:00') },
+    { teamA: 'Vasco da Gama', teamB: 'Internacional', datetime: parseDate('Nov 28', '18:30') },
+    { teamA: 'Santos', teamB: 'Sport', datetime: parseDate('Nov 28', '20:30') },
+    { teamA: 'Vitória', teamB: 'Mirassol', datetime: parseDate('Nov 29', '15:00') },
+    { teamA: 'Ceará', teamB: 'Cruzeiro', datetime: parseDate('Nov 29', '19:30') },
+    { teamA: 'Fortaleza', teamB: 'Atlético-MG', datetime: parseDate('Nov 30', '17:30') },
+    { teamA: 'Corinthians', teamB: 'Botafogo', datetime: parseDate('Nov 30', '15:00') },
+  ];
+};
+
 const NextGames = () => {
   const [selectedGame, setSelectedGame] = useState(null);
   const [upcomingGames, setUpcomingGames] = useState([]);
@@ -25,9 +68,14 @@ const NextGames = () => {
           throw new Error('Falha ao buscar os jogos.', response);
         }
         const data = await response.json();
-        setUpcomingGames(data);
+        if (data && data.length > 0) {
+          setUpcomingGames(data);
+        } else {
+          setUpcomingGames(getFallbackGames());
+        }
       } catch (err) {
         setError(err.message);
+        setUpcomingGames(getFallbackGames()); // Usa o fallback em caso de erro na API
       } finally {
         setIsLoading(false);
       }
@@ -68,7 +116,7 @@ const NextGames = () => {
                 <span className={styles.vs}>vs</span>
                 <Image
                   src={getTeamLogo(game.teamB)}
-                  alt={game.teamB}
+                  alt={`Logo do ${game.teamB}`}
                   width={30}
                   height={30}
                 />

@@ -2,12 +2,30 @@ import Image from 'next/image';
 import styles from './statistics.module.css';
 import { serieA, serieB } from '../src/lib/teams';
 
-const generateRandomStats = () => {
-  const successRate = Math.floor(Math.random() * 101);
-  const errorRate = 100 - successRate;
-  const history = Array.from({ length: 10 }, () =>
-    Math.random() > 0.5 ? 'C' : 'X'
-  );
+const getTeamStats = (teamName) => {
+  // 1. Define o histórico com base no nome do time
+  let history = Array(38).fill('');
+
+  if (teamName === 'Bragantino') {
+    history = ['C', ...Array(37).fill('')]; // Only one 'X'
+  } else if (teamName === 'Santos' || teamName === 'Mirassol') {
+    history = ['X', ...Array(37).fill('')]; // Only one 'X'
+  }
+
+  // 2. Calcula as estatísticas a partir do histórico
+  const successCount = history.filter(result => result === 'C').length;
+  const errorCount = history.filter(result => result === 'X').length;
+  const totalGames = successCount + errorCount;
+
+  let successRate = 0;
+  let errorRate = 0;
+
+  if (totalGames > 0) {
+    successRate = Math.round((successCount / totalGames) * 100);
+    errorRate = 100 - successRate; // Garante que a soma seja sempre 100%
+  }
+
+  // 3. Retorna os dados calculados
   return { successRate, errorRate, history };
 };
 
@@ -20,12 +38,12 @@ const TeamStatsTable = ({ title, teams }) => (
           <th>Time</th>
           <th>% Acerto</th>
           <th>% Erro</th>
-          <th colSpan="10">Histórico Recente</th>
+          <th colSpan="38">Histórico Recente</th>
         </tr>
       </thead>
       <tbody>
         {teams.map((team) => {
-          const { successRate, errorRate, history } = generateRandomStats();
+          const { successRate, errorRate, history } = getTeamStats(team.name);
           return (
             <tr key={team.name}>
               <td className={styles.teamCell}>
