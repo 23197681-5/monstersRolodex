@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { supabase } from '../src/supabaseClient';
+import { supabase } from '../src/lib/supabaseClient';
 
 const heavenlyStems = [
   { value: '甲', label: '甲 (jiǎ) - Madeira Yang' },
