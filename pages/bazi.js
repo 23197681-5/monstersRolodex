@@ -62,12 +62,16 @@ function computeBazi(isoDatetime) {
 // const hour = 19;
 
     // 2. Extrai componentes UTC
-    const year = dt.getUTCFullYear();
+    const year = dt.getFullYear();
 
-    let month = dt.getUTCMonth() +1;   // 0 (Jan) a 11 (Dez)
-    const day = dt.getUTCDate();      // 1 a 31
-    if(month == 10 && day >= 20){
-      month = 11;
+    let month = dt.getMonth() +1;   // 0 (Jan) a 11 (Dez)
+    let day = dt.getDate();      // 1 a 31
+  
+        if(getDefaultDateTime() != isoDatetime){
+          console.log(day, dt.getUTCDate());
+          // day = day -6 ;
+          // day = day + 1;
+      
     }
     const hour = dt.getHours();    // 0 a 23, in local time
 
@@ -97,6 +101,9 @@ function computeBazi(isoDatetime) {
     
     // ** Mês (Aproximação Lunar Fallback) **
     // Usamos o mês Gregoriano (m + 1) como fallback para lunarMonth
+    if(month == 11 && day >= 20){
+      month = 12;
+    }
     const lunarMonthFallback = month; 
     const gzMonth = computeMonthGanzhiFromLunar(lunarMonthFallback, gzYear);
 
