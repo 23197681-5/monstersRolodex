@@ -179,6 +179,7 @@ export default function Home() {
               <div>
                 <BaziPage />
                 {filteredTeamsACount === 1 && filteredTeamsBCount === 1 && (
+                  <div></div>
                   // <div style={{ textAlign: 'center', marginTop: '20px' }}>
                   //  /***  <button
                   //     style={{
