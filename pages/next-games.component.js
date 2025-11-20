@@ -48,7 +48,7 @@ const NextGames = () => {
         {error && <p style={{ color: 'red' }}>{error}</p>}
         {!isLoading && !error && upcomingGames.length === 0 && <p>Nenhum jogo encontrado para a próxima semana.</p>}
         {!isLoading && !error &&
-          upcomingGames.map((game, index) => (
+          upcomingGames?.map((game, index) => (
             <div
               key={index}
               className={`${styles.gameItem} ${

@@ -379,7 +379,6 @@ function computeDayGanzhiFromUTC(y, m1to12, d) {
                           <td key={c.label} style={cellStyle}>
                             <div style={{ padding: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', boxSizing: 'border-box' }}>
                               <div style={{ lineHeight: 1.15 }}>{stemToElement(toStem(c.gz)) || (c.gz || '')}</div>
-                              <div style={{ fontSize: 12, color: '#666', marginTop: 6 }}>{c.gz || ''}</div>
                             </div>
                           </td>
                         ))}
@@ -389,8 +388,7 @@ function computeDayGanzhiFromUTC(y, m1to12, d) {
                         {cols.map((c) => (
                           <td key={c.label} style={cellStyle}>
                             <div style={{ padding: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', boxSizing: 'border-box' }}>
-                              <div style={{ lineHeight: 1.15 }}>{branchToAnimal(toBranch(c.gz)) || (c.gz || '')}</div>
-                              <div style={{ fontSize: 12, color: '#666', marginTop: 6 }}>{c.gz || ''}</div>
+                              <div style={{ lineHeight: 1.15 }}>{branchToAnimal(toBranch(c.gz)) }</div>
                             </div>
                           </td>
                         ))}
