@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import styles from './next-games.module.css';
-import BaziPage from './bazi';
-import { serieA, serieB } from '../src/lib/teams';
+import BaziPage from '../../../pages/bazi';
+import { serieA, serieB } from '../../lib/teams';
   
 const allTeams = [...serieA, ...serieB];
 const getTeamLogo = (teamName) => {
@@ -28,8 +28,8 @@ const getFallbackGames = () => {
   };
 
   return [
-    { teamA: 'Corinthians', teamB: 'São Paulo', datetime: parseDate('Tomorrow', '18:30') },
-    { teamA: 'Ceará', teamB: 'Internacional', datetime: parseDate('Tomorrow', '20:30') },
+    // { teamA: 'Corinthians', teamB: 'São Paulo', datetime: parseDate('Nov 20', '18:30') },
+    // { teamA: 'Ceará', teamB: 'Internacional', datetime: parseDate('Nov 20', '20:30') },
     { teamA: 'Botafogo', teamB: 'Grêmio', datetime: parseDate('Nov 22', '18:30') },
     { teamA: 'Palmeiras', teamB: 'Fluminense', datetime: parseDate('Nov 22', '20:30') },
     { teamA: 'Flamengo', teamB: 'Bragantino', datetime: parseDate('Nov 22', '20:30') },

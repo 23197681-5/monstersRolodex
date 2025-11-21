@@ -69,7 +69,7 @@ export const hardcodedTeams = [
         animal_ano: "未",
         elemento_mes: "丁",
         animal_mes: "亥",
-        elemento_dia: "戊",
+        elemento_dia: "戊",                 
         animal_dia: "辰"
     },
     {
@@ -173,7 +173,7 @@ export const hardcodedTeams = [
         animal_dia: "卯"
     },
     {
-        nome: "RB Bragantino",
+        nome: "Bragantino",
         img: "image021.png",
         elemento_ano: "丁",
         animal_ano: "卯",
@@ -183,7 +183,7 @@ export const hardcodedTeams = [
         animal_dia: "未"
     },
     {
-        nome: "CEARÁ",
+        nome: "Ceará",
         img: "image022.png",
         elemento_ano: "甲",
         animal_ano: "寅",
@@ -193,7 +193,7 @@ export const hardcodedTeams = [
         animal_dia: "未"
     },
     {
-        nome: "SANTOS",
+        nome: "Santos",
         img: "image023.png",
         elemento_ano: "壬",
         animal_ano: "子",
@@ -273,7 +273,7 @@ export const hardcodedTeams = [
         animal_dia: "亥"
     },
     {
-        nome: "Ferroviária",
+        nome: "Ferroviaria",
         img: "image031.png",
         elemento_ano: "庚",
         animal_ano: "寅",
