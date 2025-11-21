@@ -243,11 +243,13 @@ const TeamStatsTable = ({ title, teams }) => {
         <tbody>
           {teamsWithStats.map((team) => {
               const teamTrineStats = getTrineStatsForTeam(team.name);
+              let showHighlightAndTooltip = false;
               let rowStyle = { cursor: 'pointer' };
 
-              // Verifica se o time tem 60% ou mais de acerto na Tríade do mês atual
-              if (currentMonthTrine && teamTrineStats[currentMonthTrine] && teamTrineStats[currentMonthTrine].successRate >= 50) {
+              // Verifica se o time tem 50% ou mais de acerto na Tríade do mês atual
+              if (currentMonthTrine && teamTrineStats[currentMonthTrine]?.successRate >= 50) {
                 rowStyle.backgroundColor = '#e6ffed'; // Verde claro para destaque
+                showHighlightAndTooltip = true;
               }
 
               return (
@@ -261,6 +263,12 @@ const TeamStatsTable = ({ title, teams }) => {
                     className={styles.teamLogo}
                   />
                   {team.name}
+                  {showHighlightAndTooltip && (
+                    <div className={styles.tooltip}>
+                      <span className={styles.tooltipIcon}>⚽</span>
+                      <span className={styles.tooltipText}>{`odds a partir de 2 vale a pena apostar no mês do ${branchToAnimal(currentMonthBranch)}`}</span>
+                    </div>
+                  )}
                 </td>
                 <td>{team.successRate}%</td>
                 <td>{team.errorRate}%</td>
