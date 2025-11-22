@@ -574,9 +574,9 @@ const Statistics = () => {
   const defaultData = calculateAllStats(DEFAULT_ANALYZE_SCORES);
 
   return (
-    <div style={{ paddingBottom: '50px' }}>
+    <div style={{ paddingBottom: '50px' }}>      
+     <CoherenceTable title="Jogos em Dias de Coerência Fogo (Série A)" stats={getFireCoherenceStats()} />
       <CoherenceTable title="Jogos em Dias de Coerência Metal (Série A)" stats={getMetalCoherenceStats()} />
-      <CoherenceTable title="Jogos em Dias de Coerência Fogo (Série A)" stats={getFireCoherenceStats()} />
       <TeamStatsTable
         title="Série A (Padrão)"
         teamsWithStats={defaultData.teamsA}
