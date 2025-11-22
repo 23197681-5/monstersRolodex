@@ -259,7 +259,15 @@ export default function Home() {
           />
         </Head>
         <main className={styles.main}>
-          <div className={styles.tabs}>
+          <div
+            className={styles.tabs}
+            style={{
+              display: 'flex',
+              flexWrap: 'nowrap',
+              overflowX: 'auto',
+              justifyContent: 'flex-start',
+            }}
+          >
             <button
               style={getButtonStyle('wuXing')}
               onClick={() => setActiveTab('wuXing')}

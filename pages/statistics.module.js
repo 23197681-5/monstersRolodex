@@ -235,7 +235,7 @@ const getCoherenceStats = (games, teams, filterCondition, coherenceElement) => {
 
       let predictedWinner = 'empate';
       if (analysisA.score > analysisB.score ) predictedWinner = 'a';
-      if (analysisB.score > analysisA.score + bonus) predictedWinner = 'b';
+      if (analysisB.score > analysisA.score ) predictedWinner = 'b';
 
       const isSuccess = predictedWinner === game.resultado;
       if (predictedWinner === game.resultado) {

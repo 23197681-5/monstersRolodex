@@ -44,6 +44,8 @@
     display: flex;
     align-items: center;
     position: relative; /* Necessário para o posicionamento do tooltip */
+  white-space: nowrap; /* Impede que o nome do time quebre a linha */
+  min-width: 150px; /* Garante uma largura mínima para a célula */
   }
   
   .teamLogo {
