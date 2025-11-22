@@ -78,21 +78,22 @@ const BRANCH_CONFLICT = {
 
 // Define default scores for easy reference and modification
 export const DEFAULT_ANALYZE_SCORES = {
-  favorable_useful_element_multiplier: 2, // Multiplica a saída de getProportionalScoreValue (e.g., 1 * [1,2,3,4]), valor positivo
-  unfavorable_useful_element_multiplier: 2, // Multiplica a saída de getProportionalScoreValue (e.g., 1 * [1,2,3,4]), valor positivo a ser subtraído
-  branch_conflict_score: -1,
-  branch_combination_score: 2,
-  trine_harmony_score: 2,
-  penalty_score: -2,
-  control_excess_bonus: 2, // Renomeado e tornado positivo, pois controlar excesso é bom.
-  deficiency_penalty_score: -1,
-  qi_sha_penalty: -1, // Penalidade para 7 Killings (Qi Sha)
-  seasonal_strengthen_score: 1,
-  seasonal_weaken_score: -1,
-  use_day_master_strength_analysis: true, // Novo parâmetro: usar análise de força do Day Master
-  use_branch_interactions: true, // Controla toda a seção de interações de ramos
-  use_excess_deficiency: true, // Controla a análise de excesso/deficiência
-  use_seasonal_dominance: true, // Controla a análise de dominância sazonal
+  // Pesos percentuais para cada categoria de análise. A soma total deve ser 100.
+  day_master_strength_weight: 50,  // Análise do Mestre do Dia e Elementos Úteis
+  branch_interactions_weight: 20,    // Conflitos, combinações, tríades
+  excess_deficiency_weight: 15,    // Análise de excesso e deficiência
+  seasonal_dominance_weight: 10,   // Influência da estação do jogo
+  qi_sha_penalty_weight: 5,        // Penalidade para "7 Killings"
+
+  // --- Opções de Ativação ---
+  use_day_master_strength_analysis: true,
+  use_branch_interactions: true,
+  use_excess_deficiency: true,
+  use_seasonal_dominance: true,
+
+  // Multiplicadores internos (não são pesos diretos, mas ajustam a intensidade dentro de uma categoria)
+  favorable_useful_element_multiplier: 1,
+  unfavorable_useful_element_multiplier: 1,
 };
 
 // -------------------------------------------------------------
@@ -252,7 +253,7 @@ export function getDayMasterStrength(dayMasterElement, wuXingMap, gzMonth) {
 
   // Quem controla o DM
   const controllerElement = Object.keys(CONTROL_CYCLE).find(e => CONTROL_CYCLE[e] === dayMasterElement);
-  const controller = wuXingMap[controllerElement];
+  const controller = wuXingMap[controllerElement]; 
 
   const supportivePower = self + supporter;
   const drainingPower = output + controller;
@@ -261,8 +262,8 @@ export function getDayMasterStrength(dayMasterElement, wuXingMap, gzMonth) {
 
   // Condição adicional: o mês deve favorecer o Day Master para que ele seja considerado forte.
   const monthBranch = getGanzhiParts(gzMonth).branch;
-  const seasonElement = getSeasonDominantElement(monthBranch);
-  const isMonthFavorable = (seasonElement === dayMasterElement) || (GENERATION_CYCLE[seasonElement] === dayMasterElement);
+  const seasonMultipliers = SEASON_MULTIPLIERS[monthBranch] || {};
+  const isMonthFavorable = seasonMultipliers[dayMasterElement] || seasonMultipliers[supporterElement];
 
   if (isMonthFavorable) {
     if (ratio >= 2.2) return "extremelyStrong";
@@ -315,12 +316,12 @@ export function getUsefulElements(dayMasterElement, strength) {
 // -------------------------------------------------------------
 //  2. ANÁLISE DE FAVORABILIDADE COMPLETA
 // -------------------------------------------------------------
-export function analyzeTeamFavorability(teamBazi, gameBazi, customScores = DEFAULT_ANALYZE_SCORES) {
+export function analyzeTeamFavorability(teamBazi, gameBazi, scoresConfig = DEFAULT_ANALYZE_SCORES) {
   // Verifica se a estrutura é { elemento_ano, animal_ano, ... } e converte para { gzYear, ... }
   if (teamBazi.elemento_ano && teamBazi.animal_ano) {
     teamBazi = {
       gzYear: `${teamBazi.elemento_ano}${teamBazi.animal_ano}`,
-      gzMonth: `${teamBazi.elemento_mes}${teamBazi.animal_mes}`,
+      gzMonth: teamBazi.elemento_mes && teamBazi.animal_mes ? `${teamBazi.elemento_mes}${teamBazi.animal_mes}` : null,
       gzDay: `${teamBazi.elemento_dia}${teamBazi.animal_dia}`,
       gzHour: teamBazi.elemento_hora && teamBazi.animal_hora ? `${teamBazi.elemento_hora}${teamBazi.animal_hora}` : null,
     };
@@ -331,9 +332,16 @@ export function analyzeTeamFavorability(teamBazi, gameBazi, customScores = DEFAU
 
   if (!teamPercentages || !gamePercentages) return { score: 0, reasons: [] };
 
-  let score = 0;
-
+  let totalScore = 0;
   const reasons = [];
+
+  // -------------------------------------------------------------
+  //  Funções de Cálculo de Pontuação por Categoria
+  // -------------------------------------------------------------
+  const calculateCategoryScore = (weight, points, maxPoints) => {
+    if (maxPoints === 0) return 0;
+    return (points / maxPoints) * weight;
+  };
 
   // -------------------------------------------------------------
   //  Elemento dominante REAL
@@ -352,29 +360,31 @@ export function analyzeTeamFavorability(teamBazi, gameBazi, customScores = DEFAU
   // -------------------------------------------------------------
   //  NOVO: Day Master + Elementos Úteis (Condicional)
   // -------------------------------------------------------------
-  if (customScores.use_day_master_strength_analysis) {
+  if (scoresConfig.use_day_master_strength_analysis && teamBazi.gzDay && teamBazi.gzMonth) {
+    let categoryPoints = 0;
+    const maxCategoryPoints = 4 * Math.max(scoresConfig.favorable_useful_element_multiplier, scoresConfig.unfavorable_useful_element_multiplier);
+
     const dayStem = getGanzhiParts(teamBazi.gzDay).stem;
-    console.log(dayStem);
     const dayMasterElement = STEM_ELEMENTS[dayStem].element;
 
     const strength = getDayMasterStrength(dayMasterElement, teamPercentages, teamBazi.gzMonth);
     const useful = getUsefulElements(dayMasterElement, strength);
 
     const gameDominantPercentage = gamePercentages[gameDominant];
+    const proportionalValue = getProportionalScoreValue(gameDominantPercentage);
 
     if (useful.favorable.includes(gameDominant)) {
-      const proportionalValue = getProportionalScoreValue(gameDominantPercentage);
-      const points = proportionalValue * customScores.favorable_useful_element_multiplier;
-      score += points;
-      reasons.push(`Elemento do jogo (${gameDominant}, ${gameDominantPercentage.toFixed(1)}%) é FAVORÁVEL ao Day Master ${dayMasterElement} (${strength}). Pontos: +${points}`);
+      const points = proportionalValue * scoresConfig.favorable_useful_element_multiplier;
+      categoryPoints += points;
+      reasons.push(`[DM] Elemento do jogo (${gameDominant}) é FAVORÁVEL ao Day Master (${dayMasterElement} ${strength}).`);
     }
 
     if (useful.unfavorable.includes(gameDominant)) {
-      const proportionalValue = getProportionalScoreValue(gameDominantPercentage);
-      const points = proportionalValue * customScores.unfavorable_useful_element_multiplier; // Agora points é positivo
-      score -= points; // Subtrai os pontos positivos
-      reasons.push(`Elemento do jogo (${gameDominant}, ${gameDominantPercentage.toFixed(1)}%) é DESFAVORÁVEL ao Day Master ${dayMasterElement} (${strength}). Pontos: -${points}`);
+      const points = proportionalValue * scoresConfig.unfavorable_useful_element_multiplier;
+      categoryPoints -= points;
+      reasons.push(`[DM] Elemento do jogo (${gameDominant}) é DESFAVORÁVEL ao Day Master (${dayMasterElement} ${strength}).`);
     }
+    totalScore += calculateCategoryScore(scoresConfig.day_master_strength_weight, categoryPoints, maxCategoryPoints);
 
     // Adiciona penalidade de Qi Sha (7 Killings)
     const gameDayStem = getGanzhiParts(gameBazi.gzDay).stem;
@@ -387,74 +397,82 @@ export function analyzeTeamFavorability(teamBazi, gameBazi, customScores = DEFAU
 
       // Se ambos têm a mesma polaridade, é Qi Sha
       if (dayMasterPolarity === gameDayPolarity) {
-        score += customScores.qi_sha_penalty;
-        reasons.push(`Penalidade de Qi Sha (7 Killings): O dia (${gameDayElement} ${gameDayPolarity}) controla o Day Master (${dayMasterElement} ${dayMasterPolarity}). Pontos: ${customScores.qi_sha_penalty}`);
+        const qiShaScore = calculateCategoryScore(scoresConfig.qi_sha_penalty_weight, -1, 1);
+        totalScore += qiShaScore;
+        reasons.push(`[Qi Sha] Penalidade de 7 Killings: O dia do jogo controla o Day Master com mesma polaridade.`);
+      }
       }
     }
-  }
   // -------------------------------------------------------------
   //  2. Harmonia, Conflito, Combinação, Tríades, Punições
   // -------------------------------------------------------------
   const teamBranch = getGanzhiParts(teamBazi.gzYear).branch;
   const gameDayBranch = getGanzhiParts(gameBazi.gzDay).branch;
 
-  if (customScores.use_branch_interactions) {
+  if (scoresConfig.use_branch_interactions) {
+    let categoryPoints = 0;
+    const maxCategoryPoints = 2; // Max score is for combination or trine
+
     if (BRANCH_CONFLICT[teamBranch] === gameDayBranch) {
-      score += customScores.branch_conflict_score;
-      reasons.push(`Conflito direto: ${teamBranch} × ${gameDayBranch}. Pontos: ${customScores.branch_conflict_score}`);
+      categoryPoints -= 1;
+      reasons.push(`[Ramos] Conflito direto: ${teamBranch} × ${gameDayBranch}.`);
     }
 
     if (BRANCH_COMBINATIONS[teamBranch] === gameDayBranch) {
-      score += customScores.branch_combination_score;
-      reasons.push(`Combinação harmoniosa: ${teamBranch} + ${gameDayBranch}. Pontos: ${customScores.branch_combination_score}`);
+      categoryPoints += 2;
+      reasons.push(`[Ramos] Combinação harmoniosa: ${teamBranch} + ${gameDayBranch}.`);
     }
 
     if (branchInSameTrine(teamBranch, gameDayBranch)) {
-      score += customScores.trine_harmony_score;
-      reasons.push(`Ambos pertencem à mesma tríade harmônica. Pontos: ${customScores.trine_harmony_score}`);
+      categoryPoints += 2;
+      reasons.push(`[Ramos] Harmonia de Tríade: ${teamBranch} e ${gameDayBranch} na mesma tríade.`);
     }
-
-    // if (branchesInPenalty(teamBranch, gameDayBranch)) {
-    //   score += customScores.penalty_score;
-    //   reasons.push(`Punição entre ${teamBranch} e ${gameDayBranch}. Pontos: ${customScores.penalty_score}`);
-    // }
+    totalScore += calculateCategoryScore(scoresConfig.branch_interactions_weight, categoryPoints, maxCategoryPoints);
   }
   // -------------------------------------------------------------
   //  3. Excesso / Deficiência
   // -------------------------------------------------------------
-  if (customScores.use_excess_deficiency) {
-    for (const el in teamPercentages) { // Corrigido para iterar sobre o objeto de porcentagens
-      if (teamPercentages[el] > 45 && CONTROL_CYCLE[gameDominant] === el) { // Corrigido para usar teamPercentages[el]
-        score += customScores.control_excess_bonus;
-        reasons.push(`Bônus por Controle de Excesso: O elemento do jogo (${gameDominant}) controla o excesso de ${el} do time. Pontos: +${customScores.control_excess_bonus}`);
+  if (scoresConfig.use_excess_deficiency) {
+    let categoryPoints = 0;
+    const maxCategoryPoints = 1; // Max 1 point for bonus or penalty
+
+    for (const el in teamPercentages) {
+      if (teamPercentages[el] > 45 && CONTROL_CYCLE[gameDominant] === el) {
+        categoryPoints += 1;
+        reasons.push(`[Equilíbrio] Bônus: Jogo (${gameDominant}) controla excesso de ${el} do time.`);
       }
-      if (teamPercentages[el] < 12 && GENERATION_CYCLE[gameDominant] === el) { // Corrigido para usar teamPercentages[el]
-        score += customScores.deficiency_penalty_score;
-        reasons.push(`Deficiência de ${el}, pressionado pelo elemento do jogo (${gameDominant}). Pontos: ${customScores.deficiency_penalty_score}`);
+      if (teamPercentages[el] < 12 && GENERATION_CYCLE[gameDominant] === el) {
+        categoryPoints -= 1;
+        reasons.push(`[Equilíbrio] Penalidade: Jogo (${gameDominant}) drena ${el} deficiente do time.`);
       }
     }
+    totalScore += calculateCategoryScore(scoresConfig.excess_deficiency_weight, categoryPoints, maxCategoryPoints);
   }
   // -------------------------------------------------------------
   //  4. Dominância sazonal
   // -------------------------------------------------------------
-  if (customScores.use_seasonal_dominance) {
+  if (scoresConfig.use_seasonal_dominance) {
+    let categoryPoints = 0;
+    const maxCategoryPoints = 1;
+
     const monthBranch = getGanzhiParts(gameBazi.gzMonth).branch;
     const seasonDominant = getSeasonDominantElement(monthBranch);
 
     if (seasonDominant) {
       if (GENERATION_CYCLE[seasonDominant] === teamDominant) {
-        score += customScores.seasonal_strengthen_score;
-        reasons.push(`O mês fortalece o time: ${seasonDominant} → ${teamDominant}. Pontos: ${customScores.seasonal_strengthen_score}`);
+        categoryPoints += 1;
+        reasons.push(`[Sazonal] Mês (${seasonDominant}) fortalece o time (${teamDominant}).`);
       }
 
       if (CONTROL_CYCLE[seasonDominant] === teamDominant) {
-        score += customScores.seasonal_weaken_score;
-        reasons.push(`O mês pressiona o time: ${seasonDominant} → ${teamDominant}. Pontos: ${customScores.seasonal_weaken_score}`);
+        categoryPoints -= 1;
+        reasons.push(`[Sazonal] Mês (${seasonDominant}) enfraquece o time (${teamDominant}).`);
       }
     }
+    totalScore += calculateCategoryScore(scoresConfig.seasonal_dominance_weight, categoryPoints, maxCategoryPoints);
   }
 
-  return { score, reasons };
+  return { score: Math.round(Math.max(-100, Math.min(100, totalScore))), reasons };
 }
 
 
@@ -492,8 +510,4 @@ function getTrueDominantElement(map) {
 
 function branchInSameTrine(a, b) {
   return BRANCH_TRINES.some(trine => trine.includes(a) && trine.includes(b));
-}
-
-function branchesInPenalty(a, b) {
-  return BRANCH_PENALTIES.some(group => group.includes(a) && group.includes(b));
 }

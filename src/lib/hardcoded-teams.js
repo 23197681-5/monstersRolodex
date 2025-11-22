@@ -150,7 +150,9 @@ export const hardcodedTeams = [
         elemento_mes: "庚",
         animal_mes: "申",
         elemento_dia: "丙",
-        animal_dia: "午"
+        animal_dia: "午",
+        elemento_hora: "乙",
+        animal_hora: "戌"
     },
     {
         nome: "Fluminense",

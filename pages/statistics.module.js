@@ -77,8 +77,8 @@ const calculateMonthlyStats = (games, customScores) => {
  console.log(analysisA, analysisB)
       let predictedWinner = 'empate';
      
-  if (analysisA.score > analysisB.score) predictedWinner = 'a';
-  if (analysisB.score > analysisA.score) predictedWinner = 'b';
+  if (analysisA.score > analysisB.score + 25) predictedWinner = 'a';
+  if (analysisB.score > analysisA.score + 25) predictedWinner = 'b';
 
   if (predictedWinner === game.resultado) {
       monthlyStatsResult[monthName].successes++;
@@ -124,7 +124,7 @@ const getTeamStats = (teamName, customScores = DEFAULT_ANALYZE_SCORES) => {
  console.log(analysisA, analysisB)
       let predictedWinner = 'empate';
      
-      if (analysisA.score > analysisB.score) predictedWinner = 'a';
+      if (analysisA.score > analysisB.score - 20) predictedWinner = 'a';
       if (analysisB.score > analysisA.score) predictedWinner = 'b';
 
       // Comparar com resultado real (usando os scores padrão para esta função)
@@ -180,8 +180,8 @@ const getTrineStatsForTeam = (teamName, customScores = DEFAULT_ANALYZE_SCORES) =
       const analysisB = analyzeTeamFavorability(teamB_Bazi, gameBazi, customScores);
       console.log(analysisA, analysisB)
       let predictedWinner = 'empate';
-      if (analysisA.score > analysisB.score) predictedWinner = 'a';
-      if (analysisB.score > analysisA.score) predictedWinner = 'b';
+      if (analysisA.score > analysisB.score +50) predictedWinner = 'a';
+      if (analysisB.score > analysisA.score +50) predictedWinner = 'b';
 
       if (predictedWinner === game.resultado) {
         trineStats[trine].successes++;
@@ -209,15 +209,16 @@ const getGanzhiElement = (ganzhi) => {
   return stemMap[stem] || null;
 };
 
-const getCoherenceStats = (games, teams, filterCondition) => {
+const getCoherenceStats = (games, teams, filterCondition, coherenceElement) => {
   const filteredGames = games.filter(game => {
     const gameBazi = getBaziForDate(parseGameDate(game.data));
-    return gameBazi && filterCondition(gameBazi);
+    return gameBazi && filterCondition(gameBazi, coherenceElement);
   });
 
   const teamStats = teams.map(team => {
     let successCount = 0;
     let totalGames = 0;
+    const teamGames = [];
 
     const relevantGames = filteredGames.filter(g => g.timeA === team.name || g.timeB === team.name);
 
@@ -233,13 +234,27 @@ const getCoherenceStats = (games, teams, filterCondition) => {
       const analysisB = analyzeTeamFavorability(teamB_Bazi, gameBazi);
 
       let predictedWinner = 'empate';
-      if (analysisA.score > analysisB.score) predictedWinner = 'a';
-      if (analysisB.score > analysisA.score) predictedWinner = 'b';
+      let bonus = 0;
+      if (coherenceElement === 'fire') bonus = 40;
+      if (analysisA.score > analysisB.score + bonus) predictedWinner = 'a';
+      if (analysisB.score > analysisA.score + bonus) predictedWinner = 'b';
 
+      const isSuccess = predictedWinner === game.resultado;
       if (predictedWinner === game.resultado) {
         successCount++;
       }
       totalGames++;
+      teamGames.push({
+        result: isSuccess ? 'C' : 'X',
+        date: game.data,
+        teamA: game.timeA,
+        teamB: game.timeB,
+        placar: game.placar,
+        resultadoReal: game.resultado,
+        resultadoPredito: predictedWinner,
+        scoreA: analysisA.score,
+        scoreB: analysisB.score,
+      });
     });
 
     return {
@@ -247,6 +262,7 @@ const getCoherenceStats = (games, teams, filterCondition) => {
       logo: team.logo,
       successRate: totalGames > 0 ? Math.round((successCount / totalGames) * 100) : 0,
       totalGames: totalGames,
+      games: teamGames,
     };
   });
 
@@ -255,23 +271,33 @@ const getCoherenceStats = (games, teams, filterCondition) => {
 
 const getMetalCoherenceStats = () => {
   const METAL_ANIMALS = ["申", "酉", "丑", "巳"];
-  return getCoherenceStats(allGames, serieA, (gameBazi) => {
+  const filterCondition = (gameBazi, coherenceElement) => {
     const dayElement = getGanzhiElement(gameBazi.gzDay);
     const dayAnimal = gameBazi.gzDay.charAt(1);
-    return dayElement === 'metal' || METAL_ANIMALS.includes(dayAnimal);
-  });
+    // A lógica de coerência agora pode usar o 'coherenceElement'
+    return (dayElement === coherenceElement || dayElement === 'water') && METAL_ANIMALS.includes(dayAnimal);
+  };
+  return getCoherenceStats(allGames, serieA, filterCondition, 'metal');
 };
 
 const getFireCoherenceStats = () => {
   const FIRE_ANIMALS = ["寅", "午", "戌", "巳"];
-  return getCoherenceStats(allGames, serieA, (gameBazi) => {
+  const filterCondition = (gameBazi, coherenceElement) => {
     const dayElement = getGanzhiElement(gameBazi.gzDay);
     const dayAnimal = gameBazi.gzDay.charAt(1);
-    return dayElement === 'fire' || FIRE_ANIMALS.includes(dayAnimal);
-  });
+    const hourAnimal = gameBazi.gzHour.charAt(1);
+
+    return (dayElement === coherenceElement || dayElement === 'wood' || dayElement === 'earth') &&
+      FIRE_ANIMALS.includes(dayAnimal) &&
+      FIRE_ANIMALS.includes(hourAnimal);
+  };
+  return getCoherenceStats(allGames, serieA, filterCondition, 'fire');
 };
 
 const CoherenceTable = ({ title, stats }) => {
+  const [selectedTeam, setSelectedTeam] = useState(null);
+  const [selectedGameDetails, setSelectedGameDetails] = useState(null);
+
   const totalGamesAnalyzed = stats.reduce((acc, team) => acc + team.totalGames, 0) / 2;
   
   // Para calcular a média geral, precisamos do total de acertos.
@@ -295,8 +321,8 @@ const CoherenceTable = ({ title, stats }) => {
         </thead>
         <tbody>
           {stats.map(stat => (
-            <tr key={stat.team}>
-              <td className={styles.teamCell}>
+            <tr key={stat.team} onClick={() => setSelectedTeam(stat)} style={{ cursor: 'pointer' }}>
+              <td className={styles.teamCell} >
                 <Image src={stat.logo} alt={`Logo do ${stat.team}`} width={25} height={25} className={styles.teamLogo} /> 
                 {stat.team}
               </td>
@@ -312,6 +338,31 @@ const CoherenceTable = ({ title, stats }) => {
           </tr>
         </tfoot>
       </table>
+      {selectedTeam && (
+        <div className={styles.modalBackdrop} onClick={() => setSelectedTeam(null)}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <h3>Jogos de Coerência para {selectedTeam.team}</h3>
+            <div className={styles.gameResultsContainer} style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center' }}>
+              {selectedTeam.games.map((game, index) => (
+                <div
+                  key={index}
+                  className={`${game.result === 'C' ? styles.successCell : styles.errorCell} ${styles.clickableCell}`}
+                  onClick={() => setSelectedGameDetails(game)}
+                >
+                  <div style={{ fontSize: '1.2em', fontWeight: 'bold' }}>{game.result}</div>
+                  <div style={{ fontSize: '0.7em', color: '#666', marginTop: '4px' }}>
+                    {new Date(parseGameDate(game.date)).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button onClick={() => setSelectedTeam(null)} className={styles.closeButton}>Fechar</button>
+          </div>
+        </div>
+      )}
+      {selectedGameDetails && (
+        <GameDetailsModal gameDetails={selectedGameDetails} onClose={() => setSelectedGameDetails(null)} />
+      )}
     </div>
   );
 };
