@@ -79,21 +79,17 @@ const BRANCH_CONFLICT = {
 // Define default scores for easy reference and modification
 export const DEFAULT_ANALYZE_SCORES = {
   // Pesos percentuais para cada categoria de análise. A soma total deve ser 100.
-  day_master_strength_weight: 50,  // Análise do Mestre do Dia e Elementos Úteis
-  branch_interactions_weight: 20,    // Conflitos, combinações, tríades
-  excess_deficiency_weight: 15,    // Análise de excesso e deficiência
-  seasonal_dominance_weight: 10,   // Influência da estação do jogo
-  qi_sha_penalty_weight: 5,        // Penalidade para "7 Killings"
-
-  // --- Opções de Ativação ---
+  day_master_strength_weight: 15.48,
+  branch_interactions_weight: 28.67,
+  excess_deficiency_weight: 21.05,
+  seasonal_dominance_weight: 13.01,
+  qi_sha_penalty_weight: 21.79,
   use_day_master_strength_analysis: true,
   use_branch_interactions: true,
   use_excess_deficiency: true,
   use_seasonal_dominance: true,
-
-  // Multiplicadores internos (não são pesos diretos, mas ajustam a intensidade dentro de uma categoria)
-  favorable_useful_element_multiplier: 1,
-  unfavorable_useful_element_multiplier: 1,
+  favorable_useful_element_multiplier: 1.47,
+  unfavorable_useful_element_multiplier: 1.06
 };
 
 // -------------------------------------------------------------
@@ -312,7 +308,24 @@ export function getUsefulElements(dayMasterElement, strength) {
       };
   }
 }
+//todo parametros alternativos para dias de coêrencia:
 
+// scoresConfig day_master_strength_weight: 50,  // Análise do Mestre do Dia e Elementos Úteis
+//   branch_interactions_weight: 20,    // Conflitos, combinações, tríades
+//   excess_deficiency_weight: 15,    // Análise de excesso e deficiência
+//   seasonal_dominance_weight: 10,   // Influência da estação do jogo
+//   qi_sha_penalty_weight: 5,        // Penalidade para "7 Killings"
+
+//   // --- Opções de Ativação ---
+//   use_day_master_strength_analysis: true,
+//   use_branch_interactions: true,
+//   use_excess_deficiency: true,
+//   use_seasonal_dominance: true,
+
+//   // Multiplicadores internos (não são pesos diretos, mas ajustam a intensidade dentro de uma categoria)
+//   favorable_useful_element_multiplier: 1, 
+//   unfavorable_useful_element_multiplier: 1,
+// };
 // -------------------------------------------------------------
 //  2. ANÁLISE DE FAVORABILIDADE COMPLETA
 // -------------------------------------------------------------
