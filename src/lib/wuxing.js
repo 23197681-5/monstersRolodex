@@ -19,6 +19,9 @@ export const CONTROL_CYCLE = {
   metal: "wood"
 };
 
+export const FIRE_ANIMALS = ["寅", "午", "戌", "巳"];
+export const METAL_ANIMALS = ["申", "酉", "丑", "巳"];
+
 // -------------------------------------------------------------
 //  Tríades Harmônicas dos Ramos
 // -------------------------------------------------------------

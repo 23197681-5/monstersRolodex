@@ -3,7 +3,7 @@ import Image from 'next/image';
 import styles from './statistics.module.css';
 import { serieA, serieB } from '../src/lib/teams';
 import { allGames, jogosRodada20Detalhados } from '../src/lib/hadcoded-games';
-import { hardcodedTeams } from '../src/lib/hardcoded-teams';
+import { hardcodedTeams } from '../src/lib/hardcoded-teams'; 
 import { analyzeTeamFavorability } from '../src/lib/wuxing';
 import { DEFAULT_ANALYZE_SCORES } from '../src/lib/wuxing'; // Importar DEFAULT_ANALYZE_SCORES aqui
 import { getBaziForDate, parseGameDate } from '../src/lib/bazi-calculator';
@@ -202,6 +202,120 @@ const getTrineStatsForTeam = (teamName, customScores = DEFAULT_ANALYZE_SCORES) =
   return result;
 };
 
+const getGanzhiElement = (ganzhi) => {
+  if (!ganzhi) return null;
+  const stem = ganzhi.charAt(0);
+  const stemMap = { '甲': 'wood', '乙': 'wood', '丙': 'fire', '丁': 'fire', '戊': 'earth', '己': 'earth', '庚': 'metal', '辛': 'metal', '壬': 'water', '癸': 'water' };
+  return stemMap[stem] || null;
+};
+
+const getCoherenceStats = (games, teams, filterCondition) => {
+  const filteredGames = games.filter(game => {
+    const gameBazi = getBaziForDate(parseGameDate(game.data));
+    return gameBazi && filterCondition(gameBazi);
+  });
+
+  const teamStats = teams.map(team => {
+    let successCount = 0;
+    let totalGames = 0;
+
+    const relevantGames = filteredGames.filter(g => g.timeA === team.name || g.timeB === team.name);
+
+    relevantGames.forEach(game => {
+      const teamA_Bazi = hardcodedTeams.find(t => t.nome === game.timeA);
+      const teamB_Bazi = hardcodedTeams.find(t => t.nome === game.timeB);
+      if (!teamA_Bazi || !teamB_Bazi) return;
+      const gameBazi = getBaziForDate(parseGameDate(game.data));
+
+      if (!teamA_Bazi || !teamB_Bazi || !gameBazi) return;
+
+      const analysisA = analyzeTeamFavorability(teamA_Bazi, gameBazi);
+      const analysisB = analyzeTeamFavorability(teamB_Bazi, gameBazi);
+
+      let predictedWinner = 'empate';
+      if (analysisA.score > analysisB.score) predictedWinner = 'a';
+      if (analysisB.score > analysisA.score) predictedWinner = 'b';
+
+      if (predictedWinner === game.resultado) {
+        successCount++;
+      }
+      totalGames++;
+    });
+
+    return {
+      team: team.name,
+      logo: team.logo,
+      successRate: totalGames > 0 ? Math.round((successCount / totalGames) * 100) : 0,
+      totalGames: totalGames,
+    };
+  });
+
+  return teamStats.filter(t => t.totalGames > 0).sort((a, b) => b.successRate - a.successRate);
+};
+
+const getMetalCoherenceStats = () => {
+  const METAL_ANIMALS = ["申", "酉", "丑", "巳"];
+  return getCoherenceStats(allGames, serieA, (gameBazi) => {
+    const dayElement = getGanzhiElement(gameBazi.gzDay);
+    const dayAnimal = gameBazi.gzDay.charAt(1);
+    return dayElement === 'metal' || METAL_ANIMALS.includes(dayAnimal);
+  });
+};
+
+const getFireCoherenceStats = () => {
+  const FIRE_ANIMALS = ["寅", "午", "戌", "巳"];
+  return getCoherenceStats(allGames, serieA, (gameBazi) => {
+    const dayElement = getGanzhiElement(gameBazi.gzDay);
+    const dayAnimal = gameBazi.gzDay.charAt(1);
+    return dayElement === 'fire' || FIRE_ANIMALS.includes(dayAnimal);
+  });
+};
+
+const CoherenceTable = ({ title, stats }) => {
+  const totalGamesAnalyzed = stats.reduce((acc, team) => acc + team.totalGames, 0) / 2;
+  
+  // Para calcular a média geral, precisamos do total de acertos.
+  // Como não temos o successCount individual, vamos recalcular a partir dos jogos filtrados.
+  const totalSuccesses = stats.reduce((acc, team) => {
+    // Aproximação do número de acertos a partir da taxa de acerto arredondada
+    return acc + (team.successRate / 100) * team.totalGames;
+  }, 0) / 2; // Divide por 2 porque cada jogo é contado para dois times
+
+  const averageSuccessRate = totalGamesAnalyzed > 0 ? Math.round((totalSuccesses / totalGamesAnalyzed) * 100) : 0;
+
+  return (
+    <div className={styles.tableContainer}>
+      <h2 className={styles.title}>{title} - Média de Acerto: {averageSuccessRate}%</h2>
+      <table className={styles.statsTable}>
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>% Acerto</th>
+          </tr>
+        </thead>
+        <tbody>
+          {stats.map(stat => (
+            <tr key={stat.team}>
+              <td className={styles.teamCell}>
+                <Image src={stat.logo} alt={`Logo do ${stat.team}`} width={25} height={25} className={styles.teamLogo} /> 
+                {stat.team}
+              </td>
+              <td>{stat.successRate}%</td>
+            </tr>
+          ))}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colSpan="2" style={{ textAlign: 'center', fontStyle: 'italic', color: '#555' }}>
+              Total de jogos analisados: {totalGamesAnalyzed}
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  );
+};
+
 const GameDetailsModal = ({ gameDetails, onClose }) => {
   if (!gameDetails) return null;
 
@@ -306,7 +420,8 @@ const TeamStatsTable = ({ title, teamsWithStats, monthlyStats, teamTrineStats })
               <tbody>
                 {sortedTeamsWithStats.map((team) => {
                   let showHighlightAndTooltip = false;
-                  let rowStyle = { cursor: 'pointer' };
+                  const rowStyle = {}; // Estilo da linha
+                  const teamCellStyle = { cursor: 'pointer' }; // Estilo da célula do time
 
                   // Verifica se o time tem 50% ou mais de acerto na Tríade do mês atual
                   if (currentMonthTrine && teamTrineStats[team.name] && teamTrineStats[team.name][currentMonthTrine]?.successRate >= 50) {
@@ -315,8 +430,12 @@ const TeamStatsTable = ({ title, teamsWithStats, monthlyStats, teamTrineStats })
                   }
 
                   return (
-                    <tr key={team.name} onClick={() => setSelectedTeam(team)} style={rowStyle}>
-                      <td className={styles.teamCell}>
+                    <tr key={team.name} style={rowStyle}>
+                      <td
+                        className={styles.teamCell}
+                        onClick={() => setSelectedTeam(team)}
+                        style={teamCellStyle}
+                      >
                         <Image
                           src={team.logo}
                           alt={`Brasão do ${team.name}`}
@@ -404,7 +523,9 @@ const Statistics = () => {
   const defaultData = calculateAllStats(DEFAULT_ANALYZE_SCORES);
 
   return (
-    <div>
+    <div style={{ paddingBottom: '50px' }}>
+      <CoherenceTable title="Jogos em Dias de Coerência Metal (Série A)" stats={getMetalCoherenceStats()} />
+      <CoherenceTable title="Jogos em Dias de Coerência Fogo (Série A)" stats={getFireCoherenceStats()} />
       <TeamStatsTable
         title="Série A (Padrão)"
         teamsWithStats={defaultData.teamsA}
