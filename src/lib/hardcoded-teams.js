@@ -19,8 +19,8 @@ export const hardcodedTeams = [
         animal_ano: "辰",
         elemento_mes: "乙",
         animal_mes: "酉",
-        elemento_dia: "癸",
-        animal_dia: "卯"
+        elemento_dia: "戊",
+        animal_dia: "寅"
     },
     {
         nome: "Palmeiras",

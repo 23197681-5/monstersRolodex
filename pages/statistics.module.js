@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import styles from './statistics.module.css';
 import { serieA, serieB } from '../src/lib/teams';
-import { allGames } from '../src/lib/hadcoded-games';
+import { allGames, jogosRodada20Detalhados } from '../src/lib/hadcoded-games';
 import { hardcodedTeams } from '../src/lib/hardcoded-teams';
 import { analyzeTeamFavorability } from '../src/lib/wuxing';
+import { DEFAULT_ANALYZE_SCORES } from '../src/lib/wuxing'; // Importar DEFAULT_ANALYZE_SCORES aqui
 import { getBaziForDate, parseGameDate } from '../src/lib/bazi-calculator';
 
 const branchToAnimal = (b) => {
@@ -55,13 +56,12 @@ const currentMonthTrine = currentMonthBranch ? getTrineForBranch(currentMonthBra
 console.log(`Mês Atual: ${branchToAnimal(currentMonthBranch)} (${currentMonthBranch}), Tríade: ${currentMonthTrine}`);
 
 
-// Calcula a taxa de acerto para cada mês lunar
-const monthlyStats = allLunarMonths.reduce((acc, monthName) => {
+const calculateMonthlyStats = (games, customScores) => {
+  const monthlyStatsResult = allLunarMonths.reduce((acc, monthName) => {
   acc[monthName] = { successes: 0, total: 0 };
   return acc;
 }, {});
-
-allGames.forEach(game => {
+  games.forEach(game => {
   const monthName = getMonthAnimalName(game.data);
   if (!monthName) return;
 
@@ -70,24 +70,29 @@ allGames.forEach(game => {
   const gameDate = parseGameDate(game.data);
   const game_Bazi = getBaziForDate(gameDate);
 
-  if (!teamA_Bazi || !teamB_Bazi || !game_Bazi) return;
+    if (!teamA_Bazi || !teamB_Bazi || !game_Bazi) return;
 
-  const analysisA = analyzeTeamFavorability(teamA_Bazi, game_Bazi);
-  const analysisB = analyzeTeamFavorability(teamB_Bazi, game_Bazi);
-
-  let predictedWinner = 'empate';
+    const analysisA = analyzeTeamFavorability(teamA_Bazi, game_Bazi);
+    const analysisB = analyzeTeamFavorability(teamB_Bazi, game_Bazi);
+ console.log(analysisA, analysisB)
+      let predictedWinner = 'empate';
+     
   if (analysisA.score > analysisB.score) predictedWinner = 'a';
   if (analysisB.score > analysisA.score) predictedWinner = 'b';
 
   if (predictedWinner === game.resultado) {
-    monthlyStats[monthName].successes++;
+      monthlyStatsResult[monthName].successes++;
   }
-  monthlyStats[monthName].total++;
+    monthlyStatsResult[monthName].total++;
 });
+  return monthlyStatsResult;
+};
 
 
-const getTeamStats = (teamName) => {
-  const history = Array(MAX_COLUMNS).fill({ result: '', date: null });
+const getTeamStats = (teamName, customScores = DEFAULT_ANALYZE_SCORES) => {
+  // Inicializa o histórico como um array de arrays vazios para armazenar múltiplos jogos por mês.
+  const history = Array.from({ length: MAX_COLUMNS }, () => []);
+
   let successCount = 0;
   let errorCount = 0;
 
@@ -97,10 +102,13 @@ const getTeamStats = (teamName) => {
       // Obter dados Bazi dos times
       const teamA_Bazi = hardcodedTeams.find(t => t.nome === game.timeA);
       const teamB_Bazi = hardcodedTeams.find(t => t.nome === game.timeB);
+      console.log('teamA_Bazi', teamA_Bazi);
+      console.log('teamB_Bazi', teamB_Bazi);
 
       // Obter Bazi da data do jogo
       const gameDate = parseGameDate(game.data);
       const game_Bazi = getBaziForDate(gameDate);
+      console.log('game_Bazi', game_Bazi);
 
       const monthName = getMonthAnimalName(game.data);
       const columnIndex = monthToIndexMap[monthName];
@@ -111,19 +119,28 @@ const getTeamStats = (teamName) => {
       }
 
       // Analisar favoritismo
-      const analysisA = analyzeTeamFavorability(teamA_Bazi, game_Bazi);
-      const analysisB = analyzeTeamFavorability(teamB_Bazi, game_Bazi);
-
+      const analysisA = analyzeTeamFavorability(teamA_Bazi, game_Bazi, customScores);
+      const analysisB = analyzeTeamFavorability(teamB_Bazi, game_Bazi, customScores);
+ console.log(analysisA, analysisB)
       let predictedWinner = 'empate';
+     
       if (analysisA.score > analysisB.score) predictedWinner = 'a';
       if (analysisB.score > analysisA.score) predictedWinner = 'b';
 
-      // Comparar com resultado real
-      if (predictedWinner === game.resultado) {
-        history[columnIndex] = { result: 'C', date: game.data };
+      // Comparar com resultado real (usando os scores padrão para esta função)
+      if (predictedWinner === game.resultado) { // This function should also accept customScores
+        history[columnIndex].push({
+          result: 'C', date: game.data, teamA: game.timeA, teamB: game.timeB,
+          placar: game.placar, resultadoReal: game.resultado, resultadoPredito: predictedWinner,
+          scoreA: analysisA.score, scoreB: analysisB.score
+        });
         successCount++;
       } else {
-        history[columnIndex] = { result: 'X', date: game.data };
+        history[columnIndex].push({
+          result: 'X', date: game.data, teamA: game.timeA, teamB: game.timeB,
+          placar: game.placar, resultadoReal: game.resultado, resultadoPredito: predictedWinner,
+          scoreA: analysisA.score, scoreB: analysisB.score
+        });
         errorCount++;
       }
     }
@@ -133,10 +150,10 @@ const getTeamStats = (teamName) => {
   const successRate = totalGames > 0 ? Math.round((successCount / totalGames) * 100) : 0;
   const errorRate = totalGames > 0 ? 100 - successRate : 0;
 
-  return { successRate, errorRate, history };
+  return { successRate, errorRate, history, successCount, errorCount };
 };
 
-const getTrineStatsForTeam = (teamName) => {
+const getTrineStatsForTeam = (teamName, customScores = DEFAULT_ANALYZE_SCORES) => {
   const trineStats = {
     Fogo: { successes: 0, total: 0 },
     Madeira: { successes: 0, total: 0 },
@@ -157,11 +174,11 @@ const getTrineStatsForTeam = (teamName) => {
       const teamA_Bazi = hardcodedTeams.find(t => t.nome === game.timeA);
       const teamB_Bazi = hardcodedTeams.find(t => t.nome === game.timeB);
 
-      if (!teamA_Bazi || !teamB_Bazi) return;
+      if (!teamA_Bazi || !teamB_Bazi || !gameBazi) return;
 
-      const analysisA = analyzeTeamFavorability(teamA_Bazi, gameBazi);
-      const analysisB = analyzeTeamFavorability(teamB_Bazi, gameBazi);
-
+      const analysisA = analyzeTeamFavorability(teamA_Bazi, gameBazi, customScores);
+      const analysisB = analyzeTeamFavorability(teamB_Bazi, gameBazi, customScores);
+      console.log(analysisA, analysisB)
       let predictedWinner = 'empate';
       if (analysisA.score > analysisB.score) predictedWinner = 'a';
       if (analysisB.score > analysisA.score) predictedWinner = 'b';
@@ -185,6 +202,48 @@ const getTrineStatsForTeam = (teamName) => {
   return result;
 };
 
+const GameDetailsModal = ({ gameDetails, onClose }) => {
+  if (!gameDetails) return null;
+
+  const translateResult = (result, teamA, teamB) => {
+    if (result === 'a') return `Vitória ${teamA}`;
+    if (result === 'b') return `Vitória ${teamB}`;
+    return 'Empate';
+  };
+
+  return (
+    <div className={styles.modalBackdrop} onClick={onClose}>
+      <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+        <h3>Detalhes do Jogo</h3>
+        <div className={styles.gameDetailRow}>
+          <strong>Partida:</strong> {gameDetails.teamA} vs {gameDetails.teamB}
+        </div>
+        <div className={styles.gameDetailRow}>
+          <strong>Data:</strong> {gameDetails.date}
+        </div>
+        <div className={styles.gameDetailRow}>
+          <strong>Placar Real:</strong> {gameDetails.placar}
+        </div>
+        <hr className={styles.modalSeparator} />
+        <div className={styles.gameDetailRow}>
+          <strong>Resultado Real:</strong> {translateResult(gameDetails.resultadoReal, gameDetails.teamA, gameDetails.teamB)}
+        </div>
+        <div className={styles.gameDetailRow}>
+          <strong>Resultado Predito:</strong> {translateResult(gameDetails.resultadoPredito, gameDetails.teamA, gameDetails.teamB)}
+        </div>
+        <div className={styles.gameDetailRow}>
+          <strong>Análise de Score:</strong>
+          <div>Score {gameDetails.teamA}: {gameDetails.scoreA}</div>
+          <div>Score {gameDetails.teamB}: {gameDetails.scoreB}</div>
+        </div>
+        <button onClick={onClose} className={styles.closeButton}>
+          Fechar
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const TrineStatsModal = ({ teamName, stats, onClose }) => {
   // Converte o objeto de estatísticas em um array e ordena pela taxa de acerto (decrescente)
   const sortedStats = Object.entries(stats).sort(([, a], [, b]) => b.successRate - a.successRate);
@@ -204,111 +263,160 @@ const TrineStatsModal = ({ teamName, stats, onClose }) => {
   );
 };
 
-const TeamStatsTable = ({ title, teams }) => {
-  const teamsWithStats = teams.map(team => {
-    const stats = getTeamStats(team.name);
-    return { ...team, ...stats };
-  }).sort((a, b) => b.successRate - a.successRate);
+const TeamStatsTable = ({ title, teamsWithStats, monthlyStats, teamTrineStats }) => {
+  // O componente agora recebe os dados já calculados.
+  // A ordenação é mantida para garantir que os times com melhor desempenho apareçam primeiro.
+  const sortedTeamsWithStats = [...teamsWithStats].sort((a, b) => b.successRate - a.successRate);
 
   const [selectedTeam, setSelectedTeam] = useState(null);
+  const [selectedGameDetails, setSelectedGameDetails] = useState(null);
 
   return (
     <div className={styles.tableContainer}>
-      <h2 className={styles.title}>
-        {title} - Taxa de Acerto Geral: {
-          (() => {
-            const totalSuccess = teamsWithStats.reduce((acc, team) => acc + team.history.filter(h => h.result === 'C').length, 0);
-            const totalError = teamsWithStats.reduce((acc, team) => acc + team.history.filter(h => h.result === 'X').length, 0);
-            const totalGames = totalSuccess + totalError;
-            return totalGames > 0 ? Math.round((totalSuccess / totalGames) * 100) : 0;
-          })()
-        }%
-      </h2>
-      <table className={styles.statsTable}>
-        <thead>
-          <tr>
-            <th>Time</th>
-            <th>% Acerto</th>
-            <th>% Erro</th>
-          {allLunarMonths.map(month => {
-            const stats = monthlyStats[month];
-            const successRate = stats.total > 0 ? Math.round((stats.successes / stats.total) * 100) : 0;
-            return (<th key={month}>
-              <div>{month}</div>
-              <div style={{ fontSize: '0.8em', fontWeight: 'normal', color: '#555' }}>({successRate}%)</div>
-            </th>)
-          })}
-          </tr>
-        </thead>
-        <tbody>
-          {teamsWithStats.map((team) => {
-              const teamTrineStats = getTrineStatsForTeam(team.name);
-              let showHighlightAndTooltip = false;
-              let rowStyle = { cursor: 'pointer' };
+      {(() => {
+        return (
+          <> {/* Adicionado React.Fragment aqui */}
+            <h2 className={styles.title}>
+              {title} - Taxa de Acerto Geral: {
+                (() => {
+                  // Acha o array de histórico para que possamos filtrar todos os jogos, não apenas os arrays de meses
+                  const totalSuccess = teamsWithStats.reduce((acc, team) => acc + team.history.flat().filter(h => h.result === 'C').length, 0);
+                  const totalError = teamsWithStats.reduce((acc, team) => acc + team.history.flat().filter(h => h.result === 'X').length, 0);
+                  const totalGames = totalSuccess + totalError;
+                  return totalGames > 0 ? Math.round((totalSuccess / totalGames) * 100) : 0;
+                })()
+              }%
+            </h2>
+            <table className={styles.statsTable}>
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>% Acerto</th>
+                  <th>% Erro</th>
+                  {allLunarMonths.map(month => {
+                    const stats = monthlyStats[month];
+                    const successRate = stats.total > 0 ? Math.round((stats.successes / stats.total) * 100) : 0;
+                    return (<th key={month}>
+                      <div>{month}</div>
+                      <div style={{ fontSize: '0.8em', fontWeight: 'normal', color: '#555' }}>({successRate}%)</div>
+                    </th>)
+                  })}
+                </tr>
+              </thead>
+              <tbody>
+                {sortedTeamsWithStats.map((team) => {
+                  let showHighlightAndTooltip = false;
+                  let rowStyle = { cursor: 'pointer' };
 
-              // Verifica se o time tem 50% ou mais de acerto na Tríade do mês atual
-              if (currentMonthTrine && teamTrineStats[currentMonthTrine]?.successRate >= 50) {
-                rowStyle.backgroundColor = '#e6ffed'; // Verde claro para destaque
-                showHighlightAndTooltip = true;
-              }
+                  // Verifica se o time tem 50% ou mais de acerto na Tríade do mês atual
+                  if (currentMonthTrine && teamTrineStats[team.name] && teamTrineStats[team.name][currentMonthTrine]?.successRate >= 50) {
+                    rowStyle.backgroundColor = '#e6ffed'; // Verde claro para destaque
+                    showHighlightAndTooltip = true;
+                  }
 
-              return (
-              <tr key={team.name} onClick={() => setSelectedTeam(team)} style={rowStyle}>
-                <td className={styles.teamCell}>
-                  <Image
-                    src={team.logo}
-                    alt={`Brasão do ${team.name}`}
-                    width={25}
-                    height={25}
-                    className={styles.teamLogo}
-                  />
-                  {team.name}
-                  {showHighlightAndTooltip && (
-                    <div className={styles.tooltip}>
-                      <span className={styles.tooltipIcon}>⚽</span>
-                      <span className={styles.tooltipText}>{`odds a partir de 2 vale a pena apostar no mês do ${branchToAnimal(currentMonthBranch)}`}</span>
-                    </div>
-                  )}
-                </td>
-                <td>{team.successRate}%</td>
-                <td>{team.errorRate}%</td>
-                {team.history.map((gameResult, index) => (
-                  <td
-                    key={index}
-                    className={gameResult.result === 'C' ? styles.successCell : (gameResult.result === 'X' ? styles.errorCell : '')}
-                  >
-                    <div style={{ fontSize: '1.2em', fontWeight: 'bold' }}>{gameResult.result}</div>
-                    {gameResult.date && (
-                      <div style={{ fontSize: '0.7em', color: '#666', marginTop: '4px' }}>
-                        {new Date(parseGameDate(gameResult.date)).toLocaleDateString('pt-BR', {
-                          day: '2-digit',
-                          month: '2-digit',
-                        })}
-                      </div>
-                    )}
-                  </td>
-                ))}
-              </tr>
-              );
-            })}
-        </tbody>
-      </table>
-      {selectedTeam && (
-        <TrineStatsModal
-          teamName={selectedTeam.name}
-          stats={getTrineStatsForTeam(selectedTeam.name)}
-          onClose={() => setSelectedTeam(null)}
-        />
-      )}
+                  return (
+                    <tr key={team.name} onClick={() => setSelectedTeam(team)} style={rowStyle}>
+                      <td className={styles.teamCell}>
+                        <Image
+                          src={team.logo}
+                          alt={`Brasão do ${team.name}`}
+                          width={25}
+                          height={25}
+                          className={styles.teamLogo}
+                        />
+                        {team.name}
+                        {showHighlightAndTooltip && (
+                          <div className={styles.tooltip}>
+                            <span className={styles.tooltipIcon}>⚽</span>
+                            <span className={styles.tooltipText}>{`odds a partir de 2 vale a pena apostar no mês do ${branchToAnimal(currentMonthBranch)}`}</span>
+                          </div>
+                        )}
+                      </td>
+                      <td>{team.successRate}%</td>
+                      <td>{team.errorRate}%</td>
+                      {team.history.map((gamesInMonth, index) => {
+                        const monthlySuccesses = gamesInMonth.filter(g => g.result === 'C').length;
+                        const monthlyTotal = gamesInMonth.length;
+                        const monthlySuccessRate = monthlyTotal > 0 ? Math.round((monthlySuccesses / monthlyTotal) * 100) : null;
+
+                        return (
+                          <td key={index} className={styles.monthCell}>
+                            <div className={styles.gameResultsContainer}>
+                              {gamesInMonth.map((gameResult, gameIndex) => (
+                                <div
+                                  key={gameIndex}
+                                  className={`${gameResult.result === 'C' ? styles.successCell : styles.errorCell} ${styles.clickableCell}`}
+                                  onClick={() => setSelectedGameDetails(gameResult)}
+                                >
+                                  <div style={{ fontSize: '1.2em', fontWeight: 'bold' }}>{gameResult.result}</div>
+                                  {gameResult.date && (
+                                    <div style={{ fontSize: '0.7em', color: '#666', marginTop: '4px' }}>
+                                      {new Date(parseGameDate(gameResult.date)).toLocaleDateString('pt-BR', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                      })}
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                            {monthlySuccessRate !== null && <div className={styles.monthlyRate}>{monthlySuccessRate}%</div>}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+            {selectedTeam && (
+              <TrineStatsModal
+                teamName={selectedTeam.name}
+                stats={teamTrineStats[selectedTeam.name]}
+                onClose={() => setSelectedTeam(null)}
+              />
+            )}
+            {selectedGameDetails && (
+              <GameDetailsModal gameDetails={selectedGameDetails} onClose={() => setSelectedGameDetails(null)} />
+            )}
+          </>
+        );
+      })()}
     </div>
   );
 };
 
 const Statistics = () => {
+  // Calcula os dados para as tabelas usando os scores padrão.
+  const calculateAllStats = (scores) => {
+    const teamsA = serieA.map(team => ({ ...team, ...getTeamStats(team.name, scores) }));
+    const teamsB = serieB.map(team => ({ ...team, ...getTeamStats(team.name, scores) }));
+    const allTeams = [...teamsA, ...teamsB];
+    const trineStats = allTeams.reduce((acc, team) => ({ ...acc, [team.name]: getTrineStatsForTeam(team.name, scores) }), {});
+    return {
+      teamsA,
+      teamsB,
+      monthly: calculateMonthlyStats(allGames, scores),
+      trine: trineStats,
+    };
+  };
+
+  const defaultData = calculateAllStats(DEFAULT_ANALYZE_SCORES);
+
   return (
     <div>
-      <TeamStatsTable title="Série A" teams={serieA} />
-      <TeamStatsTable title="Série B" teams={serieB} />
+      <TeamStatsTable
+        title="Série A (Padrão)"
+        teamsWithStats={defaultData.teamsA}
+        monthlyStats={defaultData.monthly}
+        teamTrineStats={defaultData.trine}
+      />
+      <TeamStatsTable
+        title="Série B (Padrão)"
+        teamsWithStats={defaultData.teamsB}
+        monthlyStats={defaultData.monthly}
+        teamTrineStats={defaultData.trine}
+      />
     </div>
   );
 };

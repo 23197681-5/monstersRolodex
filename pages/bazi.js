@@ -134,17 +134,22 @@ function computeBazi(isoDatetime) {
               };
 
               const stemToElement = (s) => {
-                if (!s) return '';
+                if (!s) return null;
                 // determine polarity: stems array even index = Yang(+), odd index = Yin(-)
                 const idx = stems.indexOf(s);
-                const polarity = idx >= 0 ? (idx % 2 === 0 ? ' +' : ' -') : '';
-                // return Portuguese name with Chinese element character and a +/- polarity sign
-                if (['甲','乙'].includes(s)) return `Madeira (木)${polarity}`;
-                if (['丙','丁'].includes(s)) return `Fogo (火)${polarity}`;
-                if (['戊','己'].includes(s)) return `Terra (土)${polarity}`;
-                if (['庚','辛'].includes(s)) return `Metal (金)${polarity}`;
-                if (['壬','癸'].includes(s)) return `Água (水)${polarity}`;
-                return '';
+                const polarity = idx >= 0 ? (idx % 2 === 0 ? '+' : '-') : '';
+                
+                let name = '';
+                if (['甲','乙'].includes(s)) name = 'Madeira';
+                if (['丙','丁'].includes(s)) name = 'Fogo';
+                if (['戊','己'].includes(s)) name = 'Terra';
+                if (['庚','辛'].includes(s)) name = 'Metal';
+                if (['壬','癸'].includes(s)) name = 'Água';
+
+                if (!name) return null;
+
+                // Retorna um objeto para estilização flexível
+                return { stemChar: s, name, polarity };
               };
 
               const branchToAnimal = (b) => {
@@ -165,7 +170,7 @@ function computeBazi(isoDatetime) {
                 };
                 const pt = map[b] || '';
                 // show Portuguese name plus the Chinese branch character
-                return pt ? `${pt} (${b})` : '';
+                return pt ? { animalChar: b, name: pt } : null;
               };
               const cols = [
                 { label: 'Hora', gz: result.gzHour },
@@ -213,21 +218,38 @@ function computeBazi(isoDatetime) {
                       <tr>
                         <td style={labelCellStyle}>Elementos</td>
                         {cols.map((c) => (
-                          <td key={c.label} style={cellStyle}>
-                            <div style={{ padding: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', boxSizing: 'border-box' }}>
-                              <div style={{ lineHeight: 1.15 }}>{stemToElement(toStem(c.gz)) || (c.gz || '')}</div>
-                            </div>
-                          </td>
+                          <td key={c.label} style={cellStyle}>{
+                            (() => {
+                              const element = stemToElement(toStem(c.gz));
+                              if (!element) return <div style={{ padding: 12 }}>{c.gz || ''}</div>;
+                              return (
+                                <div style={{ padding: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', boxSizing: 'border-box', lineHeight: 1.1 }}>
+                                  <div style={{ fontSize: 40, fontWeight: 'bold', whiteSpace: 'nowrap' }}>
+                                    {element.stemChar}
+                                    <span style={{ fontSize: 32, verticalAlign: 'super', marginLeft: 4 }}>{element.polarity}</span>
+                                  </div>
+                                  <div style={{ marginTop: 8, fontSize: 16 }}>{element.name}</div>
+                                </div>
+                              );
+                            })()
+                          }</td>
                         ))}
                       </tr>
                       <tr>
                         <td style={labelCellStyle}>Animais</td>
                         {cols.map((c) => (
-                          <td key={c.label} style={cellStyle}>
-                            <div style={{ padding: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', boxSizing: 'border-box' }}>
-                              <div style={{ lineHeight: 1.15 }}>{branchToAnimal(toBranch(c.gz)) }</div>
-                            </div>
-                          </td>
+                          <td key={c.label} style={cellStyle}>{
+                            (() => {
+                              const animal = branchToAnimal(toBranch(c.gz));
+                              if (!animal) return null;
+                              return (
+                                <div style={{ padding: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', boxSizing: 'border-box', lineHeight: 1.1 }}>
+                                  <div style={{ fontSize: 40, fontWeight: 'bold' }}>{animal.animalChar}</div>
+                                  <div style={{ marginTop: 8, fontSize: 16 }}>{animal.name}</div>
+                                </div>
+                              );
+                            })()
+                          }</td>
                         ))}
                       </tr>
                     </tbody>
