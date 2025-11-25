@@ -2660,7 +2660,515 @@ const jogosRodada25Detalhados = [
     placar: "0 - 1"
   }
 ];
-export const allGames = [
+const jogosRodada30Detalhados = [
+  {
+    rodada: 30,
+    data: "25/10/2025 16:00",
+    estadio: "Arena MRV",
+    timeA: "Atlético-MG",
+    timeB: "Ceará",
+    resultado: "a",
+    placar: "1 - 0"
+  },
+  {
+    rodada: 30,
+    data: "25/10/2025 16:00",
+    estadio: "Barradão",
+    timeA: "Vitória",
+    timeB: "Corinthians",
+    resultado: "b",
+    placar: "0 - 1"
+  },
+  {
+    rodada: 30,
+    data: "25/10/2025 17:30",
+    estadio: "Maracanã",
+    timeA: "Fluminense",
+    timeB: "Internacional",
+    resultado: "a",
+    placar: "1 - 0"
+  },
+  {
+    rodada: 30,
+    data: "25/10/2025 18:30",
+    estadio: "Ilha do Retiro",
+    timeA: "Sport",
+    timeB: "Mirassol",
+    resultado: "b",
+    placar: "1 - 2"
+  },
+  {
+    rodada: 30,
+    data: "25/10/2025 19:30",
+    estadio: "Castelão (CE)",
+    timeA: "Fortaleza",
+    timeB: "Flamengo",
+    resultado: "a",
+    placar: "1 - 0"
+  },
+  {
+    rodada: 30,
+    data: "25/10/2025 21:30",
+    estadio: "Morumbis",
+    timeA: "São Paulo",
+    timeB: "Bahia",
+    resultado: "a",
+    placar: "2 - 0"
+  },
+  {
+    rodada: 30,
+    data: "26/10/2025 10:00",
+    estadio: "Nilton Santos (Engenhão)",
+    timeA: "Botafogo",
+    timeB: "Santos",
+    resultado: "empate",
+    placar: "2 - 2"
+  },
+  {
+    rodada: 30,
+    data: "26/10/2025 16:00",
+    estadio: "Arena do Grêmio",
+    timeA: "Grêmio",
+    timeB: "Juventude",
+    resultado: "a",
+    placar: "3 - 1"
+  },
+  {
+    rodada: 30,
+    data: "26/10/2025 18:30",
+    estadio: "Cícero de Souza Marques",
+    timeA: "Bragantino",
+    timeB: "Vasco",
+    resultado: "b",
+    placar: "0 - 3"
+  },
+  {
+    rodada: 30,
+    data: "26/10/2025 20:30",
+    estadio: "Allianz Parque",
+    timeA: "Palmeiras",
+    timeB: "Cruzeiro",
+    resultado: "empate",
+    placar: "0 - 0"
+  }
+];
+const jogosRodada31Detalhados = [
+  {
+    rodada: 31,
+    data: "01/11/2025 16:00",
+    estadio: "Vila Belmiro",
+    timeA: "Santos",
+    timeB: "Fortaleza",
+    resultado: "empate",
+    placar: "1 - 1"
+  },
+  {
+    rodada: 31,
+    data: "01/11/2025 16:00",
+    estadio: "Mineirão",
+    timeA: "Cruzeiro",
+    timeB: "Vitória",
+    resultado: "a",
+    placar: "3 - 1"
+  },
+  {
+    rodada: 31,
+    data: "01/11/2025 18:00",
+    estadio: "Maião",
+    timeA: "Mirassol",
+    timeB: "Botafogo",
+    resultado: "empate",
+    placar: "0 - 0"
+  },
+  {
+    rodada: 31,
+    data: "01/11/2025 21:00",
+    estadio: "Maracanã",
+    timeA: "Flamengo",
+    timeB: "Sport",
+    resultado: "a",
+    placar: "3 - 0"
+  },
+  {
+    rodada: 31,
+    data: "02/11/2025 16:00",
+    estadio: "Neo Química Arena",
+    timeA: "Corinthians",
+    timeB: "Grêmio",
+    resultado: "a",
+    placar: "2 - 0"
+  },
+  {
+    rodada: 31,
+    data: "02/11/2025 16:00",
+    estadio: "Casa de Apostas Arena Fonte Nova",
+    timeA: "Bahia",
+    timeB: "Bragantino",
+    resultado: "a",
+    placar: "2 - 1"
+  },
+  {
+    rodada: 31,
+    data: "02/11/2025 16:00",
+    estadio: "Castelão (CE)",
+    timeA: "Ceará",
+    timeB: "Fluminense",
+    resultado: "a",
+    placar: "2 - 0"
+  },
+  {
+    rodada: 31,
+    data: "02/11/2025 18:30",
+    estadio: "Beira-Rio",
+    timeA: "Internacional",
+    timeB: "Atlético-MG",
+    resultado: "empate",
+    placar: "0 - 0"
+  },
+  {
+    rodada: 31,
+    data: "02/11/2025 18:30",
+    estadio: "Alfredo Jaconi",
+    timeA: "Juventude",
+    timeB: "Palmeiras",
+    resultado: "b",
+    placar: "0 - 2"
+  },
+  {
+    rodada: 31,
+    data: "02/11/2025 20:30",
+    estadio: "São Januário",
+    timeA: "Vasco",
+    timeB: "São Paulo",
+    resultado: "b",
+    placar: "0 - 2"
+  }
+];
+const jogosRodada32Detalhados = [
+  {
+    rodada: 32,
+    data: "05/11/2025 18:00",
+    estadio: "Cícero de Souza Marques",
+    timeA: "Bragantino",
+    timeB: "Corinthians",
+    resultado: "a",
+    placar: "2 - 1"
+  },
+  {
+    rodada: 32,
+    data: "05/11/2025 19:00",
+    estadio: "Barradão",
+    timeA: "Vitória",
+    timeB: "Internacional",
+    resultado: "a",
+    placar: "1 - 0"
+  },
+  {
+    rodada: 32,
+    data: "05/11/2025 19:00",
+    estadio: "Ilha do Retiro",
+    timeA: "Sport",
+    timeB: "Juventude",
+    resultado: "b",
+    placar: "0 - 2"
+  },
+  {
+    rodada: 32,
+    data: "05/11/2025 19:30",
+    estadio: "Nilton Santos (Engenhão)",
+    timeA: "Botafogo",
+    timeB: "Vasco",
+    resultado: "a",
+    placar: "3 - 0"
+  },
+  {
+    rodada: 32,
+    data: "05/11/2025 20:00",
+    estadio: "Arena MRV",
+    timeA: "Atlético-MG",
+    timeB: "Bahia",
+    resultado: "a",
+    placar: "3 - 0"
+  },
+  {
+    rodada: 32,
+    data: "05/11/2025 20:00",
+    estadio: "Arena do Grêmio",
+    timeA: "Grêmio",
+    timeB: "Cruzeiro",
+    resultado: "b",
+    placar: "0 - 1"
+  },
+  {
+    rodada: 32,
+    data: "05/11/2025 21:30",
+    estadio: "Vila Belmiro",
+    timeA: "São Paulo",
+    timeB: "Flamengo",
+    resultado: "empate",
+    placar: "2 - 2"
+  },
+  {
+    rodada: 32,
+    data: "06/11/2025 19:30",
+    estadio: "Maracanã",
+    timeA: "Fluminense",
+    timeB: "Mirassol",
+    resultado: "a",
+    placar: "1 - 0"
+  },
+  {
+    rodada: 32,
+    data: "06/11/2025 20:00",
+    estadio: "Castelão (CE)",
+    timeA: "Ceará",
+    timeB: "Fortaleza",
+    resultado: "empate",
+    placar: "1 - 1"
+  },
+  {
+    rodada: 32,
+    data: "06/11/2025 21:30",
+    estadio: "Allianz Parque",
+    timeA: "Palmeiras",
+    timeB: "Santos",
+    resultado: "a",
+    placar: "2 - 0"
+  }
+];
+
+const jogosRodada33Detalhados = [
+  {
+    rodada: 33,
+    data: "08/11/2025 16:00",
+    estadio: "Ilha do Retiro",
+    timeA: "Sport",
+    timeB: "Atlético-MG",
+    resultado: "b",
+    placar: "2 - 4"
+  },
+  {
+    rodada: 33,
+    data: "08/11/2025 16:00",
+    estadio: "São Januário",
+    timeA: "Vasco",
+    timeB: "Juventude",
+    resultado: "b",
+    placar: "1 - 3"
+  },
+  {
+    rodada: 33,
+    data: "08/11/2025 18:30",
+    estadio: "Beira-Rio",
+    timeA: "Internacional",
+    timeB: "Bahia",
+    resultado: "empate",
+    placar: "2 - 2"
+  },
+  {
+    rodada: 33,
+    data: "08/11/2025 21:00",
+    estadio: "Vila Belmiro",
+    timeA: "São Paulo",
+    timeB: "Bragantino",
+    resultado: "b",
+    placar: "0 - 1"
+  },
+  {
+    rodada: 33,
+    data: "09/11/2025 16:00",
+    estadio: "Neo Química Arena",
+    timeA: "Corinthians",
+    timeB: "Ceará",
+    resultado: "b",
+    placar: "0 - 1"
+  },
+  {
+    rodada: 33,
+    data: "09/11/2025 16:00",
+    estadio: "Mineirão",
+    timeA: "Cruzeiro",
+    timeB: "Fluminense",
+    resultado: "empate",
+    placar: "0 - 0"
+  },
+  {
+    rodada: 33,
+    data: "09/11/2025 16:00",
+    estadio: "Barradão",
+    timeA: "Vitória",
+    timeB: "Botafogo",
+    resultado: "empate",
+    placar: "0 - 0"
+  },
+  {
+    rodada: 33,
+    data: "09/11/2025 18:30",
+    estadio: "Maracanã",
+    timeA: "Flamengo",
+    timeB: "Santos",
+    resultado: "a",
+    placar: "3 - 2"
+  },
+  {
+    rodada: 33,
+    data: "09/11/2025 20:30",
+    estadio: "Maião",
+    timeA: "Mirassol",
+    timeB: "Palmeiras",
+    resultado: "a",
+    placar: "2 - 1"
+  },
+  {
+    rodada: 33,
+    data: "09/11/2025 20:30",
+    estadio: "Castelão (CE)",
+    timeA: "Fortaleza",
+    timeB: "Grêmio",
+    resultado: "empate",
+    placar: "2 - 2"
+  }
+];
+const jogosRodada34Detalhados = [
+  {
+    rodada: 34,
+    data: "18/11/2025 20:30",
+    estadio: "Nilton Santos (Engenhão)",
+    timeA: "Botafogo",
+    timeB: "Sport",
+    resultado: "a",
+    placar: "3 - 2"
+  },
+  {
+    rodada: 34,
+    data: "19/11/2025 21:30",
+    estadio: "Maracanã",
+    timeA: "Fluminense",
+    timeB: "Flamengo",
+    resultado: "a",
+    placar: "2 - 1"
+  },
+  {
+    rodada: 34,
+    data: "19/11/2025 21:30",
+    estadio: "Vila Belmiro",
+    timeA: "Santos",
+    timeB: "Mirassol",
+    resultado: "empate",
+    placar: "1 - 1"
+  },
+  {
+    rodada: 34,
+    data: "19/11/2025 21:30",
+    estadio: "Arena do Grêmio",
+    timeA: "Grêmio",
+    timeB: "Vasco",
+    resultado: "a",
+    placar: "2 - 0"
+  },
+  {
+    rodada: 34,
+    data: "20/11/2025 16:00",
+    estadio: "Alfredo Jaconi",
+    timeA: "Juventude",
+    timeB: "Cruzeiro",
+    resultado: "empate",
+    placar: "3 - 3"
+  },
+  {
+    rodada: 34,
+    data: "20/11/2025 18:00",
+    estadio: "Casa de Apostas Arena Fonte Nova",
+    timeA: "Bahia",
+    timeB: "Fortaleza",
+    resultado: "b",
+    placar: "2 - 3"
+  },
+  {
+    rodada: 34,
+    data: "20/11/2025 19:30",
+    estadio: "Neo Química Arena",
+    timeA: "Corinthians",
+    timeB: "São Paulo",
+    resultado: "a",
+    placar: "3 - 1"
+  },
+  {
+    rodada: 34,
+    data: "20/11/2025 21:30",
+    estadio: "Castelão (CE)",
+    timeA: "Ceará",
+    timeB: "Internacional",
+    resultado: "b",
+    placar: "1 - 2"
+  },
+];
+const jogosRodada35Detalhados = [
+  {
+    rodada: 35,
+    data: "22/11/2025 18:30",
+    estadio: "Nilton Santos (Engenhão)",
+    timeA: "Botafogo",
+    timeB: "Grêmio",
+    resultado: "a",
+    placar: "3 - 2"
+  },
+  {
+    rodada: 35,
+    data: "22/11/2025 21:30",
+    estadio: "Maracanã",
+    timeA: "Flamengo",
+    timeB: "Bragantino",
+    resultado: "a",
+    placar: "3 - 0"
+  },
+  {
+    rodada: 35,
+    data: "22/11/2025 21:30",
+    estadio: "Allianz Parque",
+    timeA: "Palmeiras",
+    timeB: "Fluminense",
+    resultado: "empate",
+    placar: "0 - 0"
+  },
+  {
+    rodada: 35,
+    data: "23/11/2025 16:00",
+    estadio: "Vila Belmiro",
+    timeA: "São Paulo",
+    timeB: "Juventude",
+    resultado: "a",
+    placar: "2 - 1"
+  },
+  {
+    rodada: 35,
+    data: "23/11/2025 16:00",
+    estadio: "Casa de Apostas Arena Fonte Nova",
+    timeA: "Bahia",
+    timeB: "Vasco",
+    resultado: "a",
+    placar: "1 - 0"
+  },
+  {
+    rodada: 35,
+    data: "23/11/2025 18:30",
+    estadio: "Ilha do Retiro",
+    timeA: "Sport",
+    timeB: "Vitória",
+    resultado: "b",
+    placar: "1 - 3"
+  },
+  {
+    rodada: 35,
+    data: "23/11/2025 20:30",
+    estadio: "Mineirão",
+    timeA: "Cruzeiro",
+    timeB: "Corinthians",
+    resultado: "a",
+    placar: "3 - 0"
+  },
+];
+export const allGamesSerieA = [
   ...jogosRodada1Detalhados,
   ...jogosRodada2Detalhados,
   ...jogosRodada3Detalhados,
@@ -2690,5 +3198,12 @@ export const allGames = [
 ...jogosRodada26Detalhados,
 ...jogosRodada27Detalhados,
 ...jogosRodada28Detalhados,
-...jogosRodada29Detalhados
+...jogosRodada29Detalhados,
+...jogosRodada30Detalhados,
+...jogosRodada31Detalhados,
+...jogosRodada32Detalhados,
+...jogosRodada33Detalhados,
+...jogosRodada34Detalhados,
+...jogosRodada35Detalhados,
+
 ];

@@ -293,5 +293,125 @@ export const hardcodedTeams = [
         animal_mes: "巳",
         elemento_dia: "庚",
         animal_dia: "申"
-    }
+    },
+    // 1. Goiás (Fundado em: 1943-04-06) - Extraído de image039.png
+  {
+    nome: "Goiás",
+    img: "image039.png",
+    elemento_ano: "癸",
+    animal_ano: "未",
+    elemento_mes: "丙",
+    animal_mes: "辰",
+    elemento_dia: "甲",
+    animal_dia: "午"
+  },
+  // 2. Botafogo-SP (Fundado em: 1918-10-12) - Extraído de image035.png
+  {
+    nome: "Botafogo-SP",
+    img: "image035.png",
+    elemento_ano: "戊",
+    animal_ano: "午",
+    elemento_mes: "壬",
+    animal_mes: "戌",
+    elemento_dia: "壬",
+    animal_dia: "辰"
+  },
+  // 3. Operário Ferroviário EC (Fundado em: 1912-05-01) - Extraído de image041.png
+  {
+    nome: "Operário-PR",
+    img: "image041.png",
+    elemento_ano: "壬",
+    animal_ano: "子",
+    elemento_mes: "甲",
+    animal_mes: "辰",
+    elemento_dia: "丁",
+    animal_dia: "丑"
+  },
+  // 4. Paysandu Sport Club (Fundado em: 1914-02-02) - Extraído de image042.png
+  {
+    nome: "Paysandu",
+    img: "image042.png",
+    elemento_ano: "甲",
+    animal_ano: "寅",
+    elemento_mes: "丙",
+    animal_mes: "寅",
+    elemento_dia: "己",
+    animal_dia: "未"
+  },
+  // 5. América Mineiro (Fundado em: 1912-04-30) - Extraído de image033.png
+  {
+    nome: "América-MG",
+    img: "image033.png",
+    elemento_ano: "壬",
+    animal_ano: "子",
+    elemento_mes: "甲",
+    animal_mes: "辰",
+    elemento_dia: "丙",
+    animal_dia: "子"
+  },
+  // 6. Avaí FC (Fundado em: 1923-09-01) - Extraído de image034.png
+  {
+    nome: "Avaí",
+    img: "image034.png",
+    elemento_ano: "癸",
+    animal_ano: "亥",
+    elemento_mes: "庚",
+    animal_mes: "申",
+    elemento_dia: "丁",
+    animal_dia: "丑"
+  },
+  // 7. CRB (Fundado em: 1912-09-20) - Extraído de image038.png
+  {
+    nome: "CRB",
+    img: "image038.png",
+    elemento_ano: "壬",
+    animal_ano: "子",
+    elemento_mes: "乙",
+    animal_mes: "酉",
+    elemento_dia: "己",
+    animal_dia: "亥"
+  },
+  // 8. Grêmio Novorizontino (Fundado em: 2010-03-01) - Extraído de image040.png
+  {
+    nome: "Novorizontino",
+    img: "image040.png",
+    elemento_ano: "庚",
+    animal_ano: "寅",
+    elemento_mes: "戊",
+    animal_mes: "寅",
+    elemento_dia: "庚",
+    animal_dia: "戌"
+  },
+  // 9. Coritiba FC (Fundado em: 1909-10-12) - Extraído de image037.png
+  {
+    nome: "Coritiba",
+    img: "image037.png",
+    elemento_ano: "己",
+    animal_ano: "酉",
+    elemento_mes: "癸",
+    animal_mes: "酉",
+    elemento_dia: "乙",
+    animal_dia: "巳"
+  },
+  // 10. Associação Chapecoense de Futebol (Fundado em: 1973-05-10) - Extraído de image036.png
+  {
+    nome: "Chapecoense",
+    img: "image036.png",
+    elemento_ano: "癸",
+    animal_ano: "丑",
+    elemento_mes: "丁",
+    animal_mes: "巳",
+    elemento_dia: "丙",
+    animal_dia: "午"
+  },
+  {
+    nome: "Vila Nova",
+    img: "image043.png",
+    elemento_ano: "癸",
+    animal_ano: "未",
+    elemento_mes: "己",
+    animal_mes: "未",
+    elemento_dia: "戊",
+    animal_dia: "子"
+  },
 ];
