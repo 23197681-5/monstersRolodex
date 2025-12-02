@@ -3166,7 +3166,117 @@ const jogosRodada35Detalhados = [
     timeB: "Corinthians",
     resultado: "a",
     placar: "3 - 0"
+  },  {
+    rodada: "35", // Não visível na imagem
+    data: "24/11/2025 19:00",
+    estadio: "Marília",
+    timeA: "Mirassol",
+    timeB: "Ceará",
+    resultado: "a", // Vitória do Mirassol
+    placar: "3 - 0"
   },
+  {
+    rodada: "35", // Não visível na imagem
+    data: "24/11/2025 21:00",
+    estadio: "Beira-Rio",
+    timeA: "Internacional",
+    timeB: "Santos",
+    resultado: "empate", // Empate
+    placar: "1 - 1"
+  }
+];
+
+const jogosRodada36Detalhados = [
+  {
+    "rodada": 36,
+    "data": "25/11/2025 21:30",
+    "estadio": "Arena MRV",
+    "timeA": "Atlético-MG",
+    "timeB": "Flamengo",
+    "resultado": "e",
+    "placar": "1 - 1"
+  },
+  {
+    "rodada": 36,
+    "data": "25/11/2025 21:30",
+    "estadio": "Arena do Grêmio",
+    "timeA": "Grêmio",
+    "timeB": "Palmeiras",
+    "resultado": "a",
+    "placar": "3 - 2"
+  },
+  {
+    "rodada": 36,
+    "data": "26/11/2025 19:00",
+    "estadio": "Cícero de Souza Marques",
+    "timeA": "Bragantino",
+    "timeB": "Fortaleza",
+    "resultado": "b",
+    "placar": "0 - 1"
+  },
+  {
+    "rodada": 36,
+    "data": "27/11/2025 20:30",
+    "estadio": "Maracanã",
+    "timeA": "Fluminense",
+    "timeB": "São Paulo",
+    "resultado": "a",
+    "placar": "6 - 0"
+  },
+  {
+    "rodada": 36,
+    "data": "28/11/2025 19:00",
+    "estadio": "Alfredo Jaconi",
+    "timeA": "Juventude",
+    "timeB": "Bahia",
+    "resultado": "e",
+    "placar": "1 - 1"
+  },
+  {
+    "rodada": 36,
+    "data": "28/11/2025 19:30",
+    "estadio": "São Januário",
+    "timeA": "Vasco",
+    "timeB": "Internacional",
+    "resultado": "a",
+    "placar": "5 - 1"
+  },
+  {
+    "rodada": 36,
+    "data": "28/11/2025 21:30",
+    "estadio": "Vila Belmiro",
+    "timeA": "Santos",
+    "timeB": "Sport",
+    "resultado": "a",
+    "placar": "3 - 0"
+  },
+  {
+    "rodada": 36,
+    "data": "29/11/2025 16:00",
+    "estadio": "Barradão",
+    "timeA": "Vitória",
+    "timeB": "Mirassol",
+    "resultado": "a",
+    "placar": "2 - 0"
+  },
+  {
+    "rodada": 36,
+    "data": "29/11/2025 21:00",
+    "estadio": "Castelão (CE)",
+    "timeA": "Ceará",
+    "timeB": "Cruzeiro",
+    "resultado": "e",
+    "placar": "1 - 1"
+  },
+  {
+    "rodada": 36,
+    "data": "30/11/2025 16:00",
+    "estadio": "Neo Química Arena",
+    "timeA": "Corinthians",
+    "timeB": "Botafogo",
+    "resultado": "e",
+    "placar": "2 - 2"
+  }
 ];
 export const allGamesSerieA = [
   ...jogosRodada1Detalhados,
@@ -3205,5 +3315,6 @@ export const allGamesSerieA = [
 ...jogosRodada33Detalhados,
 ...jogosRodada34Detalhados,
 ...jogosRodada35Detalhados,
+...jogosRodada36Detalhados,
 
 ];
