@@ -23,7 +23,7 @@
     "**/*.mts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "scripts/genetic_search_strategies.js"  ],
   "exclude": [
     "node_modules"
   ]

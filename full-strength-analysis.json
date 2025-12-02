@@ -1,0 +1,2157 @@
+{
+  "analysis_date": "2025-12-02T20:03:51.624Z",
+  "total_teams_tested": 13,
+  "analysis_results": [
+    {
+      "team": "Botafogo",
+      "hardcoded": {
+        "beneficos": {
+          "wood": 4
+        },
+        "maleficos": {}
+      },
+      "calculated_data": {
+        "dayMasterElement": "earth",
+        "percentages": {
+          "wood": 9.4,
+          "fire": 3.6,
+          "earth": 16.6,
+          "metal": 22.1,
+          "water": 48.3
+        }
+      },
+      "original_analysis": {
+        "strength": "extremelyWeak",
+        "missing_count": 1,
+        "missing_beneficos": [
+          "wood"
+        ]
+      },
+      "best_strength_match": {
+        "strength_used": "strong",
+        "missing_count": 0,
+        "is_original": false,
+        "favorable": [
+          "metal",
+          "water",
+          "wood"
+        ],
+        "unfavorable": [
+          "earth",
+          "fire"
+        ]
+      },
+      "all_strength_tests": [
+        {
+          "strength": "extremelyStrong",
+          "missingCount": 1,
+          "missingBeneficos": [
+            "wood"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "metal",
+              "water"
+            ],
+            "unfavorable": [
+              "earth",
+              "fire",
+              "wood"
+            ]
+          }
+        },
+        {
+          "strength": "strong",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "metal",
+              "water",
+              "wood"
+            ],
+            "unfavorable": [
+              "earth",
+              "fire"
+            ]
+          }
+        },
+        {
+          "strength": "balanced",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "metal",
+              "wood"
+            ],
+            "unfavorable": [
+              "fire"
+            ]
+          }
+        },
+        {
+          "strength": "weak",
+          "missingCount": 1,
+          "missingBeneficos": [
+            "wood"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "earth",
+              "fire"
+            ],
+            "unfavorable": [
+              "wood",
+              "water"
+            ]
+          }
+        },
+        {
+          "strength": "extremelyWeak",
+          "missingCount": 1,
+          "missingBeneficos": [
+            "wood"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "earth",
+              "fire"
+            ],
+            "unfavorable": [
+              "wood",
+              "water"
+            ]
+          }
+        },
+        {
+          "strength": "followPower",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "wood",
+              "water"
+            ],
+            "unfavorable": [
+              "earth",
+              "fire",
+              "metal"
+            ]
+          }
+        },
+        {
+          "strength": "followOutput",
+          "missingCount": 1,
+          "missingBeneficos": [
+            "wood"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "metal",
+              "water"
+            ],
+            "unfavorable": [
+              "earth",
+              "fire",
+              "wood"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "team": "Palmeiras",
+      "hardcoded": {
+        "beneficos": {
+          "wood": 3,
+          "fire": 3,
+          "metal": 3
+        },
+        "maleficos": {}
+      },
+      "calculated_data": {
+        "dayMasterElement": "wood",
+        "percentages": {
+          "wood": 14,
+          "fire": 0.5,
+          "earth": 3.6,
+          "metal": 31.2,
+          "water": 50.7
+        }
+      },
+      "original_analysis": {
+        "strength": "strong",
+        "missing_count": 1,
+        "missing_beneficos": [
+          "wood"
+        ]
+      },
+      "best_strength_match": {
+        "strength_used": "strong",
+        "missing_count": 1,
+        "is_original": true,
+        "favorable": [
+          "fire",
+          "earth",
+          "metal"
+        ],
+        "unfavorable": [
+          "wood",
+          "water"
+        ]
+      },
+      "all_strength_tests": [
+        {
+          "strength": "extremelyStrong",
+          "missingCount": 2,
+          "missingBeneficos": [
+            "wood",
+            "metal"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "fire",
+              "earth"
+            ],
+            "unfavorable": [
+              "wood",
+              "water",
+              "metal"
+            ]
+          }
+        },
+        {
+          "strength": "strong",
+          "missingCount": 1,
+          "missingBeneficos": [
+            "wood"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "fire",
+              "earth",
+              "metal"
+            ],
+            "unfavorable": [
+              "wood",
+              "water"
+            ]
+          }
+        },
+        {
+          "strength": "balanced",
+          "missingCount": 1,
+          "missingBeneficos": [
+            "wood"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "fire",
+              "metal"
+            ],
+            "unfavorable": [
+              "water"
+            ]
+          }
+        },
+        {
+          "strength": "weak",
+          "missingCount": 2,
+          "missingBeneficos": [
+            "fire",
+            "metal"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "wood",
+              "water"
+            ],
+            "unfavorable": [
+              "metal",
+              "earth"
+            ]
+          }
+        },
+        {
+          "strength": "extremelyWeak",
+          "missingCount": 2,
+          "missingBeneficos": [
+            "fire",
+            "metal"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "wood",
+              "water"
+            ],
+            "unfavorable": [
+              "metal",
+              "earth"
+            ]
+          }
+        },
+        {
+          "strength": "followPower",
+          "missingCount": 2,
+          "missingBeneficos": [
+            "wood",
+            "fire"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "metal",
+              "earth"
+            ],
+            "unfavorable": [
+              "wood",
+              "water",
+              "fire"
+            ]
+          }
+        },
+        {
+          "strength": "followOutput",
+          "missingCount": 2,
+          "missingBeneficos": [
+            "wood",
+            "metal"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "fire",
+              "earth"
+            ],
+            "unfavorable": [
+              "wood",
+              "water",
+              "metal"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "team": "Fortaleza",
+      "hardcoded": {
+        "beneficos": {},
+        "maleficos": {
+          "earth": 3
+        }
+      },
+      "calculated_data": {
+        "dayMasterElement": "earth",
+        "percentages": {
+          "wood": 0.5,
+          "fire": 18,
+          "earth": 53.3,
+          "metal": 9.8,
+          "water": 18.4
+        }
+      },
+      "original_analysis": {
+        "strength": "extremelyStrong",
+        "missing_count": 0,
+        "missing_beneficos": []
+      },
+      "best_strength_match": {
+        "strength_used": "extremelyStrong",
+        "missing_count": 0,
+        "is_original": true,
+        "favorable": [
+          "metal",
+          "water"
+        ],
+        "unfavorable": [
+          "earth",
+          "fire",
+          "wood"
+        ]
+      },
+      "all_strength_tests": [
+        {
+          "strength": "extremelyStrong",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "metal",
+              "water"
+            ],
+            "unfavorable": [
+              "earth",
+              "fire",
+              "wood"
+            ]
+          }
+        },
+        {
+          "strength": "strong",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "metal",
+              "water",
+              "wood"
+            ],
+            "unfavorable": [
+              "earth",
+              "fire"
+            ]
+          }
+        },
+        {
+          "strength": "balanced",
+          "missingCount": 1,
+          "missingBeneficos": [],
+          "missingMaleficos": [
+            "earth"
+          ],
+          "usefulElements": {
+            "favorable": [
+              "metal",
+              "wood"
+            ],
+            "unfavorable": [
+              "fire"
+            ]
+          }
+        },
+        {
+          "strength": "weak",
+          "missingCount": 1,
+          "missingBeneficos": [],
+          "missingMaleficos": [
+            "earth"
+          ],
+          "usefulElements": {
+            "favorable": [
+              "earth",
+              "fire"
+            ],
+            "unfavorable": [
+              "wood",
+              "water"
+            ]
+          }
+        },
+        {
+          "strength": "extremelyWeak",
+          "missingCount": 1,
+          "missingBeneficos": [],
+          "missingMaleficos": [
+            "earth"
+          ],
+          "usefulElements": {
+            "favorable": [
+              "earth",
+              "fire"
+            ],
+            "unfavorable": [
+              "wood",
+              "water"
+            ]
+          }
+        },
+        {
+          "strength": "followPower",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "wood",
+              "water"
+            ],
+            "unfavorable": [
+              "earth",
+              "fire",
+              "metal"
+            ]
+          }
+        },
+        {
+          "strength": "followOutput",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "metal",
+              "water"
+            ],
+            "unfavorable": [
+              "earth",
+              "fire",
+              "wood"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "team": "Internacional",
+      "hardcoded": {
+        "beneficos": {},
+        "maleficos": {
+          "metal": 4
+        }
+      },
+      "calculated_data": {
+        "dayMasterElement": "wood",
+        "percentages": {
+          "wood": 69.8,
+          "fire": 26.8,
+          "earth": 1.9,
+          "metal": 1.5,
+          "water": 0
+        }
+      },
+      "original_analysis": {
+        "strength": "extremelyStrong",
+        "missing_count": 0,
+        "missing_beneficos": []
+      },
+      "best_strength_match": {
+        "strength_used": "extremelyStrong",
+        "missing_count": 0,
+        "is_original": true,
+        "favorable": [
+          "fire",
+          "earth"
+        ],
+        "unfavorable": [
+          "wood",
+          "water",
+          "metal"
+        ]
+      },
+      "all_strength_tests": [
+        {
+          "strength": "extremelyStrong",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "fire",
+              "earth"
+            ],
+            "unfavorable": [
+              "wood",
+              "water",
+              "metal"
+            ]
+          }
+        },
+        {
+          "strength": "strong",
+          "missingCount": 1,
+          "missingBeneficos": [],
+          "missingMaleficos": [
+            "metal"
+          ],
+          "usefulElements": {
+            "favorable": [
+              "fire",
+              "earth",
+              "metal"
+            ],
+            "unfavorable": [
+              "wood",
+              "water"
+            ]
+          }
+        },
+        {
+          "strength": "balanced",
+          "missingCount": 1,
+          "missingBeneficos": [],
+          "missingMaleficos": [
+            "metal"
+          ],
+          "usefulElements": {
+            "favorable": [
+              "fire",
+              "metal"
+            ],
+            "unfavorable": [
+              "water"
+            ]
+          }
+        },
+        {
+          "strength": "weak",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "wood",
+              "water"
+            ],
+            "unfavorable": [
+              "metal",
+              "earth"
+            ]
+          }
+        },
+        {
+          "strength": "extremelyWeak",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "wood",
+              "water"
+            ],
+            "unfavorable": [
+              "metal",
+              "earth"
+            ]
+          }
+        },
+        {
+          "strength": "followPower",
+          "missingCount": 1,
+          "missingBeneficos": [],
+          "missingMaleficos": [
+            "metal"
+          ],
+          "usefulElements": {
+            "favorable": [
+              "metal",
+              "earth"
+            ],
+            "unfavorable": [
+              "wood",
+              "water",
+              "fire"
+            ]
+          }
+        },
+        {
+          "strength": "followOutput",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "fire",
+              "earth"
+            ],
+            "unfavorable": [
+              "wood",
+              "water",
+              "metal"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "team": "Flamengo",
+      "hardcoded": {
+        "beneficos": {
+          "wood": 4,
+          "earth": 4
+        },
+        "maleficos": {}
+      },
+      "calculated_data": {
+        "dayMasterElement": "water",
+        "percentages": {
+          "wood": 4.2,
+          "fire": 17.1,
+          "earth": 60,
+          "metal": 8.8,
+          "water": 9.9
+        }
+      },
+      "original_analysis": {
+        "strength": "weak",
+        "missing_count": 2,
+        "missing_beneficos": [
+          "wood",
+          "earth"
+        ]
+      },
+      "best_strength_match": {
+        "strength_used": "strong",
+        "missing_count": 0,
+        "is_original": false,
+        "favorable": [
+          "wood",
+          "fire",
+          "earth"
+        ],
+        "unfavorable": [
+          "water",
+          "metal"
+        ]
+      },
+      "all_strength_tests": [
+        {
+          "strength": "extremelyStrong",
+          "missingCount": 1,
+          "missingBeneficos": [
+            "earth"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "wood",
+              "fire"
+            ],
+            "unfavorable": [
+              "water",
+              "metal",
+              "earth"
+            ]
+          }
+        },
+        {
+          "strength": "strong",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "wood",
+              "fire",
+              "earth"
+            ],
+            "unfavorable": [
+              "water",
+              "metal"
+            ]
+          }
+        },
+        {
+          "strength": "balanced",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "wood",
+              "earth"
+            ],
+            "unfavorable": [
+              "metal"
+            ]
+          }
+        },
+        {
+          "strength": "weak",
+          "missingCount": 2,
+          "missingBeneficos": [
+            "wood",
+            "earth"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "water",
+              "metal"
+            ],
+            "unfavorable": [
+              "earth",
+              "fire"
+            ]
+          }
+        },
+        {
+          "strength": "extremelyWeak",
+          "missingCount": 2,
+          "missingBeneficos": [
+            "wood",
+            "earth"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "water",
+              "metal"
+            ],
+            "unfavorable": [
+              "earth",
+              "fire"
+            ]
+          }
+        },
+        {
+          "strength": "followPower",
+          "missingCount": 1,
+          "missingBeneficos": [
+            "wood"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "earth",
+              "fire"
+            ],
+            "unfavorable": [
+              "water",
+              "metal",
+              "wood"
+            ]
+          }
+        },
+        {
+          "strength": "followOutput",
+          "missingCount": 1,
+          "missingBeneficos": [
+            "earth"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "wood",
+              "fire"
+            ],
+            "unfavorable": [
+              "water",
+              "metal",
+              "earth"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "team": "Cruzeiro",
+      "hardcoded": {
+        "beneficos": {
+          "wood": 3,
+          "fire": 3
+        },
+        "maleficos": {}
+      },
+      "calculated_data": {
+        "dayMasterElement": "wood",
+        "percentages": {
+          "wood": 10.7,
+          "fire": 0,
+          "earth": 28.8,
+          "metal": 4.7,
+          "water": 55.8
+        }
+      },
+      "original_analysis": {
+        "strength": "strong",
+        "missing_count": 1,
+        "missing_beneficos": [
+          "wood"
+        ]
+      },
+      "best_strength_match": {
+        "strength_used": "strong",
+        "missing_count": 1,
+        "is_original": true,
+        "favorable": [
+          "fire",
+          "earth",
+          "metal"
+        ],
+        "unfavorable": [
+          "wood",
+          "water"
+        ]
+      },
+      "all_strength_tests": [
+        {
+          "strength": "extremelyStrong",
+          "missingCount": 1,
+          "missingBeneficos": [
+            "wood"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "fire",
+              "earth"
+            ],
+            "unfavorable": [
+              "wood",
+              "water",
+              "metal"
+            ]
+          }
+        },
+        {
+          "strength": "strong",
+          "missingCount": 1,
+          "missingBeneficos": [
+            "wood"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "fire",
+              "earth",
+              "metal"
+            ],
+            "unfavorable": [
+              "wood",
+              "water"
+            ]
+          }
+        },
+        {
+          "strength": "balanced",
+          "missingCount": 1,
+          "missingBeneficos": [
+            "wood"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "fire",
+              "metal"
+            ],
+            "unfavorable": [
+              "water"
+            ]
+          }
+        },
+        {
+          "strength": "weak",
+          "missingCount": 1,
+          "missingBeneficos": [
+            "fire"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "wood",
+              "water"
+            ],
+            "unfavorable": [
+              "metal",
+              "earth"
+            ]
+          }
+        },
+        {
+          "strength": "extremelyWeak",
+          "missingCount": 1,
+          "missingBeneficos": [
+            "fire"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "wood",
+              "water"
+            ],
+            "unfavorable": [
+              "metal",
+              "earth"
+            ]
+          }
+        },
+        {
+          "strength": "followPower",
+          "missingCount": 2,
+          "missingBeneficos": [
+            "wood",
+            "fire"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "metal",
+              "earth"
+            ],
+            "unfavorable": [
+              "wood",
+              "water",
+              "fire"
+            ]
+          }
+        },
+        {
+          "strength": "followOutput",
+          "missingCount": 1,
+          "missingBeneficos": [
+            "wood"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "fire",
+              "earth"
+            ],
+            "unfavorable": [
+              "wood",
+              "water",
+              "metal"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "team": "Bahia",
+      "hardcoded": {
+        "beneficos": {},
+        "maleficos": {
+          "wood": 4
+        }
+      },
+      "calculated_data": {
+        "dayMasterElement": "fire",
+        "percentages": {
+          "wood": 3.3,
+          "fire": 11.9,
+          "earth": 29.1,
+          "metal": 1.7,
+          "water": 54
+        }
+      },
+      "original_analysis": {
+        "strength": "extremelyWeak",
+        "missing_count": 1,
+        "missing_beneficos": []
+      },
+      "best_strength_match": {
+        "strength_used": "extremelyStrong",
+        "missing_count": 0,
+        "is_original": false,
+        "favorable": [
+          "earth",
+          "metal"
+        ],
+        "unfavorable": [
+          "fire",
+          "wood",
+          "water"
+        ]
+      },
+      "all_strength_tests": [
+        {
+          "strength": "extremelyStrong",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "earth",
+              "metal"
+            ],
+            "unfavorable": [
+              "fire",
+              "wood",
+              "water"
+            ]
+          }
+        },
+        {
+          "strength": "strong",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "earth",
+              "metal",
+              "water"
+            ],
+            "unfavorable": [
+              "fire",
+              "wood"
+            ]
+          }
+        },
+        {
+          "strength": "balanced",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "earth",
+              "water"
+            ],
+            "unfavorable": [
+              "wood"
+            ]
+          }
+        },
+        {
+          "strength": "weak",
+          "missingCount": 1,
+          "missingBeneficos": [],
+          "missingMaleficos": [
+            "wood"
+          ],
+          "usefulElements": {
+            "favorable": [
+              "fire",
+              "wood"
+            ],
+            "unfavorable": [
+              "water",
+              "metal"
+            ]
+          }
+        },
+        {
+          "strength": "extremelyWeak",
+          "missingCount": 1,
+          "missingBeneficos": [],
+          "missingMaleficos": [
+            "wood"
+          ],
+          "usefulElements": {
+            "favorable": [
+              "fire",
+              "wood"
+            ],
+            "unfavorable": [
+              "water",
+              "metal"
+            ]
+          }
+        },
+        {
+          "strength": "followPower",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "water",
+              "metal"
+            ],
+            "unfavorable": [
+              "fire",
+              "wood",
+              "earth"
+            ]
+          }
+        },
+        {
+          "strength": "followOutput",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "earth",
+              "metal"
+            ],
+            "unfavorable": [
+              "fire",
+              "wood",
+              "water"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "team": "Corinthians",
+      "hardcoded": {
+        "beneficos": {
+          "wood": 4
+        },
+        "maleficos": {}
+      },
+      "calculated_data": {
+        "dayMasterElement": "earth",
+        "percentages": {
+          "wood": 27.1,
+          "fire": 8.1,
+          "earth": 18.7,
+          "metal": 33.9,
+          "water": 12.2
+        }
+      },
+      "original_analysis": {
+        "strength": "extremelyWeak",
+        "missing_count": 1,
+        "missing_beneficos": [
+          "wood"
+        ]
+      },
+      "best_strength_match": {
+        "strength_used": "strong",
+        "missing_count": 0,
+        "is_original": false,
+        "favorable": [
+          "metal",
+          "water",
+          "wood"
+        ],
+        "unfavorable": [
+          "earth",
+          "fire"
+        ]
+      },
+      "all_strength_tests": [
+        {
+          "strength": "extremelyStrong",
+          "missingCount": 1,
+          "missingBeneficos": [
+            "wood"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "metal",
+              "water"
+            ],
+            "unfavorable": [
+              "earth",
+              "fire",
+              "wood"
+            ]
+          }
+        },
+        {
+          "strength": "strong",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "metal",
+              "water",
+              "wood"
+            ],
+            "unfavorable": [
+              "earth",
+              "fire"
+            ]
+          }
+        },
+        {
+          "strength": "balanced",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "metal",
+              "wood"
+            ],
+            "unfavorable": [
+              "fire"
+            ]
+          }
+        },
+        {
+          "strength": "weak",
+          "missingCount": 1,
+          "missingBeneficos": [
+            "wood"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "earth",
+              "fire"
+            ],
+            "unfavorable": [
+              "wood",
+              "water"
+            ]
+          }
+        },
+        {
+          "strength": "extremelyWeak",
+          "missingCount": 1,
+          "missingBeneficos": [
+            "wood"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "earth",
+              "fire"
+            ],
+            "unfavorable": [
+              "wood",
+              "water"
+            ]
+          }
+        },
+        {
+          "strength": "followPower",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "wood",
+              "water"
+            ],
+            "unfavorable": [
+              "earth",
+              "fire",
+              "metal"
+            ]
+          }
+        },
+        {
+          "strength": "followOutput",
+          "missingCount": 1,
+          "missingBeneficos": [
+            "wood"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "metal",
+              "water"
+            ],
+            "unfavorable": [
+              "earth",
+              "fire",
+              "wood"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "team": "Vitória",
+      "hardcoded": {
+        "beneficos": {},
+        "maleficos": {
+          "earth": 3
+        }
+      },
+      "calculated_data": {
+        "dayMasterElement": "metal",
+        "percentages": {
+          "wood": 0.7,
+          "fire": 33.2,
+          "earth": 30.4,
+          "metal": 34.6,
+          "water": 1.1
+        }
+      },
+      "original_analysis": {
+        "strength": "strong",
+        "missing_count": 0,
+        "missing_beneficos": []
+      },
+      "best_strength_match": {
+        "strength_used": "strong",
+        "missing_count": 0,
+        "is_original": true,
+        "favorable": [
+          "water",
+          "wood",
+          "fire"
+        ],
+        "unfavorable": [
+          "metal",
+          "earth"
+        ]
+      },
+      "all_strength_tests": [
+        {
+          "strength": "extremelyStrong",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "water",
+              "wood"
+            ],
+            "unfavorable": [
+              "metal",
+              "earth",
+              "fire"
+            ]
+          }
+        },
+        {
+          "strength": "strong",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "water",
+              "wood",
+              "fire"
+            ],
+            "unfavorable": [
+              "metal",
+              "earth"
+            ]
+          }
+        },
+        {
+          "strength": "balanced",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "water",
+              "fire"
+            ],
+            "unfavorable": [
+              "earth"
+            ]
+          }
+        },
+        {
+          "strength": "weak",
+          "missingCount": 1,
+          "missingBeneficos": [],
+          "missingMaleficos": [
+            "earth"
+          ],
+          "usefulElements": {
+            "favorable": [
+              "metal",
+              "earth"
+            ],
+            "unfavorable": [
+              "fire",
+              "wood"
+            ]
+          }
+        },
+        {
+          "strength": "extremelyWeak",
+          "missingCount": 1,
+          "missingBeneficos": [],
+          "missingMaleficos": [
+            "earth"
+          ],
+          "usefulElements": {
+            "favorable": [
+              "metal",
+              "earth"
+            ],
+            "unfavorable": [
+              "fire",
+              "wood"
+            ]
+          }
+        },
+        {
+          "strength": "followPower",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "fire",
+              "wood"
+            ],
+            "unfavorable": [
+              "metal",
+              "earth",
+              "water"
+            ]
+          }
+        },
+        {
+          "strength": "followOutput",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "water",
+              "wood"
+            ],
+            "unfavorable": [
+              "metal",
+              "earth",
+              "fire"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "team": "Vasco",
+      "hardcoded": {
+        "beneficos": {},
+        "maleficos": {
+          "wood": 4
+        }
+      },
+      "calculated_data": {
+        "dayMasterElement": "fire",
+        "percentages": {
+          "wood": 2.8,
+          "fire": 12,
+          "earth": 12.4,
+          "metal": 59,
+          "water": 13.8
+        }
+      },
+      "original_analysis": {
+        "strength": "extremelyWeak",
+        "missing_count": 1,
+        "missing_beneficos": []
+      },
+      "best_strength_match": {
+        "strength_used": "extremelyStrong",
+        "missing_count": 0,
+        "is_original": false,
+        "favorable": [
+          "earth",
+          "metal"
+        ],
+        "unfavorable": [
+          "fire",
+          "wood",
+          "water"
+        ]
+      },
+      "all_strength_tests": [
+        {
+          "strength": "extremelyStrong",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "earth",
+              "metal"
+            ],
+            "unfavorable": [
+              "fire",
+              "wood",
+              "water"
+            ]
+          }
+        },
+        {
+          "strength": "strong",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "earth",
+              "metal",
+              "water"
+            ],
+            "unfavorable": [
+              "fire",
+              "wood"
+            ]
+          }
+        },
+        {
+          "strength": "balanced",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "earth",
+              "water"
+            ],
+            "unfavorable": [
+              "wood"
+            ]
+          }
+        },
+        {
+          "strength": "weak",
+          "missingCount": 1,
+          "missingBeneficos": [],
+          "missingMaleficos": [
+            "wood"
+          ],
+          "usefulElements": {
+            "favorable": [
+              "fire",
+              "wood"
+            ],
+            "unfavorable": [
+              "water",
+              "metal"
+            ]
+          }
+        },
+        {
+          "strength": "extremelyWeak",
+          "missingCount": 1,
+          "missingBeneficos": [],
+          "missingMaleficos": [
+            "wood"
+          ],
+          "usefulElements": {
+            "favorable": [
+              "fire",
+              "wood"
+            ],
+            "unfavorable": [
+              "water",
+              "metal"
+            ]
+          }
+        },
+        {
+          "strength": "followPower",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "water",
+              "metal"
+            ],
+            "unfavorable": [
+              "fire",
+              "wood",
+              "earth"
+            ]
+          }
+        },
+        {
+          "strength": "followOutput",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "earth",
+              "metal"
+            ],
+            "unfavorable": [
+              "fire",
+              "wood",
+              "water"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "team": "Atlético-MG",
+      "hardcoded": {
+        "beneficos": {
+          "metal": 3
+        },
+        "maleficos": {}
+      },
+      "calculated_data": {
+        "dayMasterElement": "earth",
+        "percentages": {
+          "wood": 89.5,
+          "fire": 0,
+          "earth": 9.4,
+          "metal": 0.7,
+          "water": 0.4
+        }
+      },
+      "original_analysis": {
+        "strength": "followPower",
+        "missing_count": 1,
+        "missing_beneficos": [
+          "metal"
+        ]
+      },
+      "best_strength_match": {
+        "strength_used": "extremelyStrong",
+        "missing_count": 0,
+        "is_original": false,
+        "favorable": [
+          "metal",
+          "water"
+        ],
+        "unfavorable": [
+          "earth",
+          "fire",
+          "wood"
+        ]
+      },
+      "all_strength_tests": [
+        {
+          "strength": "extremelyStrong",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "metal",
+              "water"
+            ],
+            "unfavorable": [
+              "earth",
+              "fire",
+              "wood"
+            ]
+          }
+        },
+        {
+          "strength": "strong",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "metal",
+              "water",
+              "wood"
+            ],
+            "unfavorable": [
+              "earth",
+              "fire"
+            ]
+          }
+        },
+        {
+          "strength": "balanced",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "metal",
+              "wood"
+            ],
+            "unfavorable": [
+              "fire"
+            ]
+          }
+        },
+        {
+          "strength": "weak",
+          "missingCount": 1,
+          "missingBeneficos": [
+            "metal"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "earth",
+              "fire"
+            ],
+            "unfavorable": [
+              "wood",
+              "water"
+            ]
+          }
+        },
+        {
+          "strength": "extremelyWeak",
+          "missingCount": 1,
+          "missingBeneficos": [
+            "metal"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "earth",
+              "fire"
+            ],
+            "unfavorable": [
+              "wood",
+              "water"
+            ]
+          }
+        },
+        {
+          "strength": "followPower",
+          "missingCount": 1,
+          "missingBeneficos": [
+            "metal"
+          ],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "wood",
+              "water"
+            ],
+            "unfavorable": [
+              "earth",
+              "fire",
+              "metal"
+            ]
+          }
+        },
+        {
+          "strength": "followOutput",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "metal",
+              "water"
+            ],
+            "unfavorable": [
+              "earth",
+              "fire",
+              "wood"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "team": "Bragantino",
+      "hardcoded": {
+        "beneficos": {},
+        "maleficos": {
+          "wood": 3,
+          "earth": 3
+        }
+      },
+      "calculated_data": {
+        "dayMasterElement": "fire",
+        "percentages": {
+          "wood": 8.7,
+          "fire": 14.9,
+          "earth": 29.7,
+          "metal": 5.3,
+          "water": 41.4
+        }
+      },
+      "original_analysis": {
+        "strength": "extremelyWeak",
+        "missing_count": 2,
+        "missing_beneficos": []
+      },
+      "best_strength_match": {
+        "strength_used": "followPower",
+        "missing_count": 0,
+        "is_original": false,
+        "favorable": [
+          "water",
+          "metal"
+        ],
+        "unfavorable": [
+          "fire",
+          "wood",
+          "earth"
+        ]
+      },
+      "all_strength_tests": [
+        {
+          "strength": "extremelyStrong",
+          "missingCount": 1,
+          "missingBeneficos": [],
+          "missingMaleficos": [
+            "earth"
+          ],
+          "usefulElements": {
+            "favorable": [
+              "earth",
+              "metal"
+            ],
+            "unfavorable": [
+              "fire",
+              "wood",
+              "water"
+            ]
+          }
+        },
+        {
+          "strength": "strong",
+          "missingCount": 1,
+          "missingBeneficos": [],
+          "missingMaleficos": [
+            "earth"
+          ],
+          "usefulElements": {
+            "favorable": [
+              "earth",
+              "metal",
+              "water"
+            ],
+            "unfavorable": [
+              "fire",
+              "wood"
+            ]
+          }
+        },
+        {
+          "strength": "balanced",
+          "missingCount": 1,
+          "missingBeneficos": [],
+          "missingMaleficos": [
+            "earth"
+          ],
+          "usefulElements": {
+            "favorable": [
+              "earth",
+              "water"
+            ],
+            "unfavorable": [
+              "wood"
+            ]
+          }
+        },
+        {
+          "strength": "weak",
+          "missingCount": 2,
+          "missingBeneficos": [],
+          "missingMaleficos": [
+            "wood",
+            "earth"
+          ],
+          "usefulElements": {
+            "favorable": [
+              "fire",
+              "wood"
+            ],
+            "unfavorable": [
+              "water",
+              "metal"
+            ]
+          }
+        },
+        {
+          "strength": "extremelyWeak",
+          "missingCount": 2,
+          "missingBeneficos": [],
+          "missingMaleficos": [
+            "wood",
+            "earth"
+          ],
+          "usefulElements": {
+            "favorable": [
+              "fire",
+              "wood"
+            ],
+            "unfavorable": [
+              "water",
+              "metal"
+            ]
+          }
+        },
+        {
+          "strength": "followPower",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "water",
+              "metal"
+            ],
+            "unfavorable": [
+              "fire",
+              "wood",
+              "earth"
+            ]
+          }
+        },
+        {
+          "strength": "followOutput",
+          "missingCount": 1,
+          "missingBeneficos": [],
+          "missingMaleficos": [
+            "earth"
+          ],
+          "usefulElements": {
+            "favorable": [
+              "earth",
+              "metal"
+            ],
+            "unfavorable": [
+              "fire",
+              "wood",
+              "water"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "team": "Ceará",
+      "hardcoded": {
+        "beneficos": {},
+        "maleficos": {
+          "metal": 4
+        }
+      },
+      "calculated_data": {
+        "dayMasterElement": "earth",
+        "percentages": {
+          "wood": 14.5,
+          "fire": 41.8,
+          "earth": 19.3,
+          "metal": 24.4,
+          "water": 0
+        }
+      },
+      "original_analysis": {
+        "strength": "strong",
+        "missing_count": 1,
+        "missing_beneficos": []
+      },
+      "best_strength_match": {
+        "strength_used": "followPower",
+        "missing_count": 0,
+        "is_original": false,
+        "favorable": [
+          "wood",
+          "water"
+        ],
+        "unfavorable": [
+          "earth",
+          "fire",
+          "metal"
+        ]
+      },
+      "all_strength_tests": [
+        {
+          "strength": "extremelyStrong",
+          "missingCount": 1,
+          "missingBeneficos": [],
+          "missingMaleficos": [
+            "metal"
+          ],
+          "usefulElements": {
+            "favorable": [
+              "metal",
+              "water"
+            ],
+            "unfavorable": [
+              "earth",
+              "fire",
+              "wood"
+            ]
+          }
+        },
+        {
+          "strength": "strong",
+          "missingCount": 1,
+          "missingBeneficos": [],
+          "missingMaleficos": [
+            "metal"
+          ],
+          "usefulElements": {
+            "favorable": [
+              "metal",
+              "water",
+              "wood"
+            ],
+            "unfavorable": [
+              "earth",
+              "fire"
+            ]
+          }
+        },
+        {
+          "strength": "balanced",
+          "missingCount": 1,
+          "missingBeneficos": [],
+          "missingMaleficos": [
+            "metal"
+          ],
+          "usefulElements": {
+            "favorable": [
+              "metal",
+              "wood"
+            ],
+            "unfavorable": [
+              "fire"
+            ]
+          }
+        },
+        {
+          "strength": "weak",
+          "missingCount": 1,
+          "missingBeneficos": [],
+          "missingMaleficos": [
+            "metal"
+          ],
+          "usefulElements": {
+            "favorable": [
+              "earth",
+              "fire"
+            ],
+            "unfavorable": [
+              "wood",
+              "water"
+            ]
+          }
+        },
+        {
+          "strength": "extremelyWeak",
+          "missingCount": 1,
+          "missingBeneficos": [],
+          "missingMaleficos": [
+            "metal"
+          ],
+          "usefulElements": {
+            "favorable": [
+              "earth",
+              "fire"
+            ],
+            "unfavorable": [
+              "wood",
+              "water"
+            ]
+          }
+        },
+        {
+          "strength": "followPower",
+          "missingCount": 0,
+          "missingBeneficos": [],
+          "missingMaleficos": [],
+          "usefulElements": {
+            "favorable": [
+              "wood",
+              "water"
+            ],
+            "unfavorable": [
+              "earth",
+              "fire",
+              "metal"
+            ]
+          }
+        },
+        {
+          "strength": "followOutput",
+          "missingCount": 1,
+          "missingBeneficos": [],
+          "missingMaleficos": [
+            "metal"
+          ],
+          "usefulElements": {
+            "favorable": [
+              "metal",
+              "water"
+            ],
+            "unfavorable": [
+              "earth",
+              "fire",
+              "wood"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

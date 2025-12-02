@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import styles from './statistics.module.css';
-import { parseGameDate, getBaziForDate } from '../src/lib/bazi-calculator'; // Apenas o parseDate é necessário aqui
+import { parseGameDate, getBaziForDate } from '../src/lib/bazi-calculator';
 import {generateWuxingDefaultStatistics} from '../scripts/generate-stats';
 // --- Constantes de UI ---
+
 
 const branchToAnimal = (b) => {
   const map = {
@@ -18,7 +19,7 @@ const orderedBranches = ['寅', '卯', '辰', '巳', '午', '未', '申', '酉',
 const allLunarMonths = orderedBranches.map(branch => `Mês do ${branchToAnimal(branch)}`);
 
 // Mapeamento das Tríades Elementares (Importado de wuxing.js para consistência)
-import { TRINE_ANIMALS, getGanzhiElement } from '../src/lib/wuxing';
+import { TRINE_ANIMALS, getGanzhiElement, calculateWuXing } from '../src/lib/wuxing';
 const TRINE_ELEMENTS_MAP = { // Renomeado para evitar confusão com TRINE_ANIMALS
   Fogo: TRINE_ANIMALS.FIRE,
   Madeira: TRINE_ANIMALS.WOOD,
@@ -143,7 +144,7 @@ const GameDetailsModal = ({ gameDetails, onClose }) => {
     if (result === 'b') return `Vitória ${teamB}`;
     return 'Empate';
   };
-
+console.log(gameDetails);
   return (
     <div className={styles.modalBackdrop} onClick={onClose}>
       <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
@@ -166,8 +167,8 @@ const GameDetailsModal = ({ gameDetails, onClose }) => {
         </div>
         <div className={styles.gameDetailRow}>
           <strong>Análise de Score:</strong>
-          <div>Score {gameDetails.teamA}: {gameDetails.scoreA?.score?.toFixed(2)}</div>
-          <div>Score {gameDetails.teamB}: {gameDetails.scoreB?.score?.toFixed(2)}</div>
+          <div>Score {gameDetails.teamA}: {gameDetails.scoreA.score.toFixed(2)}</div>
+          <div>Score {gameDetails.teamB}: {gameDetails.scoreB.score.toFixed(2)}</div>
         </div>
         <button onClick={onClose} className={styles.closeButton}>
           Fechar
@@ -177,65 +178,231 @@ const GameDetailsModal = ({ gameDetails, onClose }) => {
   );
 };
 
-const TrineStatsModal = ({ team, onClose }) => {
+const elementColors = {
+  wood: '#28a745',
+  fire: '#dc3545',
+  earth: '#ffc107',
+  metal: '#adb5bd',
+  water: '#007bff',
+};
+const TopTeamsTable = ({ title, stats }) => {
+  if (!stats || stats.length === 0) {
+    return null; // Não renderiza nada se não houver estatísticas
+  }
+
+  return (
+    <div className={styles.tableContainer}>
+      <h2 className={styles.title}>{title}</h2>
+      <table className={styles.statsTable}>
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>% Acerto na Tríade</th>
+            <th>Jogos na Tríade</th>
+            <th>Elemento Preponderante nas Vitórias</th>
+          </tr>
+        </thead>
+        <tbody>
+          {stats.map(stat => (
+            <tr key={stat.name}>
+              <td className={styles.teamCell}>
+                <Image 
+                  src={stat.logo} 
+                  alt={`Logo do ${stat.name}`} 
+                  width={25} 
+                  height={25} 
+                  className={styles.teamLogo} 
+                />
+                {stat.name}
+              </td>
+              <td>{stat.successRate}%</td>
+              <td>{stat.totalGames}</td>
+              <td>
+                <div className={styles.miniChartContainer}>
+                  {Object.entries(stat.winningElements).map(([element, count]) => (
+                    count > 0 && (
+                      <div key={element} className={styles.miniBarWrapper}>
+                        <div 
+                          className={styles.miniBar} 
+                          style={{ height: `${(count / stat.successes) * 100}%`, backgroundColor: elementColors[element] }}
+                          title={`${element.charAt(0).toUpperCase() + element.slice(1)}: ${count} vitórias`}
+                        ></div>
+                        <span className={styles.miniBarLabel}>{element.charAt(0).toUpperCase()}</span>
+                      </div>
+                    )
+                  ))}
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+const ScoreVarianceChart = ({ title, data }) => {
+  if (!data || data.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className={styles.tableContainer}>
+      <h2 className={styles.title}>{title}</h2>
+      <div className={styles.chartContainer}>
+        {data.map(item => (
+          <div key={item.range} className={styles.barWrapper}>
+            <div className={styles.barLabelTop}>{item.successRate.toFixed(1)}%</div>
+            <div className={styles.bar} style={{ height: `${item.successRate}%` }}>
+            </div>
+            <div className={styles.barLabelBottom}>{item.range}</div>
+            <div className={styles.barLabelGames}>({item.totalGames} jogos)</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const TopWinsChart = ({ title, stats }) => {
+  if (!stats || stats.length === 0) {
+    return null;
+  }
+
+  const maxWins = Math.max(...stats.map(s => s.wins), 0);
+
+  return (
+    <div className={styles.tableContainer}>
+      <h2 className={styles.title}>{title}</h2>
+      <div className={styles.barChartWinsContainer}>
+        {stats.map(stat => (
+          <div key={stat.name} className={styles.barChartWinsRow}>
+            <div className={styles.teamCell} style={{ width: '150px', flexShrink: 0 }}>
+              <Image 
+                src={stat.logo} 
+                alt={`Logo do ${stat.name}`} 
+                width={25} 
+                height={25} 
+                className={styles.teamLogo} 
+              />
+              {stat.name}
+            </div>
+            <div className={styles.barContainer}>
+              <div className={styles.barWins} style={{ width: `${(stat.wins / maxWins) * 100}%` }}>
+                <span className={styles.barWinsLabel}>{stat.wins} vitórias</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const ErrorAnalysisTextArea = ({ title, data }) => {
+  if (!data) {
+    return null;
+  }
+
+  // Formata o objeto para uma string JSON bonita para exibição
+  const dataString = JSON.stringify(data, null, 2);
+
+  return (
+    <div className={styles.tableContainer}>
+      <h2 className={styles.title}>{title}</h2>
+      <textarea readOnly className={styles.jsonTextArea} value={dataString} />
+    </div>
+  );
+};
+const TrineStatsModal = ({ team, teamTrineStats, onClose }) => {
   if (!team) return null;
 
   const { name: teamName, history } = team;
 
-  // Objeto para armazenar as estatísticas calculadas para cada coerência
-  const coherenceStats = { FIRE: { successes: 0, total: 0 }, METAL: { successes: 0, total: 0 }, WOOD: { successes: 0, total: 0 }, WATER: { successes: 0, total: 0 }, EARTH: { successes: 0, total: 0 } };
+  // 1. Estatísticas Gerais de Coerência (dados já calculados)
+  const generalCoherenceStats = teamTrineStats[teamName] 
+    ? Object.entries(teamTrineStats[teamName]).map(([key, value]) => ({
+        element: coherenceElementsDisplayMap[key],
+        successRate: value.successRate,
+        totalGames: value.totalGames,
+      })).sort((a, b) => b.successRate - a.successRate)
+    : [];
 
-  // Itera sobre todos os jogos do histórico do time
-  history.flat().forEach(game => {
-    const gameDate = parseGameDate(game.date);
-    const gameBazi = getBaziForDate(gameDate);
-    if (!gameBazi) return;
+  // 2. Estatísticas por Meses da Tríade
+  const trineMonthStats = Object.entries(TRINE_ELEMENTS_MAP).map(([elementName, branches]) => {
+    let successes = 0;
+    let totalGames = 0;
 
-    const dayElement = getGanzhiElement(gameBazi.gzDay);
+    history.flat().forEach(game => {
+      const gameDate = parseGameDate(game.date);
+      const gameBazi = getBaziForDate(gameDate);
+      if (!gameBazi) return;
 
-    // Verifica a qual coerência este jogo pertence
-    for (const coherenceKey in coherenceElementsDisplayMap) {
-      const trineName = coherenceElementsDisplayMap[coherenceKey];
-      const trineBranches = TRINE_ELEMENTS_MAP[trineName];
-
-      if (trineBranches && trineBranches.includes(gameBazi.gzMonth.charAt(1)) && dayElement === coherenceKey.toLowerCase()) {
-        coherenceStats[coherenceKey].total++;
+      const monthBranch = gameBazi.gzMonth.charAt(1);
+      if (branches.includes(monthBranch)) {
+        totalGames++;
         if (game.result === 'C') {
-          coherenceStats[coherenceKey].successes++;
+          successes++;
         }
       }
-    }
-  });
+    });
 
-  // Formata os dados para exibição na tabela
-  const statsArray = Object.entries(coherenceStats).map(([key, value]) => ({
-    element: coherenceElementsDisplayMap[key],
-    successRate: value.total > 0 ? Math.round((value.successes / value.total) * 100) : 0,
-    totalGames: value.total,
-  })).sort((a, b) => b.successRate - a.successRate);
+    return {
+      element: elementName,
+      successRate: totalGames > 0 ? Math.round((successes / totalGames) * 100) : 0,
+      totalGames: totalGames,
+    };
+  }).sort((a, b) => b.successRate - a.successRate);
 
   return (
     <div className={styles.modalBackdrop} onClick={onClose}>
       <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-        <h3>Estatísticas de Coerência para {teamName}</h3>
-        <table className={styles.statsTable}>
-          <thead>
-            <tr>
-              <th>Coerência</th>
-              <th>% Acerto</th>
-              <th>Jogos</th>
-            </tr>
-          </thead>
-          <tbody>
-            {statsArray.map((stat) => (
-              <tr key={stat.element}>
-                <td>{stat.element}</td>
-                <td>{stat.successRate}%</td>
-                <td>{stat.totalGames}</td>
+        <h3>Estatísticas para {teamName}</h3>
+        
+        <h4 style={{ marginTop: '1.5rem', textAlign: 'left' }}>Desempenho em Dias de Coerência</h4>
+        {generalCoherenceStats.length > 0 ? (
+          <table className={styles.statsTable}>
+            <thead>
+              <tr>
+                <th>Coerência</th>
+                <th>% Acerto</th>
+                <th>Jogos</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {generalCoherenceStats.map((stat) => (
+                <tr key={stat.element}>
+                  <td>{stat.element}</td>
+                  <td>{stat.successRate}%</td>
+                  <td>{stat.totalGames}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : <p>Sem dados de coerência para este time.</p>}
+
+        <h4 style={{ marginTop: '1.5rem', textAlign: 'left' }}>Desempenho nos Meses da Tríade</h4>
+        {trineMonthStats.length > 0 ? (
+          <table className={styles.statsTable}>
+            <thead>
+              <tr>
+                <th>Tríade (Elemento)</th>
+                <th>% Acerto</th>
+                <th>Jogos</th>
+              </tr>
+            </thead>
+            <tbody>
+              {trineMonthStats.map((stat) => (
+                <tr key={stat.element}>
+                  <td>{stat.element}</td>
+                  <td>{stat.successRate}%</td>
+                  <td>{stat.totalGames}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : <p>Sem dados de meses da tríade para este time.</p>}
+
         <button onClick={onClose} className={styles.closeButton}>Fechar</button>
       </div>
     </div>
@@ -249,6 +416,7 @@ const TeamStatsTable = ({ title, teamsWithStats, monthlyStats, teamTrineStats, c
         <h2 className={styles.title}>{title} - Não há dados para exibir.</h2>
       </div>
     );
+    console.log(teamsWithStats);
   const sortedTeamsWithStats = [...teamsWithStats].sort((a, b) => b.successRate - a.successRate);
   const currentMonthTrine = currentMonthBranch ? getTrineForBranch(currentMonthBranch) : null;
   
@@ -257,10 +425,15 @@ const TeamStatsTable = ({ title, teamsWithStats, monthlyStats, teamTrineStats, c
 
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [selectedGameDetails, setSelectedGameDetails] = useState(null);
-
+  let totalSuccess = 0;
+  let totalError = 0;
   // Calcula o acerto geral para o título (mantido como estava)
-  const totalSuccess = teamsWithStats.reduce((acc, team) => acc + team.history.flat().filter(h => h.result === 'C').length, 0);
-  const totalError = teamsWithStats.reduce((acc, team) => acc + team.history.flat().filter(h => h.result === 'X').length, 0);
+  if(!teamsWithStats || !teamsWithStats[0] || !teamsWithStats[0].history){
+     }
+  else{
+    totalSuccess = teamsWithStats.reduce((acc, team) => acc + team.history.flat().filter(h => h.result === 'C').length, 0);
+    totalError = teamsWithStats.reduce((acc, team) => acc + team.history.flat().filter(h => h.result === 'X').length, 0);
+  }
   const totalGames = totalSuccess + totalError;
   const overallSuccessRate = totalGames > 0 ? Math.round((totalSuccess / totalGames) * 100) : 0;
 
@@ -276,7 +449,7 @@ const TeamStatsTable = ({ title, teamsWithStats, monthlyStats, teamTrineStats, c
             <th>% Acerto</th>
             <th>% Erro</th>
             {allLunarMonths.map(month => {
-              const stats = monthlyStats[month];
+              const stats = monthlyStats ? monthlyStats[month] : { total: 0, successes: 0 };
               const successRate = stats.total > 0 ? Math.round((stats.successes / stats.total) * 100) : 0;
               return (<th key={month}>
                 <div>{month}</div>
@@ -321,7 +494,7 @@ const TeamStatsTable = ({ title, teamsWithStats, monthlyStats, teamTrineStats, c
                 </td>
                 <td>{team.successRate}%</td>
                 <td>{team.errorRate}%</td>
-                {team.history.map((gamesInMonth, index) => {
+                {(team.history || []).map((gamesInMonth, index) => {
                   const monthlySuccesses = gamesInMonth.filter(g => g.result === 'C').length;
                   const monthlyTotal = gamesInMonth.length;
                   const monthlySuccessRate = monthlyTotal > 0 ? Math.round((monthlySuccesses / monthlyTotal) * 100) : null;
@@ -358,7 +531,8 @@ const TeamStatsTable = ({ title, teamsWithStats, monthlyStats, teamTrineStats, c
       </table>
       {selectedTeam && (
         <TrineStatsModal
-          team={selectedTeam} // Passa o objeto completo do time, que inclui o histórico de jogos
+          team={selectedTeam}
+          teamTrineStats={teamTrineStats}
           onClose={() => setSelectedTeam(null)}
         />
       )}
@@ -370,45 +544,229 @@ const TeamStatsTable = ({ title, teamsWithStats, monthlyStats, teamTrineStats, c
 };
 
 // --- Componente Principal Atualizado ---
- 
-export const DEFAULT_ANALYZE_SCORES = {
-  // Pesos percentuais para cada categoria de análise. A soma total deve ser 100.
-  day_master_strength_weight: 15.48,
-  branch_interactions_weight: 28.67,
-  excess_deficiency_weight: 21.05,
-  seasonal_dominance_weight: 13.01,
-  qi_sha_penalty_weight: 21.79,
-  mystical_trine_weight: 10, 
-  use_day_master_strength_analysis: true,
-  use_branch_interactions: true,
-  use_excess_deficiency: true,
-  use_seasonal_dominance: true,
-  triades_can_be_harmfull: false, // Nova flag para penalizar tríades maléficas
-  // Bônus e penalidades para a Tríade Mística
-  mystical_trine_bonus: 2,
-  mystical_trine_penalty: 2, // Usado como valor negativo
-  // Limiar de pontuação para considerar uma previsão de vitória (em vez de empate)
-  prediction_threshold: 50,
-  favorable_useful_element_multiplier: 1.47,
-  unfavorable_useful_element_multiplier: 1.06
-};
+import { DEFAULT_ANALYZE_SCORES } from '../src/lib/wuxing';
 
 const Statistics = () => {
   const [statsData, setStatsData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [topWoodTrineTeams, setTopWoodTrineTeams] = useState([]);
+  const [topHighFireTeams, setTopHighFireTeams] = useState([]);
+  const [scoreVarianceData, setScoreVarianceData] = useState([]);
+  const [teamsAWithErrors, setTeamsAWithErrors] = useState([]);
+  const [teamsBWithErrors, setTeamsBWithErrors] = useState([]);
+  const [errorAnalysisA, setErrorAnalysisA] = useState({});
+  const [errorAnalysisB, setErrorAnalysisB] = useState({});
+  const woodTrineBranches = TRINE_ELEMENTS_MAP['Madeira']; // Mantido fora, pois é uma constante
 
-useEffect(() => {
-  try {
-    const stats = generateWuxingDefaultStatistics(DEFAULT_ANALYZE_SCORES);
+  // Efeito 1: Carrega os dados principais (statsData)
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const stats = generateWuxingDefaultStatistics(DEFAULT_ANALYZE_SCORES);
+        setStatsData(stats);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadStats();
+  }, []);
 
-    setStatsData(stats);
-  } catch (err) {
-    setError(err.message);
-  } finally {
-    setIsLoading(false);
-  }
-}, []);
+  // Efeito 2: Calcula as estatísticas derivadas *após* statsData estar carregado
+  useEffect(() => {
+    const calculateDerivedStats = () => {
+      if (!statsData || !statsData.defaultData) return;
+      
+      // ******* CORREÇÃO APLICADA AQUI *******
+      // Garante que as listas de times sejam lidas DENTRO do useEffect
+      const serieATeams = statsData.defaultData.teamsA || [];
+      const serieBTeams = statsData.defaultData.teamsB || [];
+      // ***************************************
+
+      // Lógica para calcular o Top 10 da Tríade de Madeira
+      const woodTrineTeams = serieATeams.map(team => {
+        let successes = 0;
+        let totalGames = 0;
+        const winningElements = { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 };
+        console.log(team);
+        if(team.history)
+        team.history.flat().forEach(game => {
+          const gameDate = parseGameDate(game.date);
+          const gameBazi = getBaziForDate(gameDate);
+          if (!gameBazi || !gameBazi.gzMonth) return;
+
+          const monthBranch = gameBazi.gzMonth.charAt(1);
+          if (woodTrineBranches.includes(monthBranch)) {
+            totalGames++;
+            if (game.result === 'C') {
+              successes++;
+              const gamePercentages = calculateWuXing(gameBazi, null, DEFAULT_ANALYZE_SCORES);
+              if (gamePercentages) {
+                const dominantElement = (Object.keys(gamePercentages) || []).reduce((a, b) => gamePercentages[a] > gamePercentages[b] ? a : b);
+                if (winningElements.hasOwnProperty(dominantElement)) {
+                  winningElements[dominantElement]++;
+                }
+              }
+            }
+          }
+        });
+
+        return {
+          ...team, successRate: totalGames > 0 ? Math.round((successes / totalGames) * 100) : 0, totalGames, successes, winningElements
+        };
+      });
+
+      const finalTopWoodTrineTeams = woodTrineTeams
+        .filter(team => team.totalGames > 3)
+        .sort((a, b) => b.successRate - a.successRate)
+        .slice(0, 10);
+      setTopWoodTrineTeams(finalTopWoodTrineTeams);
+
+      // Lógica para times com mais vitórias em dias de Fogo >= 33%
+      const highFireTeams = serieATeams.map(team => {
+        let highFireWins = 0;
+        console.log(team);
+        if(team.history)
+        team.history.flat().forEach(game => {
+          if (game.result === 'C') {
+            const gameDate = parseGameDate(game.date);
+            const gameBazi = getBaziForDate(gameDate);
+            if (!gameBazi) return;
+
+            const gamePercentages = calculateWuXing(gameBazi, null, DEFAULT_ANALYZE_SCORES);
+            if (gamePercentages && gamePercentages.fire >= 33) {
+              highFireWins++;
+            }
+          }
+        });
+        return { ...team, wins: highFireWins };
+      });
+
+      const finalTopHighFireTeams = highFireTeams
+        .filter(team => team.wins > 0)
+        .sort((a, b) => b.wins - a.wins)
+        .slice(0, 10);
+      setTopHighFireTeams(finalTopHighFireTeams);
+
+      // Lógica para agrupar taxa de acerto por diferença de score
+      const scoreVarianceRanges = {
+        '0-15': { successes: 0, totalGames: 0 },
+        '16-30': { successes: 0, totalGames: 0 },
+        '31-50': { successes: 0, totalGames: 0 },
+        '51+': { successes: 0, totalGames: 0 },
+      };
+
+      const allGames = [...serieATeams, ...serieBTeams] // Agora serieATeams e serieBTeams estão definidos
+        .flatMap(team => {
+          if(team.history){
+          team.history.flat()}
+    });
+
+      const processedGames = new Set();
+      allGames.forEach(game => {
+        if(!game || !game.date || !game.teamA || !game.teamB) return;
+        const gameId = `${game.date}-${game.teamA}-${game.teamB}`;
+        if (processedGames.has(gameId) || !game.scoreA || !game.scoreB) return;
+        processedGames.add(gameId);
+
+        const scoreDiff = Math.abs(game.scoreA.score - game.scoreB.score);
+        let rangeKey;
+        if (scoreDiff <= 15) rangeKey = '0-15';
+        else if (scoreDiff <= 30) rangeKey = '16-30';
+        else if (scoreDiff <= 50) rangeKey = '31-50';
+        else rangeKey = '51+';
+
+        scoreVarianceRanges[rangeKey].totalGames++;
+        if (game.result === 'C') {
+          scoreVarianceRanges[rangeKey].successes++;
+        }
+      });
+
+      const finalScoreVarianceData = Object.entries(scoreVarianceRanges).map(([range, stats]) => ({
+        range, ...stats, successRate: stats.totalGames > 0 ? (stats.successes / stats.totalGames) * 100 : 0
+      }));
+      setScoreVarianceData(finalScoreVarianceData);
+
+      // Função para calcular as categorias de erro para uma lista de times
+      const calculateErrorCategories = (teams) => {
+        if (!teams) return [];
+        return teams.map(team => {
+          const errorCategories = {
+            predictedLossWon: { total: 0, elements: { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 } },
+            wrongResultDraw: { total: 0, elements: { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 } },
+            predictedWinLost: { total: 0, elements: { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 } },
+          };
+        console.log(team);
+        if(team.history)
+          team.history.flat().forEach(game => {
+            if (game.result === 'X') {
+              const isTeamA = team.name === game.teamA;
+              let category = null;
+
+              if ((isTeamA && game.resultadoPredito === 'b' && game.resultadoReal === 'a') ||
+                  (!isTeamA && game.resultadoPredito === 'a' && game.resultadoReal === 'b')) {
+                category = 'predictedLossWon';
+              } else if (game.resultadoReal === 'empate' && game.resultadoPredito !== 'empate') {
+                category = 'wrongResultDraw';
+              } else if ((isTeamA && game.resultadoPredito === 'a' && game.resultadoReal === 'b') ||
+                       (!isTeamA && game.resultadoPredito === 'b' && game.resultadoReal === 'a')) {
+                category = 'predictedWinLost';
+              }
+
+              if (category) {
+                errorCategories[category].total++;
+                const gameDate = parseGameDate(game.date);
+                const gameBazi = getBaziForDate(gameDate);
+                if (gameBazi) {
+                  const gamePercentages = calculateWuXing(gameBazi, null, DEFAULT_ANALYZE_SCORES);
+                  if (gamePercentages) {
+                    const dominantElement = Object.keys(gamePercentages).reduce((a, b) => gamePercentages[a] > gamePercentages[b] ? a : b);
+                    if (errorCategories[category].elements.hasOwnProperty(dominantElement)) {
+                      errorCategories[category].elements[dominantElement]++;
+                    }
+                  }
+                }
+              }
+            }
+          });
+          return { ...team, errorCategories };
+        });
+      };
+
+      const finalTeamsAWithErrors = calculateErrorCategories(serieATeams, DEFAULT_ANALYZE_SCORES);
+      const finalTeamsBWithErrors = calculateErrorCategories(serieBTeams, DEFAULT_ANALYZE_SCORES);
+      setTeamsAWithErrors(finalTeamsAWithErrors);
+      setTeamsBWithErrors(finalTeamsBWithErrors);
+
+
+      const generateErrorAnalysisObject = (teams) => {
+        if (!teams) return {};
+        return teams.reduce((acc, team) => {
+          const beneficos = team.errorCategories.predictedLossWon.elements;
+          const maleficos = team.errorCategories.predictedWinLost.elements;
+
+          const filteredBeneficos = Object.fromEntries(Object.entries(beneficos).filter(([, count]) => count >= 3));
+          const filteredMaleficos = Object.fromEntries(Object.entries(maleficos).filter(([, count]) => count >= 3));
+
+          if (Object.keys(filteredBeneficos).length > 0 || Object.keys(filteredMaleficos).length > 0) {
+            acc[team.name] = {
+              elementos_beneficos: filteredBeneficos,
+              elementos_maleficos: filteredMaleficos,
+            };
+          }
+          return acc;
+        }, {});
+      };
+
+      setErrorAnalysisA(generateErrorAnalysisObject(finalTeamsAWithErrors));
+      setErrorAnalysisB(generateErrorAnalysisObject(finalTeamsBWithErrors));
+    };
+
+    // Dependência do useEffect permanece [statsData]
+    calculateDerivedStats();
+  }, [statsData]);;
 
   if (isLoading) {
     return <div className={styles.loadingMessage}>Carregando estatísticas...</div>;
@@ -422,6 +780,7 @@ useEffect(() => {
     return <div className={styles.loadingMessage}>Nenhum dado de estatística encontrado.</div>;
   }
 
+
   // Desestrutura os dados de coerência
   const { 
     fireCoherenceStats, 
@@ -433,24 +792,19 @@ useEffect(() => {
     bestScoresByCoherence 
   } = statsData;
 
-  const getBestRate = (element) => {
-      const result = bestScoresByCoherence?.[element];
-      return result ? `` : '';
-  };
-
   return (
     <div style={{ paddingBottom: '50px' }}>
-      
-     
-      
+   
+
+    
+
       <hr />
       <h1>Estatísticas Padrão por Mês Lunar</h1>
       <hr />
-
       {/* Tabela Padrão Série A */}
       <TeamStatsTable
         title="Série A (Padrão)"
-        teamsWithStats={statsData.defaultData?.teamsA}
+        teamsWithStats={teamsAWithErrors}
         monthlyStats={statsData.defaultData?.monthlyA}
         teamTrineStats={teamCoherenceStats} // Passa as novas estatísticas de coerência por time
       />
@@ -458,7 +812,7 @@ useEffect(() => {
       {/* Tabela Padrão Série B */}
       <TeamStatsTable
         title="Série B (Padrão)"
-        teamsWithStats={statsData.defaultData?.teamsB}
+        teamsWithStats={teamsBWithErrors}
         monthlyStats={statsData.defaultData?.monthlyB}
         teamTrineStats={teamCoherenceStats} // Passa as novas estatísticas de coerência por time
       />
@@ -467,32 +821,55 @@ useEffect(() => {
 
       {/* Tabela de Coerência Fogo */}
       <CoherenceTable 
-        title={`🔥 Jogos em Dias de Coerência Fogo ${getBestRate('FIRE')}` } 
+        title={`🔥 Jogos em Dias de Coerência Fogo` } 
         stats={fireCoherenceStats} 
       />
       
       {/* Tabela de Coerência Metal */}
       <CoherenceTable 
-        title={`⚙️ Jogos em Dias de Coerência Metal ${getBestRate('METAL')}`} 
+        title={`⚙️ Jogos em Dias de Coerência Metal`} 
         stats={metalCoherenceStats} 
       />
       
       {/* Tabela de Coerência Madeira */}
       <CoherenceTable 
-        title={`🌳 Jogos em Dias de Coerência Madeira ${getBestRate('WOOD')}`} 
+        title={`🌳 Jogos em Dias de Coerência Madeira`} 
         stats={woodCoherenceStats} 
       />
 
       {/* Tabela de Coerência Água */}
       <CoherenceTable 
-        title={`💧 Jogos em Dias de Coerência Água ${getBestRate('WATER')}`} 
+        title={`💧 Jogos em Dias de Coerência Água`} 
         stats={waterCoherenceStats} 
       />
 
       {/* Tabela de Coerência Terra */}
       <CoherenceTable 
-        title={`⛰️ Jogos em Dias de Coerência Terra ${getBestRate('EARTH')}`} 
+        title={`⛰️ Jogos em Dias de Coerência Terra`} 
         stats={earthCoherenceStats} 
+      />
+
+      <hr />
+         <TopWinsChart
+        title="🔥 Top 10 Times com Vitórias em Dias de Fogo (>= 33%)"
+        stats={topHighFireTeams}
+      />
+      <TopTeamsTable 
+        title="🏆 Top 10 Times na Tríade de Madeira (Coelho, Cabra, Porco)"
+        stats={topWoodTrineTeams}
+      />
+      <ScoreVarianceChart
+        title="📊 Taxa de Acerto por Diferença de Score"
+        data={scoreVarianceData}
+      />
+      <ErrorAnalysisTextArea
+        title="🔬 Análise de Erros - Elementos Preponderantes (Série A)"
+        data={errorAnalysisA}
+      />
+
+      <ErrorAnalysisTextArea
+        title="🔬 Análise de Erros - Elementos Preponderantes (Série B)"
+        data={errorAnalysisB}
       />
     </div>
   );

@@ -77,8 +77,14 @@ export const hardcodedTeams = [
     {
         nome: "Flamengo",
         img: "image008.png",
+        // elemento_ano: "乙",
+        // animal_ano: "未",//antigo
+        // elemento_mes: "丁",
+        // animal_mes: "亥",
+        // elemento_dia: "戊",                 
+        // animal_dia: "辰",
         elemento_ano: "辛",
-        animal_ano: "亥",
+        animal_ano: "亥",//novo
         elemento_mes: "戊",
         animal_mes: "戌",
         elemento_dia: "壬",  
@@ -314,7 +320,7 @@ export const hardcodedTeams = [
         animal_dia: "卯",
     },
     {
-        nome: "Athletic",
+        nome: "Athletic Club",
         img: "image029.png",
         elemento_ano: "己",
         animal_ano: "酉",
@@ -365,16 +371,16 @@ export const hardcodedTeams = [
     animal_dia: "午"
   },
   // 2. Botafogo-SP (Fundado em: 1918-10-12) - Extraído de image035.png
-  // {
-  //   nome: "Botafogo-SP",
-  //   img: "image035.png",
-  //   elemento_ano: "戊",
-  //   animal_ano: "午",
-  //   elemento_mes: "壬",
-  //   animal_mes: "戌",
-  //   elemento_dia: "壬",
-  //   animal_dia: "辰"
-  // },
+  {
+    nome: "Botafog-SP",
+    img: "image035.png",
+    elemento_ano: "戊",
+    animal_ano: "午",
+    elemento_mes: "壬",
+    animal_mes: "戌",
+    elemento_dia: "壬",
+    animal_dia: "辰"
+  },
   // 3. Operário Ferroviário EC (Fundado em: 1912-05-01) - Extraído de image041.png
   {
     nome: "Operário-PR",

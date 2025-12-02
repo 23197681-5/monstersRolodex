@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import styles from './next-games.module.css';
-import BaziPage from '../../../pages/bazi';
-import { serieA, serieB } from '../../lib/teams';
+import BaziPage from '../../../pages/bazi-chart';
+import { serieA, serieB } from '../../lib/brasileirao-a-b-table';
   
 const allTeams = [...serieA, ...serieB];
 const getTeamLogo = (teamName) => {
@@ -12,45 +12,78 @@ const getTeamLogo = (teamName) => {
 
 const getFallbackGames = () => {
   const currentYear = new Date().getFullYear();
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-
-  const parseDate = (dateStr, timeStr) => {
-    const [hour, minute] = timeStr.split(':');
-    let date;
-    if (dateStr === 'Tomorrow') {
-      date = new Date(tomorrow);
-      date.setHours(hour, minute, 0, 0);
-    } else {
-      date = new Date(`${dateStr}, ${currentYear} ${timeStr}`);
+  function addOneMonth(date) {
+    // 1. Cria uma cópia da data para não modificar a original
+    const newDate = new Date(date.getTime());
+    
+    // 2. Obtém o mês atual (0 = Jan, 11 = Dez)
+    const currentMonth = newDate.getMonth();
+    
+    // 3. Define o mês para o próximo mês (currentMonth + 1)
+    newDate.setMonth(currentMonth);
+    
+    // 4. Retorna a nova data
+    return newDate;
+}
+  function parseDate(dateStr, timeStr) {
+    // Exemplo: dateStr = 'Dez 02', timeStr = '19:00'
+    const currentYear = new Date().getFullYear(); 
+    
+    // Mapeamento de abreviações em Português (e capitalização)
+    const monthMap = {
+    'Jan': 'Jan',
+    'Fev': 'Feb', // Ou 'Feb' (Fevereiro)
+    'Mar': 'Mar',
+    'Abr': 'Apr', // Ou 'Apr' (Abril)
+    'Mai': 'May', // Ou 'May' (Maio)
+    'Jun': 'Jun',
+    'Jul': 'Jul',
+    'Ago': 'Aug', // Ou 'Aug' (Agosto)
+    'Set': 'Sep', // Ou 'Sep' (Setembro)
+    'Out': 'Oct',
+    'Nov': 'Nov',
+    'Dez': 'Dec'
+};
+    
+    const [monthAbbrPt, day] = dateStr.split(' ');
+    
+    // Converte 'Dez' para 'Dec'
+    const monthAbbrEn = monthMap[monthAbbrPt];
+    
+    // Monta a string no formato seguro americano: "Dec 02, 2025 19:00"
+    const safeDateString = `${monthAbbrEn} ${day}, ${currentYear} ${timeStr}`;
+    
+    const date = addOneMonth(new Date(safeDateString));
+    
+    // console.log(`safeDateString: ${safeDateString}`); // Para depuração
+    
+    // Verifica se a data é válida antes de chamar toISOString()
+    if (isNaN(date.getTime())) {
+        return 'Invalid Date'; // Ou joga um erro
     }
+    
     return date.toISOString();
-  };
+}
 
-  return [
-    // { teamA: 'Corinthians', teamB: 'São Paulo', datetime: parseDate('Nov 20', '18:30') },
-    // { teamA: 'Ceará', teamB: 'Internacional', datetime: parseDate('Nov 20', '20:30') },
-    { teamA: 'Botafogo', teamB: 'Grêmio', datetime: parseDate('Nov 22', '18:30') },
-    { teamA: 'Palmeiras', teamB: 'Fluminense', datetime: parseDate('Nov 22', '20:30') },
-    { teamA: 'Flamengo', teamB: 'Bragantino', datetime: parseDate('Nov 22', '20:30') },
-    { teamA: 'Bahia', teamB: 'Vasco', datetime: parseDate('Nov 23', '15:00') },
-    { teamA: 'São Paulo', teamB: 'Juventude', datetime: parseDate('Nov 23', '15:00') },
-    { teamA: 'Sport', teamB: 'Vitória', datetime: parseDate('Nov 23', '17:30') },
-    { teamA: 'Cruzeiro', teamB: 'Corinthians', datetime: parseDate('Nov 23', '19:30') },
-    { teamA: 'Mirassol', teamB: 'Ceará', datetime: parseDate('Nov 24', '18:00') },
-    { teamA: 'Internacional', teamB: 'Santos', datetime: parseDate('Nov 24', '20:00') },
-    { teamA: 'Atlético-MG', teamB: 'Flamengo', datetime: parseDate('Nov 25', '20:30') },
-    { teamA: 'Grêmio', teamB: 'Palmeiras', datetime: parseDate('Nov 25', '20:30') },
-    { teamA: 'Bragantino', teamB: 'Fortaleza', datetime: parseDate('Nov 26', '18:00') },
-    { teamA: 'Fluminense', teamB: 'São Paulo', datetime: parseDate('Nov 27', '19:30') },
-    { teamA: 'Juventude', teamB: 'Bahia', datetime: parseDate('Nov 28', '18:00') },
-    { teamA: 'Vasco', teamB: 'Internacional', datetime: parseDate('Nov 28', '18:30') },
-    { teamA: 'Santos', teamB: 'Sport', datetime: parseDate('Nov 28', '20:30') },
-    { teamA: 'Vitória', teamB: 'Mirassol', datetime: parseDate('Nov 29', '15:00') },
-    { teamA: 'Palmeiras', teamB: 'Flamengo', datetime: parseDate('Nov 29', '16:00') },
-    { teamA: 'Ceará', teamB: 'Cruzeiro', datetime: parseDate('Nov 29', '19:30') },
-    { teamA: 'Fortaleza', teamB: 'Atlético-MG', datetime: parseDate('Nov 30', '17:30') },
-    { teamA: 'Corinthians', teamB: 'Botafogo', datetime: parseDate('Nov 30', '15:00') },
+  return [  
+    { teamA: 'Vasco', teamB: 'Mirassol', datetime: parseDate('Dez 02', '19:00') },
+    { teamA: 'Grêmio', teamB: 'Fluminense', datetime: parseDate('Dez 02', '21:30') },
+    { teamA: 'Fortaleza', teamB: 'Corinthians', datetime: parseDate('Dez 03', '19:00') },
+    { teamA: 'Juventude', teamB: 'Santos', datetime: parseDate('Dez 03', '19:30') },
+    { teamA: 'São Paulo', teamB: 'Internacional', datetime: parseDate('Dez 03', '20:00') },
+    { teamA: 'Bahia', teamB: 'Sport', datetime: parseDate('Dez 03', '20:00') },
+    { teamA: 'Flamengo', teamB: 'Ceará', datetime: parseDate('Dez 03', '21:30') },
+    { teamA: 'Cruzeiro', teamB: 'Botafogo', datetime: parseDate('Dez 04', '19:30') },
+    { teamA: 'Fluminense', teamB: 'Bahia', datetime: parseDate('Dez 07', '16:00') },
+    { teamA: 'Botafogo', teamB: 'Fortaleza', datetime: parseDate('Dez 07', '16:00') },
+    { teamA: 'Corinthians', teamB: 'Juventude', datetime: parseDate('Dez 07', '16:00') },
+    { teamA: 'Santos', teamB: 'Cruzeiro', datetime: parseDate('Dez 07', '16:00') },
+    { teamA: 'Mirassol', teamB: 'Flamengo', datetime: parseDate('Dez 07', '16:00') },
+    { teamA: 'Atlético-MG', teamB: 'Vasco', datetime: parseDate('Dez 07', '16:00') },
+    { teamA: 'Internacional', teamB: 'Bragantino', datetime: parseDate('Dez 07', '16:00') },
+    { teamA: 'Vitória', teamB: 'São Paulo', datetime: parseDate('Dez 07', '16:00') },
+    { teamA: 'Ceará', teamB: 'Palmeiras', datetime: parseDate('Dez 07', '16:00') },
+    { teamA: 'Sport', teamB: 'Grêmio', datetime: parseDate('Dez 07', '16:00') }
   ];
 };
 
@@ -63,19 +96,19 @@ const NextGames = ({ onCalculateWuXing }) => {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        setIsLoading(true);
-        const response = await fetch('/api/get-upcoming-games');
-        if (!response.ok) {
+        // setIsLoading(true);
+        // const response = await fetch('/api/get-upcoming-games');
+        // if (!response.ok) {
 
           setUpcomingGames(getFallbackGames());
-          console.log('Falha ao buscar os jogos.', response);
-        }
-        const data = await response.json();
-        if (data && data.length > 0) {
-          setUpcomingGames(data);
-        } else {
-          setUpcomingGames(getFallbackGames());
-        }
+          // console.log('Falha ao buscar os jogos.', response);
+        // }
+        // const data = await response.json();
+        // if (data && data.length > 0) {
+        //   setUpcomingGames(data);
+        // } else {
+        //   setUpcomingGames(getFallbackGames());
+        // }
       } catch (err) {
         setError(err.message);
         setUpcomingGames(getFallbackGames()); // Usa o fallback em caso de erro na API

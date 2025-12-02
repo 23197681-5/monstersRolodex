@@ -24,7 +24,31 @@ export const CONTROL_CYCLE = {
   fire: "metal",
   metal: "wood"
 };
+/**
+ * Define o ciclo de ser GERADO POR (Elemento 'Mãe').
+ * Onde o elemento no lado esquerdo é GERADO POR (É o filho de) o elemento no lado direito.
+ * Você pode usar isso para o Raciocínio (Recursos - Zheng Yin / Pian Yin).
+ */
+export const GENERATED_CYCLE = {
+    fire: "wood",
+    earth: "fire",
+    metal: "earth",
+    water: "metal",
+    wood: "water"
+};
 
+/**
+ * Define o ciclo de ser CONTROLADO POR (Elemento 'Controlador').
+ * Onde o elemento no lado esquerdo é CONTROLADO POR (É a vítima de) o elemento no lado direito.
+ * Você pode usar isso para o Poder/Autoridade (Zheng Guan / Qi Sha).
+ */
+export const CONTROLLED_CYCLE = {
+    earth: "wood",
+    water: "earth",
+    fire: "water",
+    metal: "fire",
+    wood: "metal"
+};
 export const FIRE_ANIMALS = ["寅", "午", "戌", "巳"];
 export const METAL_ANIMALS = ["申", "酉", "丑", "巳"];
 
@@ -89,6 +113,15 @@ export const BRANCH_COMBINATIONS = {
   "未": "午"
 };
 
+// Combinações Cardeais (Direcionais)
+export const DIRECTIONAL_COMBINATIONS = {
+  wood: ['寅', '卯', '辰'], // Leste
+  fire: ['巳', '午', '未'], // Sul
+  metal: ['申', '酉', '戌'], // Oeste
+  water: ['亥', '子', '丑'], // Norte
+};
+
+
 // -------------------------------------------------------------
 //  Punições
 // -------------------------------------------------------------
@@ -98,14 +131,6 @@ export const BRANCH_PENALTIES = [
   ["丑", "戌", "未"],
   ["辰", "辰"]
 ];
-const BRANCH_HARMONY = {
-  '子': '丑', '丑': '子',
-  '寅': '亥', '亥': '寅',
-  '卯': '戌', '戌': '卯',
-  '辰': '酉', '酉': '辰',
-  '午': '未', '未': '午',
-  '申': '巳', '巳': '申',
-};
 const BRANCH_CONFLICT = {
   '子': '午', '午': '子',
   '丑': '未', '未': '丑',
@@ -117,7 +142,7 @@ const BRANCH_CONFLICT = {
 const TRIADS = [
   { branches: ['亥', '卯', '未'], element: 'wood', centralBranch: '卯' }, // Madeira (Porco, Coelho, Cabra)
   { branches: ['寅', '午', '戌'], element: 'fire', centralBranch: '午' }, // Fogo (Tigre, Cavalo, Cão)
-  { branches: ['巳', '酉', '丑'], element: 'metal', centralBranch: 'metal' }, // Metal (Serpente, Galo, Boi)
+  { branches: ['巳', '酉', '丑'], element: 'metal', centralBranch: '酉' }, // Metal (Serpente, Galo, Boi)
   { branches: ['申', '子', '辰'], element: 'water', centralBranch: '子' }, // Água (Macaco, Rato, Dragão)
 ];
 
@@ -136,7 +161,7 @@ const HARMS = [
 const TRIAD_BONUS_PERCENTAGES = {
     FULL_TRIAD: 35,    // Bônus para Tríade completa (ex: 35% de força de Água)
     VISIBILE_SEMI: 25, // Bônus para Semi-Tríade + Tronco Celestial visível
-    PURE_SEMI: 15,     // Bônus para Semi-Tríade (Ramo Meio presente) sem Tronco visível
+    PURE_SEMI: 15,         // Bônus para Semi-Tríade (Ramo Meio presente) sem Tronco visível
 };
 
 
@@ -148,140 +173,334 @@ const VISIBLE_STEMS = {
   water: ['壬', '癸'],
   earth: ['戊', '己'], // Terra raramente usa Tríade, mas está aqui para completude
 };
+let statistics = {};
 
-const BEST_SCORES_BY_COHERENCE = {
-    "GENERAL": {
+export async function initializeScores() {
+  let statistics = {};
+  try {
+    // The path is relative to the `public` directory at runtime.
+    let statsModule = await import('../../public/statistics.json', { assert: { type: 'json' } });
+    statistics = statsModule.default;
+  } catch (error) {
+    // If the file is not found, we'll just use an empty object and fall back to defaults.
+    if (error.code !== 'ERR_MODULE_NOT_FOUND') {
+      console.error("Error loading statistics.json:", error);
+    }
+  }
+
+  const baseScores = statistics?.bestScoresByCoherence?.GENERAL?.scores || {};
+
+  let DEFAULT_ANALYZE_SCORES = { ...baseScores };
+  return DEFAULT_ANALYZE_SCORES;
+}
+
+export async function initializeElementsScores() {
+  let statistics = {};
+  try {
+    // The path is relative to the `public` directory at runtime.
+    let statsModule = await import('../../public/statistics.json', { assert: { type: 'json' } });
+    statistics = statsModule.default;
+  } catch (error) {
+    // If the file is not found, we'll just use an empty object and fall back to defaults.
+    if (error.code !== 'ERR_MODULE_NOT_FOUND') {
+      console.error("Error loading statistics.json:", error);
+    }
+  }
+
+  const fireScores = statistics?.bestScoresByCoherence?.FIRE?.scores || {};
+  const woodScores = statistics?.bestScoresByCoherence?.WOOD?.scores || {};
+  const earthScores = statistics?.bestScoresByCoherence?.EARTH?.scores || {};
+  const metalScores = statistics?.bestScoresByCoherence?.METAL?.scores || {};
+  const waterScores = statistics?.bestScoresByCoherence?.WATER?.scores || {}; 
+
+  let FIRE_SCORES = { ...fireScores };
+  let WOOD_SCORES = { ...woodScores };
+  let EARTH_SCORES = { ...earthScores };
+  let METAL_SCORES = { ...metalScores };
+  let WATER_SCORES = { ...waterScores };
+  return {
+    FIRE: FIRE_SCORES,
+    WOOD: WOOD_SCORES,
+    EARTH: EARTH_SCORES,
+    METAL: METAL_SCORES,
+    WATER: WATER_SCORES
+  };
+}
+
+export let DEFAULT_ANALYZE_SCORES = await initializeScores();
+export let ELEMENT_SCORES = {
+    "FIRE": {
+      "rate": 80,
+      "count": 13,
+      "total": 25,
       "scores": {
-       "day_master_strength_weight": 2.05,
-        "branch_interactions_weight": 32.12,
-        "excess_deficiency_weight": 11.58,
-        "seasonal_dominance_weight": 19.52,
-        "qi_sha_penalty_weight": 34.74,
-        "mystical_trine_weight": 10,
+        "pillar_weight_year": 0.79,
+        "pillar_weight_month": 1.45,
+        "pillar_weight_day": 1.49,
+        "pillar_weight_hour": 1.11,
+        "dm_strength_ratio_extremely_strong": 3.79,
+        "dm_strength_ratio_strong": 0.92,
+        "dm_strength_ratio_extremely_weak": 0.24,
+        "dm_strength_ratio_weak": 0.74,
+        "day_master_strength_weight": 14.77,
+        "branch_interactions_weight": 5.78,
+        "excess_deficiency_weight": 12.38,
+        "seasonal_dominance_weight": 5.09,
+        "qi_sha_penalty_weight": 8.51,
+        "mystical_trine_bonus": 15.47,
+        "mystical_trine_penalty": 1.6,
+        "stem_combination_bonus": 6.64,
+        "stem_combination_penalty": 15.94,
+        "branch_clash_penalty": 12.11,
+        "earth_clash_penalty": 15.78,
+        "earth_punishment_penalty": 4.72,
+        "ten_god_analysis_weight": 12.16,
+        "ten_god_bonus_zheng_guan": 9.61,
+        "ten_god_bonus_zheng_cai": 8.26,
+        "ten_god_bonus_pian_cai": 4.07,
+        "cardinal_combination_bonus": 10.98,
+        "movement_combination_bonus": 11.33,
+        "secret_friendship_bonus": 13.86,
+        "secret_enmity_penalty": 11.74,
+        "punishment_penalty": 10.35,
+        "normalization_offset_general": 8.42,
+        "normalization_offset_fire": 1.63,
+        "normalization_offset_metal": 6.16,
+        "normalization_offset_wood": 6.81,
+        "normalization_offset_water": 11.16,
+        "normalization_offset_earth": 13.39,
+        "favorable_useful_element_multiplier": 1.49,
+        "unfavorable_useful_element_multiplier": 0.61,
+        "dm_strength_seasonal_bonus_multiplier": 1.94,
+        "dm_strength_seasonal_penalty_multiplier": 0.12,
+        "prediction_threshold": 1.88,
         "use_day_master_strength_analysis": true,
         "use_branch_interactions": true,
-        "use_excess_deficiency": false,
+        "use_excess_deficiency": true,
         "use_seasonal_dominance": false,
-        "use_custom_config_for_fire_coherence": true,
-        "use_custom_config_for_metal_coherence": true,
-        "use_custom_config_for_wood_coherence": true,
-        "use_custom_config_for_water_coherence": true,
-        "use_custom_config_for_earth_coherence": true,
-        "triades_can_be_harmfull": true,
-        "mystical_trine_bonus": 1.78,
-        "mystical_trine_penalty": 1.55,
-        "prediction_threshold": 60.78,
-        "favorable_useful_element_multiplier": 0.82,
-        "unfavorable_useful_element_multiplier": 0.95
-      }
-    },
-    "FIRE": {
-      "scores": {
-        "day_master_strength_weight": 2.92,
-        "branch_interactions_weight": 30.36,
-        "excess_deficiency_weight": 22.65,
-        "seasonal_dominance_weight": 14.61,
-        "qi_sha_penalty_weight": 29.45,
-        "mystical_trine_weight": 10,
-        "use_day_master_strength_analysis": true,
-        "use_branch_interactions": false,
-        "use_excess_deficiency": false,
-        "use_seasonal_dominance": false,
-        "triades_can_be_harmfull": true,
-        "mystical_trine_bonus": 1.51,
-        "mystical_trine_penalty": 2.4,
-        "prediction_threshold": 75.96,
-        "favorable_useful_element_multiplier": 0.63,
-        "unfavorable_useful_element_multiplier": 1.22
+        "triades_can_be_harmfull": false,
+        "mystical_trine_can_be_harmful": true,
+        "use_qi_sha_penalty": false
       }
     },
     "METAL": {
+      "rate": 67,
+      "count": 27,
+      "total": 57,
       "scores": {
-      "day_master_strength_weight": 21.57,
-        "branch_interactions_weight": 6.24,
-        "excess_deficiency_weight": 41.77,
-        "seasonal_dominance_weight": 6.66,
-        "qi_sha_penalty_weight": 23.76,
-        "mystical_trine_weight": 10,
-        "use_day_master_strength_analysis": true,
-        "use_branch_interactions": true,
-        "use_excess_deficiency": false,
-        "use_seasonal_dominance": true,
-        "triades_can_be_harmfull": true,
-        "mystical_trine_bonus": 2.26,
-        "mystical_trine_penalty": 1.46,
-        "prediction_threshold": 12.64,
-        "favorable_useful_element_multiplier": 1.14,
-        "unfavorable_useful_element_multiplier": 0.97
-      }
-    },
-    "WOOD": {
-      "scores": {
-        "day_master_strength_weight": 5.71,
-        "branch_interactions_weight": 28.83,
-        "excess_deficiency_weight": 9.27,
-        "seasonal_dominance_weight": 20.51,
-        "qi_sha_penalty_weight": 35.68,
-        "mystical_trine_weight": 10,
-        "use_day_master_strength_analysis": true,
-        "use_branch_interactions": true,
-        "use_excess_deficiency": true,
-        "use_seasonal_dominance": false,
-        "triades_can_be_harmfull": true,
-        "mystical_trine_bonus": 2.45,
-        "mystical_trine_penalty": 3.41,
-        "prediction_threshold": 17.54,
-        "favorable_useful_element_multiplier": 0.61,
-        "unfavorable_useful_element_multiplier": 1.94
-      }
-    },
-    "WATER": {
-      "scores": {
-          "day_master_strength_weight": 43.64,
-        "branch_interactions_weight": 5.53,
-        "excess_deficiency_weight": 26.4,
-        "seasonal_dominance_weight": 9.83,
-        "qi_sha_penalty_weight": 14.61,
-        "mystical_trine_weight": 10,
-        "use_day_master_strength_analysis": true,
-        "use_branch_interactions": true,
-        "use_excess_deficiency": true,
-        "use_seasonal_dominance": true,
-        "triades_can_be_harmfull": true,
-        "mystical_trine_bonus": 1.49,
-        "mystical_trine_penalty": 2.37,
-        "prediction_threshold": 58.12,
-        "favorable_useful_element_multiplier": 1.46,
-        "unfavorable_useful_element_multiplier": 1.27
-      }
-    },
-    "EARTH": {
-      "scores": {
-          "day_master_strength_weight": 46.2,
-        "branch_interactions_weight": 2.18,
-        "excess_deficiency_weight": 9.33,
-        "seasonal_dominance_weight": 10.04,
-        "qi_sha_penalty_weight": 32.25,
-        "mystical_trine_weight": 10,
+        "pillar_weight_year": 0.85,
+        "pillar_weight_month": 2.24,
+        "pillar_weight_day": 1.47,
+        "pillar_weight_hour": 2.64,
+        "dm_strength_ratio_extremely_strong": 3.36,
+        "dm_strength_ratio_strong": 0.64,
+        "dm_strength_ratio_extremely_weak": 0.01,
+        "dm_strength_ratio_weak": 0.33,
+        "day_master_strength_weight": 12.49,
+        "branch_interactions_weight": 7.17,
+        "excess_deficiency_weight": 1.86,
+        "seasonal_dominance_weight": 3.11,
+        "qi_sha_penalty_weight": 11.78,
+        "mystical_trine_bonus": 7.88,
+        "mystical_trine_penalty": 13.84,
+        "stem_combination_bonus": 2.61,
+        "stem_combination_penalty": 13.62,
+        "branch_clash_penalty": 4.87,
+        "earth_clash_penalty": 5.5,
+        "earth_punishment_penalty": 12.09,
+        "ten_god_analysis_weight": 2.86,
+        "ten_god_bonus_zheng_guan": 2.36,
+        "ten_god_bonus_zheng_cai": 13.33,
+        "ten_god_bonus_pian_cai": 2.2,
+        "cardinal_combination_bonus": 14.86,
+        "movement_combination_bonus": 11.24,
+        "secret_friendship_bonus": 13.38,
+        "secret_enmity_penalty": 1.4,
+        "punishment_penalty": 9.27,
+        "normalization_offset_general": 1.17,
+        "normalization_offset_fire": 15.37,
+        "normalization_offset_metal": 10.39,
+        "normalization_offset_wood": 4.38,
+        "normalization_offset_water": 12.78,
+        "normalization_offset_earth": 12.45,
+        "favorable_useful_element_multiplier": 0.76,
+        "unfavorable_useful_element_multiplier": 0.53,
+        "dm_strength_seasonal_bonus_multiplier": 2,
+        "dm_strength_seasonal_penalty_multiplier": 0.31,
+        "prediction_threshold": 1.1,
         "use_day_master_strength_analysis": true,
         "use_branch_interactions": true,
         "use_excess_deficiency": true,
         "use_seasonal_dominance": true,
         "triades_can_be_harmfull": false,
-        "mystical_trine_bonus": 2.65,
-        "mystical_trine_penalty": 1.3,
-        "prediction_threshold": 60.27,
-        "favorable_useful_element_multiplier": 1.04,
-        "unfavorable_useful_element_multiplier": 1.6
+        "mystical_trine_can_be_harmful": true,
+        "use_qi_sha_penalty": true
+      }
+    },
+    "WOOD": {
+      "rate": 73,
+      "count": 5,
+      "total": 14,
+      "scores": {
+        "pillar_weight_year": 1.82,
+        "pillar_weight_month": 0.89,
+        "pillar_weight_day": 0.68,
+        "pillar_weight_hour": 0.7,
+        "dm_strength_ratio_extremely_strong": 3.8,
+        "dm_strength_ratio_strong": 0.89,
+        "dm_strength_ratio_extremely_weak": 0.36,
+        "dm_strength_ratio_weak": 0.62,
+        "day_master_strength_weight": 12.01,
+        "branch_interactions_weight": 13.7,
+        "excess_deficiency_weight": 2.82,
+        "seasonal_dominance_weight": 5.82,
+        "qi_sha_penalty_weight": 10.46,
+        "mystical_trine_bonus": 6.01,
+        "mystical_trine_penalty": 13.25,
+        "stem_combination_bonus": 5.31,
+        "stem_combination_penalty": 1.61,
+        "branch_clash_penalty": 2.42,
+        "earth_clash_penalty": 7.54,
+        "earth_punishment_penalty": 2.55,
+        "ten_god_analysis_weight": 14.01,
+        "ten_god_bonus_zheng_guan": 6.84,
+        "ten_god_bonus_zheng_cai": 15.04,
+        "ten_god_bonus_pian_cai": 15.17,
+        "cardinal_combination_bonus": 5.42,
+        "movement_combination_bonus": 7.46,
+        "secret_friendship_bonus": 7.05,
+        "secret_enmity_penalty": 13.08,
+        "punishment_penalty": 1.61,
+        "normalization_offset_general": 1.44,
+        "normalization_offset_fire": 1.23,
+        "normalization_offset_metal": 1.1,
+        "normalization_offset_wood": 13.77,
+        "normalization_offset_water": 5.64,
+        "normalization_offset_earth": 3.38,
+        "favorable_useful_element_multiplier": 1.7,
+        "unfavorable_useful_element_multiplier": 0.23,
+        "dm_strength_seasonal_bonus_multiplier": 2.2,
+        "dm_strength_seasonal_penalty_multiplier": 0.91,
+        "prediction_threshold": 4.94,
+        "use_day_master_strength_analysis": true,
+        "use_branch_interactions": false,
+        "use_excess_deficiency": true,
+        "use_seasonal_dominance": false,
+        "triades_can_be_harmfull": false,
+        "mystical_trine_can_be_harmful": false,
+        "use_qi_sha_penalty": true
+      }
+    },
+    "WATER": {
+      "rate": 79,
+      "count": 11,
+      "total": 19,
+      "scores": {
+        "pillar_weight_year": 2.07,
+        "pillar_weight_month": 0.31,
+        "pillar_weight_day": 0.41,
+        "pillar_weight_hour": 2.12,
+        "dm_strength_ratio_extremely_strong": 3.7,
+        "dm_strength_ratio_strong": 1.18,
+        "dm_strength_ratio_extremely_weak": 0.05,
+        "dm_strength_ratio_weak": 0.92,
+        "day_master_strength_weight": 15.05,
+        "branch_interactions_weight": 1.16,
+        "excess_deficiency_weight": 15.22,
+        "seasonal_dominance_weight": 2.47,
+        "qi_sha_penalty_weight": 2.28,
+        "mystical_trine_bonus": 13.98,
+        "mystical_trine_penalty": 8.52,
+        "stem_combination_bonus": 9.9,
+        "stem_combination_penalty": 13.25,
+        "branch_clash_penalty": 10.18,
+        "earth_clash_penalty": 9.32,
+        "earth_punishment_penalty": 11.31,
+        "ten_god_analysis_weight": 4.53,
+        "ten_god_bonus_zheng_guan": 10.91,
+        "ten_god_bonus_zheng_cai": 11.14,
+        "ten_god_bonus_pian_cai": 15.82,
+        "cardinal_combination_bonus": 7.15,
+        "movement_combination_bonus": 12.17,
+        "secret_friendship_bonus": 2.58,
+        "secret_enmity_penalty": 14.89,
+        "punishment_penalty": 13.59,
+        "normalization_offset_general": 5.06,
+        "normalization_offset_fire": 9.75,
+        "normalization_offset_metal": 15.1,
+        "normalization_offset_wood": 11.36,
+        "normalization_offset_water": 2.84,
+        "normalization_offset_earth": 7.34,
+        "favorable_useful_element_multiplier": 1.65,
+        "unfavorable_useful_element_multiplier": 1.42,
+        "dm_strength_seasonal_bonus_multiplier": 1.16,
+        "dm_strength_seasonal_penalty_multiplier": 0.87,
+        "prediction_threshold": 1.56,
+        "use_day_master_strength_analysis": true,
+        "use_branch_interactions": true,
+        "use_excess_deficiency": true,
+        "use_seasonal_dominance": true,
+        "triades_can_be_harmfull": true,
+        "mystical_trine_can_be_harmful": true,
+        "use_qi_sha_penalty": false
+      }
+    },
+    "EARTH": {
+      "rate": 82,
+      "count": 9,
+      "total": 17,
+      "scores": {
+        "pillar_weight_year": 0.99,
+        "pillar_weight_month": 1.48,
+        "pillar_weight_day": 0.22,
+        "pillar_weight_hour": 2.83,
+        "dm_strength_ratio_extremely_strong": 1.85,
+        "dm_strength_ratio_strong": 0.81,
+        "dm_strength_ratio_extremely_weak": 0.41,
+        "dm_strength_ratio_weak": 0.78,
+        "day_master_strength_weight": 11.68,
+        "branch_interactions_weight": 1.46,
+        "excess_deficiency_weight": 15.67,
+        "seasonal_dominance_weight": 15.91,
+        "qi_sha_penalty_weight": 6.42,
+        "mystical_trine_bonus": 6.97,
+        "mystical_trine_penalty": 1.57,
+        "stem_combination_bonus": 14.25,
+        "stem_combination_penalty": 12.91,
+        "branch_clash_penalty": 2.94,
+        "earth_clash_penalty": 13.07,
+        "earth_punishment_penalty": 6.06,
+        "ten_god_analysis_weight": 7.46,
+        "ten_god_bonus_zheng_guan": 15.03,
+        "ten_god_bonus_zheng_cai": 7.16,
+        "ten_god_bonus_pian_cai": 10.41,
+        "cardinal_combination_bonus": 3.25,
+        "movement_combination_bonus": 2.39,
+        "secret_friendship_bonus": 4.61,
+        "secret_enmity_penalty": 9.75,
+        "punishment_penalty": 1.07,
+        "normalization_offset_general": 12.3,
+        "normalization_offset_fire": 3.71,
+        "normalization_offset_metal": 14.64,
+        "normalization_offset_wood": 10.84,
+        "normalization_offset_water": 2.17,
+        "normalization_offset_earth": 14.38,
+        "favorable_useful_element_multiplier": 1.8,
+        "unfavorable_useful_element_multiplier": 0.76,
+        "dm_strength_seasonal_bonus_multiplier": 2.64,
+        "dm_strength_seasonal_penalty_multiplier": 0.23,
+        "prediction_threshold": 2.1,
+        "use_day_master_strength_analysis": false,
+        "use_branch_interactions": true,
+        "use_excess_deficiency": true,
+        "use_seasonal_dominance": false,
+        "triades_can_be_harmfull": false,
+        "mystical_trine_can_be_harmful": true,
+        "use_qi_sha_penalty": true
       }
     }
-};
-
-// Define default scores for easy reference and modification
-export const DEFAULT_ANALYZE_SCORES = {
-  ...BEST_SCORES_BY_COHERENCE.GENERAL.scores
-};
-
+}
+  //wait initializeElementsScores();
 // -------------------------------------------------------------
 //  SEASON MULTIPLIERS (Corrigido: multiplos elementos)
 // -------------------------------------------------------------
@@ -300,7 +519,6 @@ export const SEASON_MULTIPLIERS = {
   亥: { water: 1.5, wood: 1.5 }
 };
 
-
 function isHarmBroken(branch, otherBranches) {
     for (const [b1, b2] of HARMS) {
         if ((branch === b1 && otherBranches.includes(b2)) || (branch === b2 && otherBranches.includes(b1))) {
@@ -310,7 +528,43 @@ function isHarmBroken(branch, otherBranches) {
     return false;
 }
 
+/**
+ * Retorna o nome do 10 Deus (Shen) que o targetStem é em relação ao dmStem.
+ * @param {string} dmStem - Tronco Celestial do Mestre do Dia (Time).
+ * @param {string} targetStem - Tronco Celestial do Alvo (Jogo).
+ * @returns {string | null} - Ex: 'Zheng Cai', 'Qi Sha', 'Bi Jian', etc.
+ */
+export function getTenGodRelationship(dmStem, targetStem) {
+    if (!dmStem || !targetStem) return null;
 
+    const dmElement = STEM_ELEMENTS[dmStem].element;
+    const dmPolarity = getElementPolarity(dmStem);
+    const targetElement = STEM_ELEMENTS[targetStem].element;
+    const targetPolarity = getElementPolarity(targetStem);
+    
+    // Mapeamento de 10 Deuses baseado no Ciclo de Geração e Controle (Wu Xing)
+    // E na Polaridade (Yin/Yang)
+    const relationships = {
+        // Gera o DM (Recursos)
+        [GENERATION_CYCLE[dmElement]]: targetPolarity === dmPolarity ? 'Pian Yin' : 'Zheng Yin',
+        // É gerado pelo DM (Expressão)
+        [GENERATED_CYCLE[dmElement]]: targetPolarity === dmPolarity ? 'Shi Shen' : 'Shang Guan',
+        // Controla o DM (Poder/Autoridade)
+        [CONTROL_CYCLE[dmElement]]: targetPolarity === dmPolarity ? 'Qi Sha' : 'Zheng Guan',
+        // É controlado pelo DM (Riqueza)
+        [CONTROLLED_CYCLE[dmElement]]: targetPolarity === dmPolarity ? 'Pian Cai' : 'Zheng Cai',
+        // Idêntico ao DM (Companheiros/Amigos)
+        [dmElement]: targetPolarity === dmPolarity ? 'Bi Jian' : 'Jie Cai',
+    };
+    
+    // Busca o Deus (Shen)
+    for (const el in relationships) {
+        if (el === targetElement) {
+            return relationships[el];
+        }
+    }
+    return null;
+}
 /**
  * Padroniza os dados de entrada do Bazi (que podem vir em formato 'elemento_X/animal_X'
  * ou 'gzYear' etc.) para um formato interno com listas de hastes e ramos.
@@ -331,18 +585,18 @@ function standardizeBaziInput(data) {
     }
     // Caso 2: Entrada já usa 'gzYear', etc. (Copia diretamente)
     else if (data.gzYear) {
-        standardized.gzYear = data.gzYear;
-        standardized.gzMonth = data.gzMonth;
-        standardized.gzDay = data.gzDay;
-        standardized.gzHour = data.gzHour;
+        Object.assign(standardized, data);
     } else {
         return null; // Formato de entrada inválido
     }
 
     // Deriva arrays de stems (Troncos) e branches (Ramos)
-    const gzPillars = [standardized.gzYear, standardized.gzMonth, standardized.gzDay, standardized.gzHour].filter(gz => gz);
-    standardized.stems = gzPillars.map(gz => getGanzhiParts(gz).stem);
-    standardized.branches = gzPillars.map(gz => getGanzhiParts(gz).branch);
+    // Garante que a derivação aconteça mesmo se a entrada já for padronizada.
+    if (!standardized.stems || !standardized.branches) {
+        const gzPillars = [standardized.gzYear, standardized.gzMonth, standardized.gzDay, standardized.gzHour].filter(Boolean);
+        standardized.stems = gzPillars.map(gz => getGanzhiParts(gz).stem);
+        standardized.branches = gzPillars.map(gz => getGanzhiParts(gz).branch);
+    }
 
     return standardized;
 }
@@ -352,12 +606,13 @@ function standardizeBaziInput(data) {
 // -------------------------------------------------------------
 
 function getGanzhiParts(ganzhi) {
-  // console.log(ganzhi);
     if (!ganzhi || ganzhi.length !== 2) return { stem: null, branch: null };
     return { stem: ganzhi.charAt(0), branch: ganzhi.charAt(1) };
 }
 
-export function calculateWuXing(baziData, gameBazi = null) {
+
+export function calculateWuXing(baziData, gameBazi = null, scoresConfig) {
+  // console.log(baziData, gameBazi);
   // 1. Padronizar e Inicializar Pilares
   const primaryBazi = standardizeBaziInput(baziData);
   const secondaryBazi = gameBazi ? standardizeBaziInput(gameBazi) : null;
@@ -366,27 +621,36 @@ export function calculateWuXing(baziData, gameBazi = null) {
 
   const { gzYear, gzMonth, gzDay, gzHour, stems, branches } = primaryBazi;
 
+  // Define dayMasterElement for internal calculations like semi-trines
+  let dayMasterElement = null;
+  if (gzDay) {
+    dayMasterElement = getGanzhiElement(gzDay);
+  }
+
   // NOVO: Unificação de Troncos e Ramos dos dois mapas Bazi (se o secundário existir)
   const secondaryStems = secondaryBazi ? secondaryBazi.stems : [];
   const secondaryBranches = secondaryBazi ? secondaryBazi.branches : [];
+
+  // Define os ramos do time e do jogo para a análise de interação
+  const teamBranches = primaryBazi.branches;
+  const gameBranches = secondaryBazi ? secondaryBazi.branches : [];
 
   const allStems = [...stems, ...secondaryStems];
   const allBranches = [...branches, ...secondaryBranches];
   // FIM NOVO
 
   const pillars = [
-    { ...getGanzhiParts(gzYear), weight: 1.0 },
-    { ...getGanzhiParts(gzMonth), weight: 1.3 }, // Mês mais pesado
-    { ...getGanzhiParts(gzDay), weight: 1.5 } // Dia/Day Master mais pesado
+    { ...getGanzhiParts(gzYear), weight: scoresConfig.pillar_weight_year },
+    { ...getGanzhiParts(gzMonth), weight: scoresConfig.pillar_weight_month }, // Mês mais pesado
+    { ...getGanzhiParts(gzDay), weight: scoresConfig.pillar_weight_day } // Dia/Day Master mais pesado
   ];
 
   if (gzHour) {
-    pillars.push({ ...getGanzhiParts(gzHour), weight: 0.8 }); // Hora menos pesada
+    pillars.push({ ...getGanzhiParts(gzHour), weight: scoresConfig.pillar_weight_hour });
   }
 
   const initialSums = { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 };
   let totalBonusPoints = 0; // Pontos de bônus da Tríade a serem adicionados ao total
-
   // -------------------------------------------------------------
   // 2. Somatório Inicial e Multiplicadores Sazonais (Inalterado)
   // -------------------------------------------------------------
@@ -411,7 +675,8 @@ export function calculateWuXing(baziData, gameBazi = null) {
       initialSums[el] *= SEASON_MULTIPLIERS[monthBranch][el];
     }
   }
-  
+   
+   
   // -------------------------------------------------------------
   // 3. Lógica das Combinações de Troncos (He Hua) e Ramos (Liu He Ju) - NOVO PASSO
   //    (Interação entre Bazi Principal e Jogo)
@@ -433,19 +698,25 @@ export function calculateWuXing(baziData, gameBazi = null) {
   });
 
   // 3B. Combinações de Ramos (Liu He Ju)
-  BRANCH_COMBINATIONS_WEIGTHS.forEach(combination => {
-    const [branch1, branch2] = combination.pair;
-    const { element, bonus } = combination;
-    
-    // Verifica se os dois ramos estão presentes no conjunto unificado
-    const branch1Found = allBranches.includes(branch1);
-    const branch2Found = allBranches.includes(branch2);
-    
-    if (branch1Found && branch2Found) {
-      // O bônus é adicionado ao elemento transformado
-      initialSums[element] += bonus * COMBINATION_BONUS_MULTIPLIER;
-    }
-  });
+  const appliedCombinations = new Set(); // Para evitar aplicar o mesmo bônus duas vezes
+  for (let i = 0; i < teamBranches.length; i++) {
+      for (let j = 0; j < gameBranches.length; j++) {
+          // Verifica se os pilares são os mesmos ou adjacentes
+          if (Math.abs(i - j) <= 1) {
+              const tBranch = teamBranches[i];
+              const gBranch = gameBranches[j];
+              const combinationKey = [tBranch, gBranch].sort().join(',');
+
+              if (BRANCH_COMBINATIONS[tBranch] === gBranch && !appliedCombinations.has(combinationKey)) {
+                  const comboInfo = BRANCH_COMBINATIONS_WEIGTHS.find(c => c.pair.includes(tBranch) && c.pair.includes(gBranch));
+                  if (comboInfo) {
+                      initialSums[comboInfo.element] += comboInfo.bonus * COMBINATION_BONUS_MULTIPLIER;
+                      appliedCombinations.add(combinationKey);
+                  }
+              }
+          }
+      }
+  }
 
 
   // -------------------------------------------------------------
@@ -456,6 +727,7 @@ export function calculateWuXing(baziData, gameBazi = null) {
     
     // O filtro agora usa o array unificado `allBranches`
     let foundBranches = allBranches.filter(b => triadBranches.includes(b));
+
     let bonusPercentage = 0;
 
     // 4a. Verificar se há Danos (Harm) quebrando a Tríade
@@ -488,7 +760,28 @@ export function calculateWuXing(baziData, gameBazi = null) {
         bonusPercentage = TRIAD_BONUS_PERCENTAGES.PURE_SEMI;
       }
     }
-    
+      // NOVO: Verificar semi-tríade entre Dia e Hora do time
+      if (gzDay && gzHour) {
+        const dayBranch = getGanzhiParts(gzDay).branch;
+        const currentDayMasterElement = getGanzhiElement(gzDay); // Deriva o DM do mapa atual
+        const hourBranch = getGanzhiParts(gzHour).branch;
+
+        // Verifica se Dia e Hora pertencem à tríade atual e um deles é o ramo central
+        if (
+          triadBranches.includes(dayBranch) &&
+          triadBranches.includes(hourBranch) &&
+          (dayBranch === centralBranch || hourBranch === centralBranch) &&
+          currentDayMasterElement === triadElement
+        ) {
+          bonusPercentage = TRIAD_BONUS_PERCENTAGES.FULL_TRIAD * 1.5; 
+          if(getGanzhiElement(gzHour) === triadElement){
+            bonusPercentage = TRIAD_BONUS_PERCENTAGES.FULL_TRIAD * 5; 
+          }
+            
+            
+          // Aplica bônus de semi-tríade{
+        }
+      }
     // 4c. Aplicar o Bônus
     if (bonusPercentage > 0) {
       initialSums[triadElement] += bonusPercentage * 1.5; 
@@ -501,6 +794,11 @@ export function calculateWuXing(baziData, gameBazi = null) {
   // -------------------------------------------------------------
   
   // O restante do cálculo (passos 5 em diante) permanece inalterado.
+  // Adiciona uma verificação para evitar divisão por zero, que causa NaN.
+  if (Object.values(initialSums).reduce((a, b) => a + b, 0) === 0) {
+    return { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 };
+  }
+
   const finalTotalScore = Object.values(initialSums).reduce((a, b) => a + b, 0);
 
   const percentages = {};
@@ -540,7 +838,7 @@ const BRANCH_ELEMENTS = {
   '亥': { [ELEMENT_VALUES.water]: 30, [ELEMENT_VALUES.wood]: 20 },
 }
 
-const STEM_ELEMENTS = {
+export const STEM_ELEMENTS = {
       '甲': { element: ELEMENT_VALUES.wood, value: 50 },
   '乙': { element: ELEMENT_VALUES.wood, value: 50 },
   '丙': { element: ELEMENT_VALUES.fire, value: 50 },
@@ -558,41 +856,156 @@ const getElementPolarity = (stem) => {
   const idx = stems.indexOf(stem);
   return idx >= 0 ? (idx % 2 === 0 ? 'yang' : 'yin') : null;
 };
+
+
+/**
+ * Verifica se o mapa é um Padrão de 'Segue Produção/Criança'.
+ * Ocorre quando o MD é extremamente fraco E a energia de Produção/Output é dominante.
+ * * Lógica Simplificada: Output deve ser dominante e o Suporte (Self + Resource) deve ser mínimo.
+ * @returns {boolean}
+ */
+function checkFollowOutputPattern(wuXingMap, dayMasterElement) {
+    const totalPower = Object.values(wuXingMap).reduce((sum, val) => sum + val, 0);
+    if (totalPower === 0) return false;
+
+    // Elementos chave
+    const produced = GENERATION_CYCLE[dayMasterElement]; // Output
+    const generating = Object.keys(GENERATION_CYCLE).find(e => GENERATION_CYCLE[e] === dayMasterElement); // Recurso
+    
+    // Pesos
+    const outputPower = wuXingMap[produced];
+    const resourcePower = wuXingMap[generating];
+    const selfPower = wuXingMap[dayMasterElement];
+    
+    // Condições quantitativas simplificadas
+    const outputRatio = outputPower / totalPower;
+    const supportRatio = (resourcePower + selfPower) / totalPower;
+
+    // 1. Output é muito dominante (Ex: > 40% da energia total)
+    const isOutputDominant = outputRatio >= 0.40;
+    
+    // 2. Suporte ao MD é extremamente fraco (Ex: < 15% da energia total)
+    const isMDSupportWeak = supportRatio <= 0.15;
+
+    // 3. Output é significativamente mais forte que o Suporte
+    const isOutputMuchStronger = outputPower > (selfPower + resourcePower) * 2.5;
+    
+    // Para ser um Follow Output, deve haver um output dominante E suporte fraco.
+    if (isOutputDominant && isMDSupportWeak && isOutputMuchStronger) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Verifica se o mapa é um Padrão de 'Segue Poder'.
+ * Ocorre quando o MD é extremamente fraco E a energia de Poder/Oficial é dominante.
+ * * Lógica Simplificada: Poder/Oficial deve ser dominante e o Suporte (Self + Resource) deve ser mínimo.
+ * @returns {boolean}
+ */
+function checkFollowPowerPattern(wuXingMap, dayMasterElement) {
+    const totalPower = Object.values(wuXingMap).reduce((sum, val) => sum + val, 0);
+    if (totalPower === 0) return false;
+
+    // Elementos chave
+    const controller = Object.keys(CONTROL_CYCLE).find(e => CONTROL_CYCLE[e] === dayMasterElement); // Poder/Oficial
+    const generating = Object.keys(GENERATION_CYCLE).find(e => GENERATION_CYCLE[e] === dayMasterElement); // Recurso
+    
+    // Pesos
+    const controllerPower = wuXingMap[controller];
+    const resourcePower = wuXingMap[generating];
+    const selfPower = wuXingMap[dayMasterElement];
+    
+    // Condições quantitativas simplificadas
+    const controllerRatio = controllerPower / totalPower;
+    const supportRatio = (resourcePower + selfPower) / totalPower;
+
+    // 1. Poder/Oficial é muito dominante (Ex: > 40% da energia total)
+    const isControllerDominant = controllerRatio >= 0.40;
+    
+    // 2. Suporte ao MD é extremamente fraco (Ex: < 15% da energia total)
+    const isMDSupportWeak = supportRatio <= 0.15;
+
+    // 3. Poder/Oficial é significativamente mais forte que o Suporte
+    const isControllerMuchStronger = controllerPower > (selfPower + resourcePower) * 2.5;
+    
+    // Para ser um Follow Power, deve haver um controlador dominante E suporte fraco.
+    if (isControllerDominant && isMDSupportWeak && isControllerMuchStronger) {
+        return true;
+    }
+
+    return false;
+}
+
 // -------------------------------------------------------------
 //  FORÇA DO DAY MASTER (NOVO)
 // -------------------------------------------------------------
-export function getDayMasterStrength(dayMasterElement, wuXingMap, gzMonth) {
-  const self = wuXingMap[dayMasterElement];
+export function getDayMasterStrength(dayMasterElement, wuXingMap, gzMonth, gzDay, scoresConfig) {
+    // --- 1. Determinação dos Elementos (Peso Bruto) ---
+    const self = wuXingMap[dayMasterElement];
+    
+    const supporterElement = Object.keys(GENERATION_CYCLE).find(e => GENERATION_CYCLE[e] === dayMasterElement);
+    const supporter = wuXingMap[supporterElement];
 
-  // Quem gera o DM
-  const supporterElement = Object.keys(GENERATION_CYCLE).find(e => GENERATION_CYCLE[e] === dayMasterElement);
-  const supporter = wuXingMap[supporterElement];
+    const output = wuXingMap[GENERATION_CYCLE[dayMasterElement]];
 
-  // Quem o DM gera
-  const output = wuXingMap[GENERATION_CYCLE[dayMasterElement]];
+    const controllerElement = Object.keys(CONTROL_CYCLE).find(e => CONTROL_CYCLE[e] === dayMasterElement);
+    const controller = wuXingMap[controllerElement]; 
+    
+    const wealthElement = CONTROL_CYCLE[dayMasterElement]; // Correção para definir wealthElement
+    const wealth = wuXingMap[wealthElement];
 
-  // Quem controla o DM
-  const controllerElement = Object.keys(CONTROL_CYCLE).find(e => CONTROL_CYCLE[e] === dayMasterElement);
-  const controller = wuXingMap[controllerElement]; 
+    // --- 2. Hierarquia Sazonal (Mês) ---
+    
+    let seasonalMultiplier = 1.0;
+    
+    // Assume que gzMonth é uma string Ganzhi (ex: '庚申')
+    const monthBranch = getGanzhiParts(gzMonth).branch; 
+    const monthMultipliers = SEASON_MULTIPLIERS[monthBranch] || {};
+    
+    const isMonthFavorable = monthMultipliers[dayMasterElement] || monthMultipliers[supporterElement]; 
+    
+    if (isMonthFavorable) {
+        seasonalMultiplier = scoresConfig.dm_strength_seasonal_bonus_multiplier || 1.8; // Bônus por estar em estação.
+    } else if (monthMultipliers[controllerElement] || monthMultipliers[wealthElement]) {
+        seasonalMultiplier = scoresConfig.dm_strength_seasonal_penalty_multiplier || 0.6; // Penalidade por estar em estação de dreno/controle.
+    }
+    
+    // --- 3. Cálculo Ponderado ---
 
-  const supportivePower = self + supporter;
-  const drainingPower = output + controller;
+    const drainingPowerTotal = output + controller + wealth;
+    const supportivePowerWeighted = (self + supporter) * seasonalMultiplier;
+    const finalRatio = supportivePowerWeighted / (drainingPowerTotal + 1);
 
-  const ratio = supportivePower / (drainingPower + 1);
+    // --- 4. DETERMINAÇÃO DE PADRÕES ESPECIAIS (CASOS DE SEGUIMENTO) ---
+    // Estas verificações anulam as classificações de Fraco.
+    
+    if (checkFollowPowerPattern(wuXingMap, dayMasterElement)) {
+        return "followPower"; 
+    }
 
-  // Condição adicional: o mês deve favorecer o Day Master para que ele seja considerado forte.
-  const monthBranch = getGanzhiParts(gzMonth).branch;
-  const seasonMultipliers = SEASON_MULTIPLIERS[monthBranch] || {};
-  const isMonthFavorable = seasonMultipliers[dayMasterElement] || seasonMultipliers[supporterElement];
+    if (checkFollowOutputPattern(wuXingMap, dayMasterElement)) {
+        return "followOutput";
+    }
 
-  if (isMonthFavorable) {
-    if (ratio >= 2.2) return "extremelyStrong";
-    if (ratio >= 1.3) return "strong";
-  }
-
-  if (ratio <= 0.45) return "extremelyWeak";
-  if (ratio <= 0.75) return "weak";
-  return "balanced";
+    // --- 5. Determinação da Força Padrão (Limiares Ajustados) ---
+    
+    if (finalRatio >= scoresConfig.dm_strength_ratio_extremely_strong) {
+        return "extremelyStrong";
+    }
+    if (finalRatio >= scoresConfig.dm_strength_ratio_strong) {
+        return "strong"; 
+    }
+    
+    // Fraco
+    if (finalRatio <= scoresConfig.dm_strength_ratio_extremely_weak) {
+        return "extremelyWeak";
+    }
+    if (finalRatio <= scoresConfig.dm_strength_ratio_weak) {
+        return "weak";
+    }
+    return "balanced";
 }
 const ELEMENT_FILTERS = {
     FIRE: ['fire', 'wood', 'earth'],
@@ -633,10 +1046,15 @@ const DEFAULT_COHERENCE_CONFIGS = {
     },
 };
 const getCoherenceFilterCondition = (config) => (gameBazi) => {
+    // Adiciona uma verificação para garantir que gameBazi e suas propriedades existem
+    if (!gameBazi || !gameBazi.gzDay || !gameBazi.gzMonth) {
+        return false;
+    }
+
     const dayElement = getGanzhiElement(gameBazi.gzDay);
     const dayAnimal = gameBazi.gzDay.charAt(1);
     const monthAnimal = gameBazi.gzMonth.charAt(1);
-    const hourAnimal = gameBazi.gzHour.charAt(1);
+    const hourAnimal = gameBazi.gzHour? gameBazi.gzHour.charAt(1) : null;
 
     // 1. Verificar Elemento do Dia (regra comum)
     if (!config.ELEMENTS.includes(dayElement)) {
@@ -671,36 +1089,61 @@ const coherenceFilters = {
 //  ELEMENTOS FAVORÁVEIS (NOVO)
 // -------------------------------------------------------------
 export function getUsefulElements(dayMasterElement, strength) {
-  const generating = Object.keys(GENERATION_CYCLE).find(e => GENERATION_CYCLE[e] === dayMasterElement);
-  const produced = GENERATION_CYCLE[dayMasterElement];
-  const controller = Object.keys(CONTROL_CYCLE).find(e => CONTROL_CYCLE[e] === dayMasterElement);
-  const controlled = CONTROL_CYCLE[dayMasterElement];
-
+  // Elementos do Ciclo Wu Xing
+  const generating = Object.keys(GENERATION_CYCLE).find(e => GENERATION_CYCLE[e] === dayMasterElement); // Recurso
+  const produced = GENERATION_CYCLE[dayMasterElement]; // Produção/Output
+  const controller = Object.keys(CONTROL_CYCLE).find(e => CONTROL_CYCLE[e] === dayMasterElement); // Poder/Oficial
+  const controlled = CONTROL_CYCLE[dayMasterElement]; // Riqueza/Wealth
+  
   switch (strength) {
+    // 1. 🌊 Caso Especial: Segue Poder (Follow Power / Cong Qiang - 従強)
+    // O MD é extremamente fraco e a energia dominante no mapa é o Poder/Oficial.
+    case "followPower":
+      return {
+        // Favoráveis: O Poder dominante e o elemento que o gera (Riqueza do MD).
+        favorable: [controller, controlled],
+        // Maléficos: Tentar apoiar o MD fraco ou drenar o Poder.
+        unfavorable: [dayMasterElement, generating, produced] 
+      };
+
+    // 2. 👶 Caso Especial: Segue Produção/Criança (Follow Output / Cong Er - 従兒)
+    // O MD é extremamente fraco e a energia dominante é a Produção/Output.
+    case "followOutput":
+      return {
+        // Favoráveis: A Produção dominante e o elemento que ela gera (Riqueza).
+        favorable: [produced, controlled],
+        // Maléficos: Tentar controlar a Produção ou fortalecer o MD.
+        unfavorable: [dayMasterElement, generating, controller] 
+      };
+
     case "weak":
     case "extremelyWeak":
+      // MD Fraco Típico: Precisa ser apoiado.
       return {
         favorable: [dayMasterElement, generating],
-        unfavorable: [produced, controlled]
+        unfavorable: [controller, controlled] // Corrigido para incluir o Controlador e o Controlado como Maléficos.
       };
 
     case "strong":
+      // MD Forte Típico: Precisa ser drenado e controlado.
       return {
-        favorable: [produced, controlled],
+        favorable: [produced, controlled, controller], // Inclui o Controlador para balancear.
         unfavorable: [dayMasterElement, generating]
       };
 
     case "extremelyStrong":
+      // MD Extremamente Forte (Força Total): Priorizar vazão (Produção) e evitar confronto (Poder).
       return {
-        favorable: [dayMasterElement, generating],
-        unfavorable: [produced, controller]
+        favorable: [produced, controlled], // Foco em Dreno (Output e Wealth)
+        unfavorable: [dayMasterElement, generating, controller] // Evita o confronto (Controller)
       };
 
     case "balanced":
     default:
+      // MD Equilibrado: Busca fluidez (Produção) e Controle (Oficial) para mantê-lo sob controle.
       return {
-        favorable: [produced],
-        unfavorable: [controller]
+        favorable: [produced, controller], // Busca Produção e Controle sutil.
+        unfavorable: [generating] // Recurso (geração) pode desequilibrar.
       };
   }
 }
@@ -800,33 +1243,58 @@ export function isPunishment(allBranches) {
 
     return null;
 }
+/**
+ * Verifica se dois Troncos Celestes (Tiangan) formam uma Combinação (He Hua)
+ * e retorna o elemento resultante da transformação, se bem-sucedida.
+ * * @param {string} stem1 - O primeiro Tronco Celestial (e.g., '甲', '乙').
+ * @param {string} stem2 - O segundo Tronco Celestial (e.g., '己', '庚').
+ * @returns {string | null} - O elemento resultante ('wood', 'fire', 'earth', 'metal', 'water') ou null se não houver combinação.
+ */
+export function getStemCombinationElement(stem1, stem2) {
+    if (!stem1 || !stem2) return null;
+
+    // Normaliza e define os pares de combinação e seus elementos transformados
+    // NOTA: Em uma análise completa, a transformação só é bem-sucedida se for suportada
+    // pelo Mês (Qi) ou pelo Bazi em geral. Aqui, estamos apenas verificando o potencial de combinação.
+    const combinationsMap = {
+        '甲': { partner: '己', element: 'earth' }, // Jia (甲) + Ji (己) -> Earth
+        '己': { partner: '甲', element: 'earth' }, 
+
+        '乙': { partner: '庚', element: 'metal' }, // Yi (乙) + Geng (庚) -> Metal
+        '庚': { partner: '乙', element: 'metal' },
+
+        '丙': { partner: '辛', element: 'water' }, // Bing (丙) + Xin (辛) -> Water
+        '辛': { partner: '丙', element: 'water' },
+
+        '丁': { partner: '壬', element: 'wood' },  // Ding (丁) + Ren (壬) -> Wood
+        '壬': { partner: '丁', element: 'wood' },
+
+        '戊': { partner: '癸', element: 'fire' },  // Wu (戊) + Gui (癸) -> Fire
+        '癸': { partner: '戊', element: 'fire' },
+    };
+
+    const s1 = stem1.trim();
+    const s2 = stem2.trim();
+
+    // 1. Verifica se o primeiro Tronco faz parte de uma combinação
+    if (combinationsMap[s1]) {
+        // 2. Verifica se o segundo Tronco é o parceiro necessário
+        if (combinationsMap[s1].partner === s2) {
+            // 3. Retorna o elemento transformado
+            return combinationsMap[s1].element;
+        }
+    }
+
+    // Retorna null se não houver combinação
+    return null;
+}
+let use_branch_priority_system = false
 // -------------------------------------------------------------
 //  2. ANÁLISE DE FAVORABILIDADE COMPLETA
 // -------------------------------------------------------------
-export function analyzeTeamFavorability(teamBazi, gameBazi, scoresConfig = DEFAULT_ANALYZE_SCORES) {
-  
+export function analyzeTeamFavorability(teamBazi, gameBazi, scoresConfig = null) {
+
   const reasons = [];
-  
-  // Verifica qual elemento de coerência está ativo para o dia do jogo
-  const activeCoherenceElement = Object.keys(coherenceFilters).find(key => {
-    return gameBazi && coherenceFilters[key](gameBazi);
-  });
-
-  // Se um elemento de coerência for encontrado, verifica se sua flag de configuração customizada está ativa
-  if (activeCoherenceElement) {
-    const useCustomConfigFlag = `use_custom_config_for_${activeCoherenceElement.toLowerCase()}_coherence`;
-    
-    // Se a flag específica para este elemento estiver ativa, aplica os scores otimizados
-    if (scoresConfig[useCustomConfigFlag] && BEST_SCORES_BY_COHERENCE[activeCoherenceElement]?.scores) {
-      const bestConfig = BEST_SCORES_BY_COHERENCE[activeCoherenceElement];
-      scoresConfig = {
-        ...scoresConfig,
-        ...bestConfig.scores
-      };
-      reasons.push(`⚡ Configuração otimizada para coerência de ${activeCoherenceElement} aplicada.`);
-    }
-  }
-
   // Verifica se a estrutura é { elemento_ano, animal_ano, ... } e converte para { gzYear, ... }
   if (teamBazi.elemento_ano && teamBazi.animal_ano) {
     teamBazi = {
@@ -837,27 +1305,18 @@ export function analyzeTeamFavorability(teamBazi, gameBazi, scoresConfig = DEFAU
     };
   }
 
-  const teamPercentages = calculateWuXing(teamBazi, gameBazi);
-  const gamePercentages = calculateWuXing(gameBazi);
-
-  if (!teamPercentages || !gamePercentages) return { score: 0, reasons: [] };
-
-  let totalScore = 0;
-
+    if (gameBazi.elemento_ano && gameBazi.animal_ano) {
+    gameBazi = {
+      gzYear: `${gameBazi.elemento_ano}${gameBazi.animal_ano}`,
+      gzMonth: gameBazi.elemento_mes && gameBazi.animal_mes ? `${gameBazi.elemento_mes}${gameBazi.animal_mes}` : null,
+      gzDay: `${gameBazi.elemento_dia}${gameBazi.animal_dia}`,
+      gzHour: gameBazi.elemento_hora && gameBazi.animal_hora ? `${gameBazi.elemento_hora}${gameBazi.animal_hora}` : null,
+    };
+  }
   // -------------------------------------------------------------
-  //  Funções de Cálculo de Pontuação por Categoria
+  //  Core Utility Functions (Restored from optimized version)
   // -------------------------------------------------------------
-  const calculateCategoryScore = (weight, points, maxPoints) => {
-    if (maxPoints === 0) return 0;
-    return (points / maxPoints) * weight;
-  };
-
-  // -------------------------------------------------------------
-  //  Elemento dominante REAL
-  // -------------------------------------------------------------
-  const teamDominant = getTrueDominantElement(teamPercentages);
-  const gameDominant = getTrueDominantElement(gamePercentages);
-
+  
   // Função auxiliar para determinar o valor base proporcional (1, 2, 3 ou 4)
   const getProportionalScoreValue = (percentage) => {
     if (percentage >= 75) return 4;
@@ -865,91 +1324,349 @@ export function analyzeTeamFavorability(teamBazi, gameBazi, scoresConfig = DEFAU
     if (percentage >= 25) return 2;
     return 1;
   };
+
+  // Funções de Cálculo de Pontuação por Categoria (Restored normalization)
+  // MaxPoints é NECESSÁRIO para garantir que a pontuação da categoria seja
+  // normalizada antes de ser multiplicada pelo peso total.
+  const calculateCategoryScore = (weight, points, maxPoints) => {
+    // Fallback para evitar NaN se maxPoints for undefined.
+    if (maxPoints === undefined) {
+        maxPoints = 1;
+    }
+    // (Pontos recebidos / Pontos máximos) * Peso total
+    return (points / maxPoints) * weight;
+  };
+
+
+  // Verifica qual elemento de coerência está ativo para o dia do jogo
+  const activeCoherenceElement = Object.keys(coherenceFilters).find(key => {
+    return gameBazi && coherenceFilters[key](gameBazi);
+  });
+
+  // Define o valor de normalização a ser usado
+  let normalizationOffset = scoresConfig?.normalization_offset_general ?? 0;
+  if (activeCoherenceElement) {
+    const coherenceOffsetKey = `normalization_offset_${activeCoherenceElement.toLowerCase()}`;
+    if (scoresConfig[coherenceOffsetKey] !== undefined) {
+      normalizationOffset = scoresConfig[coherenceOffsetKey];
+      reasons.push(`[Norm] Offset de normalização para ${activeCoherenceElement} aplicado: ${normalizationOffset}.`);
+    }
+  } else {
+      reasons.push(`[Norm] Offset de normalização geral aplicado: ${normalizationOffset}.`);
+  }
+
+  // Se um elemento de coerência for encontrado, verifica se sua flag de configuração customizada está ativa
+  if (activeCoherenceElement) {
+    // console.log(activeCoherenceElement);
+    // ELEMENT_SCORES = initializeElementsScores();
+    // console.log(ELEMENT_SCORES)
+    scoresConfig = ELEMENT_SCORES[activeCoherenceElement].scores;
+    reasons.push(`⚡ Configuração otimizada para coerência de ${activeCoherenceElement} aplicada.`);
+  }else{
+    scoresConfig = DEFAULT_ANALYZE_SCORES;
+  }
+
+  let totalScore = 0;
+
+  let teamPercentages = calculateWuXing(teamBazi, gameBazi, scoresConfig);
+  let gamePercentages = calculateWuXing(gameBazi, null, scoresConfig);
+
+  // -------------------------------------------------------------
+  //  Elemento dominante REAL
+  // -------------------------------------------------------------
+  if (!teamPercentages || !gamePercentages) {
+    console.error("ANALYZE ERROR: wuxing calculation returned null. Aborting.");
+    return { score: NaN, reasons: ["Erro no cálculo de WuXing inicial."] };
+  }
+  const teamDominant = getTrueDominantElement(teamPercentages);
+  const gameDominant = getTrueDominantElement(gamePercentages);
+
   
   // -------------------------------------------------------------
   //  NOVO: Day Master + Elementos Úteis (Condicional)
   // -------------------------------------------------------------
+  let useful;
+  let dayMasterElement = null;
+  let dayStem = null;
+  let strength = null;
+
+  if (teamBazi.gzDay) {
+    dayStem = getGanzhiParts(teamBazi.gzDay).stem;
+    dayMasterElement = STEM_ELEMENTS[dayStem].element;
+    strength = getDayMasterStrength(dayMasterElement, teamPercentages, teamBazi.gzMonth, teamBazi.gzDay, scoresConfig);
+
+    // Prioriza os elementos hardcoded se existirem
+    if (teamBazi.elementos_beneficos && teamBazi.elementos_maleficos) {
+      useful = {
+        favorable: Object.keys(teamBazi.elementos_beneficos),
+        unfavorable: Object.keys(teamBazi.elementos_maleficos),
+      };
+    } else {
+      useful = getUsefulElements(dayMasterElement, strength);
+    }
+  }
+
   if (scoresConfig.use_day_master_strength_analysis && teamBazi.gzDay && teamBazi.gzMonth) {
     let categoryPoints = 0;
-    const maxCategoryPoints = 4 * Math.max(scoresConfig.favorable_useful_element_multiplier, scoresConfig.unfavorable_useful_element_multiplier);
-
-    const dayStem = getGanzhiParts(teamBazi.gzDay).stem;
-    const dayMasterElement = STEM_ELEMENTS[dayStem].element;
-
-    const strength = getDayMasterStrength(dayMasterElement, teamPercentages, teamBazi.gzMonth);
-    const useful = getUsefulElements(dayMasterElement, strength);
+    
+    // MaxPoints baseado na estrutura do código OTIMIZADO anterior
+    const maxCategoryPoints = 4 * Math.max(
+        scoresConfig.favorable_useful_element_multiplier, 
+        Math.abs(scoresConfig.unfavorable_useful_element_multiplier)
+    );
 
     const gameDominantPercentage = gamePercentages[gameDominant];
+    
+    // REVERTIDO: Usa o valor proporcional (1-4) em vez do percentual (1-100)
     const proportionalValue = getProportionalScoreValue(gameDominantPercentage);
 
+    // Bônus/Penalidade pelo elemento DOMINANTE do jogo
     if (useful.favorable.includes(gameDominant)) {
       const points = proportionalValue * scoresConfig.favorable_useful_element_multiplier;
       categoryPoints += points;
       reasons.push(`[DM] Elemento do jogo (${gameDominant}) é FAVORÁVEL ao Day Master (${dayMasterElement} ${strength}).`);
     }
 
+    // NOVO: Bônus se um elemento favorável estiver presente entre 30-50% no jogo
+    useful.favorable.forEach(favElement => {
+      if (gamePercentages[favElement] >= 30 && gamePercentages[favElement] <= 50) {
+        // Adiciona um bônus fixo, ponderado pelo multiplicador de elemento favorável
+        const bonusPoints = 10 * scoresConfig.favorable_useful_element_multiplier;
+        categoryPoints += bonusPoints;
+        reasons.push(`[DM] Bônus: Elemento favorável '${favElement}' está forte (${gamePercentages[favElement]}%) no mapa do jogo.`);
+      }
+    });
+
     if (useful.unfavorable.includes(gameDominant)) {
       const points = proportionalValue * scoresConfig.unfavorable_useful_element_multiplier;
-      categoryPoints -= points;
+      categoryPoints += points; // Note: multiplier must be negative for penalty
       reasons.push(`[DM] Elemento do jogo (${gameDominant}) é DESFAVORÁVEL ao Day Master (${dayMasterElement} ${strength}).`);
     }
-    totalScore += calculateCategoryScore(scoresConfig.day_master_strength_weight, categoryPoints, maxCategoryPoints);
 
     // Adiciona penalidade de Qi Sha (7 Killings)
-    const gameDayStem = getGanzhiParts(gameBazi.gzDay).stem;
-    const gameDayElement = STEM_ELEMENTS[gameDayStem].element;
+    if (scoresConfig.use_qi_sha_penalty) {
+      const gameDayStem = getGanzhiParts(gameBazi.gzDay).stem;
+      const gameDayElement = STEM_ELEMENTS[gameDayStem].element;
 
-    // Verifica se o elemento do dia do jogo controla o Day Master
-    if (CONTROL_CYCLE[gameDayElement] === dayMasterElement) {
-      const dayMasterPolarity = getElementPolarity(dayStem);
-      const gameDayPolarity = getElementPolarity(gameDayStem);
+      // Verifica se o elemento do dia do jogo controla o Day Master
+      if (CONTROL_CYCLE[gameDayElement] === dayMasterElement) {
+        const dayMasterPolarity = getElementPolarity(dayStem);
+        const gameDayPolarity = getElementPolarity(gameDayStem);
 
-      // Se ambos têm a mesma polaridade, é Qi Sha
-      if (dayMasterPolarity === gameDayPolarity) {
-        const qiShaScore = calculateCategoryScore(scoresConfig.qi_sha_penalty_weight, -1, 1);
-        totalScore += qiShaScore;
-        reasons.push(`[Qi Sha] Penalidade de 7 Killings: O dia do jogo controla o Day Master com mesma polaridade.`);
-      }
+        // Se ambos têm a mesma polaridade, é Qi Sha
+        if (dayMasterPolarity === gameDayPolarity) {
+          // Usa 1 como MaxPoints para a penalidade Qi Sha
+          const qiShaScore = calculateCategoryScore(scoresConfig.qi_sha_penalty_weight, -1, 1);
+          totalScore += qiShaScore;
+          reasons.push(`[Qi Sha] Penalidade de 7 Killings: O dia do jogo controla o Day Master com mesma polaridade.`);
+        }
       }
     }
- // -------------------------------------------------------------
-//  2. Harmonia, Conflito, Combinação, Tríades, Punições
-// -------------------------------------------------------------
-const teamBranch = getGanzhiParts(teamBazi.gzYear).branch;
-const gameDayBranch = getGanzhiParts(gameBazi.gzDay).branch;  
+    
+    // Usa o calculateCategoryScore REVERTIDO (normalizado)
+    const dmScore = calculateCategoryScore(scoresConfig.day_master_strength_weight, categoryPoints, maxCategoryPoints);
+    totalScore += dmScore;
+  }
+
+
+  // -------------------------------------------------------------
+  //  Combinação de Troncos Celestes do Dia
+  // -------------------------------------------------------------
+  if (scoresConfig.use_stem_combinations && teamBazi.gzDay && gameBazi.gzDay) {
+      
+      const teamDayStem = getGanzhiParts(teamBazi.gzDay).stem;
+      const gameDayStem = getGanzhiParts(gameBazi.gzDay).stem;
+      const combinationResult = getStemCombinationElement(teamDayStem, gameDayStem);
+      
+      if (combinationResult) {
+          let categoryPoints = 5;
+          let maxCategoryPoints = 5 + scoresConfig.stem_combination_bonus; // Max points is base (5) + max bonus
+
+          // Verifica se o elemento transformado é favorável ao Day Master do Time
+          if (scoresConfig.use_day_master_strength_analysis) {
+            
+              if (useful.favorable.includes(combinationResult)) {
+                  categoryPoints += scoresConfig.stem_combination_bonus;
+                  reasons.push(`[Tronco He] Bônus: Combinação Dia-Dia (${teamDayStem}-${gameDayStem}) transforma em ${combinationResult}, que é FAVORÁVEL.`);
+              } else if (useful.unfavorable.includes(combinationResult)) {
+                  categoryPoints -= scoresConfig.stem_combination_penalty;
+                  maxCategoryPoints = Math.max(maxCategoryPoints, scoresConfig.stem_combination_penalty); // Max points must cover max penalty
+                  reasons.push(`[Tronco He] Penalidade: Combinação Dia-Dia (${teamDayStem}-${gameDayStem}) transforma em ${combinationResult}, que é DESFAVORÁVEL.`);
+              }
+          } else {
+              // Comportamento padrão: sempre dá bônus pela ligação e transformação
+              categoryPoints += scoresConfig.stem_combination_bonus * 0.5; // Bônus neutro
+              reasons.push(`[Tronco He] Bônus: Combinação Dia-Dia (${teamDayStem}-${gameDayStem}) transforma em ${combinationResult} (Sinergia).`);
+          }
+          
+          const stemComboScore = calculateCategoryScore(scoresConfig.stem_combination_weight, categoryPoints, maxCategoryPoints);
+          totalScore += stemComboScore;
+      }
+  }
+
+  // -------------------------------------------------------------
+  //  2. Harmonia, Conflito, Combinação, Tríades, Punições
+  // -------------------------------------------------------------
+  let categoryPoints = 0;
+  const teamBranch = getGanzhiParts(teamBazi.gzYear).branch;
+  const gameDayBranch = getGanzhiParts(gameBazi.gzDay).branch;  
   const teamBranches = [teamBazi.gzYear, teamBazi.gzMonth, teamBazi.gzDay, teamBazi.gzHour].map(gz => gz ? getGanzhiParts(gz).branch : null).filter(Boolean);
   const gameBranches = [gameBazi.gzYear, gameBazi.gzMonth, gameBazi.gzDay, gameBazi.gzHour].map(gz => gz ? getGanzhiParts(gz).branch : null).filter(Boolean);
 
 
-// Unificação de todos os ramos para checagem de punições/choques complexos
-const allBranches = [...teamBranches, ...gameBranches];
+  // Unificação de todos os ramos para checagem de punições/choques complexos
+  const allBranches = [...teamBranches, ...gameBranches];
 
-if (scoresConfig.use_branch_interactions) {
+  let usedBranches = new Set(); // Armazena ramos já usados em combinações de maior prioridade
+
+
+  if (scoresConfig.use_branch_interactions) {
     let categoryPoints = 0;
-    const maxCategoryPoints = 2; // Max score for combination or trine
+    
+    // Define o MaxPoints com base na maior pontuação positiva possível (Ex: Cardinal Combination)
+    const maxCategoryPoints = scoresConfig.cardinal_combination_bonus || 5;
 
-    // 2A. Conflitos Simples, Combinações e Tríades (Lógica existente)
-    // ... (Seu código existente para BRANCH_CONFLICT e BRANCH_COMBINATIONS)
-    if (BRANCH_CONFLICT[teamBranch] === gameDayBranch) {
-        categoryPoints -= 1;
-        reasons.push(`[Ramos] Conflito direto: ${teamBranch} × ${gameDayBranch}.`);
+    // 1. Combinação Cardeal (Direcional) - Maior Prioridade
+    for (const element in DIRECTIONAL_COMBINATIONS) {
+        const requiredBranches = DIRECTIONAL_COMBINATIONS[element];        
+        // Note: use_branch_priority_system is assumed to be defined/passed in the scope or scoresConfig
+        const presentBranches = allBranches.filter(b => 
+            requiredBranches.includes(b) && (typeof use_branch_priority_system === 'undefined' || use_branch_priority_system === false || !usedBranches.has(b))
+        );
+        if (new Set(presentBranches).size === 3) {
+            categoryPoints += maxCategoryPoints; // Usa o MaxPoints como pontuação
+            reasons.push(`[Ramos] Combinação Cardeal de ${element.toUpperCase()} formada.`);
+            if (typeof use_branch_priority_system !== 'undefined' && use_branch_priority_system !== false) requiredBranches.forEach(b => usedBranches.add(b));
+            break; // Encontrou a mais forte, para a verificação
+        }
     }
-
-    if (BRANCH_COMBINATIONS[teamBranch] === gameDayBranch) {
-        categoryPoints += 2;
-        reasons.push(`[Ramos] Combinação harmoniosa: ${teamBranch} + ${gameDayBranch}.`);
-    }
-
+    
     if (branchInSameTrine(teamBranch, gameDayBranch)) {
-        categoryPoints += 2;
-        reasons.push(`[Ramos] Harmonia de Tríade: ${teamBranch} e ${gameDayBranch} na mesma tríade.`);
+            categoryPoints += 2;
+            reasons.push(`[Ramos] Harmonia de Tríade: ${teamBranch} e ${gameDayBranch} na mesma tríade.`); 
+    }
+    
+    // 2. Combinação de Movimento (Tríade)
+    if (usedBranches.size < allBranches.length) {
+        for (const triad of BRANCH_TRINES) {            
+            const presentBranches = allBranches.filter(b => 
+                triad.includes(b) && (typeof use_branch_priority_system === 'undefined' || use_branch_priority_system === false || !usedBranches.has(b))
+            );
+            if (new Set(presentBranches).size === 3) {
+                categoryPoints += scoresConfig.movement_combination_bonus || 4;
+                reasons.push(`[Ramos] Tríade de Movimento completa formada.`);
+                if (typeof use_branch_priority_system !== 'undefined' && use_branch_priority_system !== false) triad.forEach(b => usedBranches.add(b));
+                break;
+            }
+        }
     }
 
+    // 3. Amizade Secreta (Liu He)
+    if (usedBranches.size < allBranches.length) {
+        for (const branch1 of teamBranches) {
+            if (typeof use_branch_priority_system !== 'undefined' && use_branch_priority_system !== false && usedBranches.has(branch1)) continue;
+            for (const branch2 of gameBranches) {
+                if (typeof use_branch_priority_system !== 'undefined' && use_branch_priority_system !== false && usedBranches.has(branch2)) continue;
+                if (BRANCH_COMBINATIONS[branch1] === branch2) {
+                    categoryPoints += scoresConfig.secret_friendship_bonus || 3;
+                    reasons.push(`[Ramos] Amizade Secreta (Liu He): ${branch1} e ${branch2}.`);
+                    usedBranches.add(branch1); // Marca o ramo do time como usado
+                    usedBranches.add(branch2); // Marca o ramo do jogo como usado
+                }
+            }
+        }
+    }
+
+    // 4. Oposição (Chong)
+    if (BRANCH_CONFLICT[teamBranch] === gameDayBranch) {
+      if (!usedBranches.has(teamBranch) && !usedBranches.has(gameDayBranch)) {
+          categoryPoints -= scoresConfig.branch_clash_penalty || 2;
+          reasons.push(`[Ramos] Oposição (Chong): ${teamBranch} × ${gameDayBranch}.`);
+          if (typeof use_branch_priority_system !== 'undefined' && use_branch_priority_system !== false) usedBranches.add(teamBranch);
+          if (typeof use_branch_priority_system !== 'undefined' && use_branch_priority_system !== false) usedBranches.add(gameDayBranch);
+      }
+    }
+
+    // 5. Inimizade Secreta (Harm)
+    if (usedBranches.size < allBranches.length) {
+        for (const harmPair of HARMS) {
+            const [b1, b2] = harmPair;            
+            if (allBranches.includes(b1) && allBranches.includes(b2) && (typeof use_branch_priority_system === 'undefined' || use_branch_priority_system === false || (!usedBranches.has(b1) && !usedBranches.has(b2)))) {
+                categoryPoints -= scoresConfig.secret_enmity_penalty || 2;
+                reasons.push(`[Ramos] Inimizade Secreta (Hai): ${b1} e ${b2}.`);
+                if (typeof use_branch_priority_system !== 'undefined' && use_branch_priority_system !== false) usedBranches.add(b1);
+                if (typeof use_branch_priority_system !== 'undefined' && use_branch_priority_system !== false) usedBranches.add(b2);
+            }
+        }
+    }
+
+    // 6. Punição (Xing)
+    const punishmentType = isPunishment(allBranches.filter(b => !usedBranches.has(b)));
+    if (punishmentType) {
+        categoryPoints -= scoresConfig.punishment_penalty || 3;
+        reasons.push(`[Ramos] Punição de ${punishmentType} ativada.`);
+    }
+
+    const branchScore = calculateCategoryScore(scoresConfig.branch_interactions_weight, categoryPoints, maxCategoryPoints);
+    totalScore += branchScore;
+  }
+
+
+  // -------------------------------------------------------------
+  // NOVO: 3. Análise de Riqueza e Autoridade (Zheng Guan, Cai)
+  // -------------------------------------------------------------
+  if (scoresConfig.use_ten_god_analysis && teamBazi.gzDay && gameBazi.gzDay) {
+      // Logic for Ten God analysis (commented out by user)
+      let categoryPoints = 0;
+      // ... (your existing Ten God analysis logic) ...
+      
+      // Assumindo um MaxPoints razoável, se for implementado no futuro
+      const tenGodMaxPoints = 5; 
+      const tenGodScore = calculateCategoryScore(scoresConfig.ten_god_analysis_weight || 1.0, categoryPoints, tenGodMaxPoints);
+      totalScore += tenGodScore;
+  }
+
+
+ 
+  // -------------------------------------------------------------
+  //  Combinação de Troncos Celestes do Dia
+  // -------------------------------------------------------------
+  if (scoresConfig.use_stem_combinations && teamBazi.gzDay && gameBazi.gzDay) {
+      
+      const teamDayStem = getGanzhiParts(teamBazi.gzDay).stem;
+      const gameDayStem = getGanzhiParts(gameBazi.gzDay).stem;
+      const combinationResult = getStemCombinationElement(teamDayStem, gameDayStem);
+      
+      if (combinationResult) {
+          let categoryPoints = 5;
+          let maxCategoryPoints = 5 + scoresConfig.stem_combination_bonus; // Max points is base (5) + max bonus
+
+          // Verifica se o elemento transformado é favorável ao Day Master do Time
+          if (scoresConfig.use_day_master_strength_analysis) {
+            
+              if (useful.favorable.includes(combinationResult)) {
+                  categoryPoints += scoresConfig.stem_combination_bonus;
+                  reasons.push(`[Tronco He] Bônus: Combinação Dia-Dia (${teamDayStem}-${gameDayStem}) transforma em ${combinationResult}, que é FAVORÁVEL.`);
+              } else if (useful.unfavorable.includes(combinationResult)) {
+                  categoryPoints -= scoresConfig.stem_combination_penalty;
+                  maxCategoryPoints = Math.max(maxCategoryPoints, scoresConfig.stem_combination_penalty); // Max points must cover max penalty
+                  reasons.push(`[Tronco He] Penalidade: Combinação Dia-Dia (${teamDayStem}-${gameDayStem}) transforma em ${combinationResult}, que é DESFAVORÁVEL.`);
+              }
+          } else {
+              // Comportamento padrão: sempre dá bônus pela ligação e transformação
+              categoryPoints += scoresConfig.stem_combination_bonus * 0.5; // Bônus neutro
+              reasons.push(`[Tronco He] Bônus: Combinação Dia-Dia (${teamDayStem}-${gameDayStem}) transforma em ${combinationResult} (Sinergia).`);
+          }
+          
+          const stemComboScore2 = calculateCategoryScore(scoresConfig.stem_combination_weight, categoryPoints, maxCategoryPoints);
+          totalScore += stemComboScore2;
+      }
+  }
     // -------------------------------------------------------------
     // NOVO: 2B. Choques e Punições de Terra (Bullying/Uncivilized)
     // -------------------------------------------------------------
-    const clashPenalty = scoresConfig.earth_clash_penalty || 1.5;
-    const punishmentPenalty = scoresConfig.earth_punishment_penalty || 2.5;
+    const clashPenalty = scoresConfig.earth_clash_penalty;
+    const punishmentPenalty = scoresConfig.earth_punishment_penalty;
 
     // 1. Choques de Terra (丑/未 ou 辰/戌) entre Pilares-chave (Ano do Time vs Dia do Jogo)
     if (isClash(teamBranch, gameDayBranch, ['丑', '未', '辰', '戌'])) {
@@ -978,8 +1695,8 @@ if (scoresConfig.use_branch_interactions) {
     }
 
     // Aplica a pontuação final da categoria
-    totalScore += calculateCategoryScore(scoresConfig.branch_interactions_weight, categoryPoints, maxCategoryPoints);
-}
+    const earthClashScore = calculateCategoryScore(scoresConfig.branch_interactions_weight, categoryPoints, 5);
+    totalScore += earthClashScore;
 
 // NOVO: Análise do Terceiro Místico (Formação de Tríade entre todos os pilares)
 
@@ -990,19 +1707,18 @@ if (scoresConfig.use_branch_interactions) {
       const mysticalTrineResult = findMysticalThirdForTrine(tBranch, gBranch);
       if (mysticalTrineResult) {
         let categoryPoints = 0;
-        const maxCategoryPoints = Math.max(scoresConfig.mystical_trine_bonus, scoresConfig.mystical_trine_penalty);
 
         // Se a flag estiver ativa, verifica se o elemento da tríade é benéfico ou maléfico
         if (scoresConfig.triades_can_be_harmfull && scoresConfig.use_day_master_strength_analysis) {
           const dayStem = getGanzhiParts(teamBazi.gzDay).stem;
           const dayMasterElement = STEM_ELEMENTS[dayStem].element;
-          const strength = getDayMasterStrength(dayMasterElement, teamPercentages, teamBazi.gzMonth);
+          const strength = getDayMasterStrength(dayMasterElement, teamPercentages, teamBazi.gzMonth, teamBazi.gzDay, scoresConfig);
           const useful = getUsefulElements(dayMasterElement, strength);
 
           if (useful.favorable.includes(mysticalTrineResult.element)) {
             categoryPoints += scoresConfig.mystical_trine_bonus;
             reasons.push(`[Tríade Mística] Bônus: Formação de tríade benéfica de ${mysticalTrineResult.element} (${tBranch} do time + ${gBranch} do jogo).`);
-          } else if (useful.unfavorable.includes(mysticalTrineResult.element)) {
+          } else if (useful.unfavorable.includes(mysticalTrineResult.element) && scoresConfig.mystical_trine_can_be_harmful) {
             categoryPoints -= scoresConfig.mystical_trine_penalty;
             reasons.push(`[Tríade Mística] Penalidade: Formação de tríade maléfica de ${mysticalTrineResult.element} (${tBranch} do time + ${gBranch} do jogo).`);
           }
@@ -1013,7 +1729,8 @@ if (scoresConfig.use_branch_interactions) {
         }
         
         if (categoryPoints !== 0) {
-            totalScore += calculateCategoryScore(scoresConfig.mystical_trine_weight, categoryPoints, maxCategoryPoints);
+            const trineScore = calculateCategoryScore(scoresConfig.mystical_trine_weight, categoryPoints, 5);
+            totalScore += trineScore || 0;
             trineFound = true; // Marca que a tríade foi encontrada e processada
             break; // Sai do loop interno
         }
@@ -1026,7 +1743,6 @@ if (scoresConfig.use_branch_interactions) {
   // -------------------------------------------------------------
   if (scoresConfig.use_excess_deficiency) {
     let categoryPoints = 0;
-    const maxCategoryPoints = 1; // Max 1 point for bonus or penalty
 
     for (const el in teamPercentages) {
       if (teamPercentages[el] > 45 && CONTROL_CYCLE[gameDominant] === el) {
@@ -1038,14 +1754,15 @@ if (scoresConfig.use_branch_interactions) {
         reasons.push(`[Equilíbrio] Penalidade: Jogo (${gameDominant}) drena ${el} deficiente do time.`);
       }
     }
-    totalScore += calculateCategoryScore(scoresConfig.excess_deficiency_weight, categoryPoints, maxCategoryPoints);
+    const excessScore = calculateCategoryScore(scoresConfig.excess_deficiency_weight, categoryPoints, 2);
+    totalScore += excessScore;
   }
+
   // -------------------------------------------------------------
   //  4. Dominância sazonal
   // -------------------------------------------------------------
   if (scoresConfig.use_seasonal_dominance) {
     let categoryPoints = 0;
-    const maxCategoryPoints = 1;
 
     const monthBranch = getGanzhiParts(gameBazi.gzMonth).branch;
     const seasonDominant = getSeasonDominantElement(monthBranch);
@@ -1061,24 +1778,13 @@ if (scoresConfig.use_branch_interactions) {
         reasons.push(`[Sazonal] Mês (${seasonDominant}) enfraquece o time (${teamDominant}).`);
       }
     }
-    totalScore += calculateCategoryScore(scoresConfig.seasonal_dominance_weight, categoryPoints, maxCategoryPoints);
+    const seasonalScore = calculateCategoryScore(scoresConfig.seasonal_dominance_weight, categoryPoints, 1);
+    totalScore += seasonalScore;
   }
 
-  return { score: Math.round(Math.max(-100, Math.min(100, totalScore))), reasons };
+  return { score: totalScore, reasons: reasons || [] };
+
 }
-
-
-// Constantes para normalização (pode ser ajustado)
-const MAX_DAY_MASTER_STRENGTH_POINTS = 50;
-const MAX_BRANCH_INTERACTIONS_POINTS = 20;
-const MAX_NAYIN_POINTS = 10;
-const MAX_TEN_GODS_POINTS = 10;
-const MAX_EXCESS_DEFICIENCY_POINTS = 5;
-const MAX_SEASONAL_DOMINANCE_POINTS = 5;
-
-
-
-
 
 // -------------------------------------------------------------
 //  FUNÇÕES AUXILIARES

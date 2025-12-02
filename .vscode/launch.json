@@ -1,0 +1,35 @@
+ {
+      "version": "0.2.0",
+      "configurations": [
+        {
+          "name": "Next.js: debug full stack",
+          "type": "node",
+          "request": "launch",
+          "runtimeExecutable": "npm",
+          "runtimeArgs": ["run", "dev"],
+          "skipFiles": ["<node_internals>/**"],
+          "console": "integratedTerminal",
+          "port": 9229,
+          "serverReadyAction": {
+            "action": "debugWithChrome", // or "debugWithEdge"
+            "pattern": "ready on",
+            "uriFormat": "http://localhost:%p",
+            "webRoot": "${workspaceFolder}"
+          }
+        },
+        {
+          "name": "Next.js: debug client side",
+          "type": "chrome", // or "msedge"
+          "request": "launch",
+          "url": "http://localhost:3000", // Adjust port if needed
+          "webRoot": "${workspaceFolder}"
+        },
+        {
+          "name": "Next.js: debug server side",
+          "type": "node",
+          "request": "attach",
+          "port": 9229,
+          "skipFiles": ["<node_internals>/**"]
+        }
+      ]
+    }

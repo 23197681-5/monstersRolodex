@@ -5,14 +5,14 @@ import Image from 'next/image';
 import SearchBox from '../src/components/search-box/search-box.component';
 import MapaBazi from '../src/components/mapa-compoonent/mapa-bazi.component';
 import Statistics from './statistics.module';
-import BaziPage from './bazi';
+import BaziPage from './bazi-chart';
 import NextGames from '../src/components/next-games/next-games.component';
 import CadastrarTime from '../src/lib/cadastrar-time';
 import { calculateWuXing, analyzeTeamFavorability } from '../src/lib/wuxing';
 import { supabase } from '../src/lib/supabaseClient';
 import AnalysisDisplay from '../src/components/analysis-display/AnalysisDisplay';
-import { hardcodedTeams } from '../src/lib/hardcoded-teams';
-
+import { hardcodedTeams } from '../src/lib/hardcoded-teams'
+import { DEFAULT_ANALYZE_SCORES } from '../src/lib/wuxing.js';
 export default function Home() {
   const [monsters, setMonsters] = useState([]);
   const [filteredMonsters, setFilteredMonsters] = useState(monsters);
@@ -181,27 +181,27 @@ export default function Home() {
       }
 
     // Calcula as porcentagens de Wu Xing
-    const teamACalculation = calculateWuXing(teamAData);
-    const teamBCalculation = calculateWuXing(teamBData);
-    const gameCalculation = calculateWuXing(gameBaziData);
+    const gameCalculation =  calculateWuXing(gameBaziData, null, DEFAULT_ANALYZE_SCORES);
+
+    // Analisa o favoritismo e obtém os scores e razões para ambos
+    const [analysisA, analysisB] = [
+      analyzeTeamFavorability(teamAData, gameBaziData, DEFAULT_ANALYZE_SCORES),
+      analyzeTeamFavorability(teamBData, gameBaziData, DEFAULT_ANALYZE_SCORES)
+    ];
+    if (!analysisA || !analysisB) {
+      alert("Falha ao analisar o jogo.");
+      return;
+    }
 
     // Armazena os resultados do cálculo
     setWuXingResult({
-      teamA: { name: teamAName, percentages: teamACalculation },
-      teamB: { name: teamBName, percentages: teamBCalculation },
+      teamA: { name: teamAName, percentages: calculateWuXing(teamAData, gameBaziData, DEFAULT_ANALYZE_SCORES) },
+      teamB: { name: teamBName, percentages: calculateWuXing(teamBData, gameBaziData, DEFAULT_ANALYZE_SCORES) },
       game: { name: 'Jogo', percentages: gameCalculation },
-    });
-
-    // Analisa o favoritismo de cada time
-    const teamAAnalysis = analyzeTeamFavorability(teamAData, gameBaziData);
-    const teamBAnalysis = analyzeTeamFavorability(teamBData, gameBaziData);
-
-    setAnalysisResult({ teamA: teamAAnalysis, teamB: teamBAnalysis });
+    });    setAnalysisResult({ teamA: analysisA, teamB: analysisB });
     
     console.log('Dados do Time A e B selecionados:', { teamA: selectedTeamA, teamB: selectedTeamB });
 
-    console.log("Análise Time A:", teamAAnalysis);
-    console.log("Análise Time B:", teamBAnalysis);
     } catch (err) {
       console.error("Erro ao buscar ou calcular o Wu Xing:", err);
       alert(`Ocorreu um erro: ${err.message}`);

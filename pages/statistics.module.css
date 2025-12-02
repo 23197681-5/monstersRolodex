@@ -47,7 +47,140 @@
   white-space: nowrap; /* Impede que o nome do time quebre a linha */
   min-width: 150px; /* Garante uma largura mínima para a célula */
   }
-  
+  .chartContainer {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  height: 250px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  margin-top: 1rem;
+}
+
+.barWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 20%;
+  height: 50%;
+  text-align: center;
+}
+
+.bar {
+  width: 50px;
+  background: linear-gradient(to top, #007aff, #00c6ff);
+  border-radius: 4px 4px 0 0;
+  transition: height 0.5s ease-out;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.barLabelTop {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.barLabelBottom, .barLabelGames {
+  margin-top: 8px;
+  font-weight: 500;
+  color: #555;
+}
+.barLabelGames {
+    font-size: 0.8em;
+    color: #777;
+}
+
+.miniChartContainer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 40px;
+  gap: 4px;
+}
+
+.miniBarWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  flex-grow: 1;
+}
+
+.miniBar {
+  width: 10px;
+  border-radius: 2px;
+  align-self: flex-end;
+}
+
+.miniBarLabel {
+  font-size: 0.7em;
+  margin-top: 2px;
+  color: #555;
+}
+
+.barChartWinsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.barChartWinsRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.barContainer {
+  flex-grow: 1;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  height: 30px;
+}
+
+.barWins {
+  height: 100%;
+  background: linear-gradient(to right, #ff4e50, #f9d423);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 10px;
+  transition: width 0.5s ease-out;
+  min-width: 50px; /* Garante que o texto seja visível mesmo para barras pequenas */
+}
+
+.barWinsLabel {
+  color: white;
+  font-weight: bold;
+  font-size: 0.9em;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.errorColumn {
+  background-color: #fff5f5; /* Um vermelho bem claro para destacar as colunas de erro */
+  min-width: 120px;
+}
+
+.jsonTextArea {
+  width: 100%;
+  height: 400px;
+  padding: 1rem;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  background-color: #2d2d2d;
+  color: #f8f8f2;
+  border: 1px solid #444;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+
   .teamLogo {
     margin-right: 10px;
   }

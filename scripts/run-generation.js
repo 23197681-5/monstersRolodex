@@ -1,11 +1,12 @@
 import fs from 'fs';
 import path from 'path';
+import { Genetic, Select } from 'async-genetic';
 import { fileURLToPath } from 'url';
 
 
 import { allGamesSerieA } from '../src/lib/hard-coded-serie-a-games.js';
 import { allGamesSerieB } from '../src/lib/hard-coded-serie-b-games.js';
-import { serieA, serieB } from '../src/lib/teams.js';
+import { serieA, serieB } from '../src/lib/brasileirao-a-b-table.js';
 import {
     getCoherenceFilterCondition,
     DEFAULT_COHERENCE_CONFIGS,
@@ -19,45 +20,59 @@ import {
     getWaterCoherenceStats,
     getEarthCoherenceStats
 } from './generate-stats.js';
+import {
+    initializePopulation,
+    calculateFitness,
+    crossover,
+    mutate,
+    clearBestResults,
+    getBestResults
+} from './genetic_algorithm_utils.js';
 import { DEFAULT_ANALYZE_SCORES } from '../src/lib/wuxing.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-function main() {
+
+// --- Parâmetros do Algoritmo Genético ---
+const POPULATION_SIZE = 2000; // Número de configurações em cada geração
+const MAX_GENERATIONS = 30;  // Número de gerações para rodar
+const MUTATION_RATE = 0.33;  // 25% de chance de um gene sofrer mutação
+const CROSSOVER_RATE = 0.7;  // 70% de chance de um par de pais se cruzar
+
+// --- FLAG DE CONTROLE ---
+// Defina como `true` para salvar o resultado da simulação mesmo que seja pior que o existente.
+const SOBRESCREVER_RESULTADO_PIOR = true; 
+// ---
+
+async function main() {
     console.log("Iniciando a geração de estatísticas...");
+    const startTime = Date.now();
 
-    const simulationResults = runSimulation(allGamesSerieA);
+    const outputPath = path.join(__dirname, '..', 'public', 'statistics.json');
+    let existingStats = null;
+    if (fs.existsSync(outputPath)) {
+        try {
+            existingStats = JSON.parse(fs.readFileSync(outputPath, 'utf-8'));
+            console.log("Arquivo statistics.json existente carregado para comparação.");
+        } catch (e) { console.error("Erro ao ler o arquivo statistics.json existente:", e); }
+    }
 
-    const bestOverallResult = simulationResults.length > 0 ? simulationResults.sort((a, b) => b.successRate - a.successRate)[0] : { scores: DEFAULT_ANALYZE_SCORES, successRate: 0, totalGames: allGamesSerieA.length };
+    const gaResult = await runGeneticAlgorithm(allGamesSerieA, DEFAULT_ANALYZE_SCORES);
+    const bestScoresFromGA = gaResult.bestConfig;
 
     const elements = ['FIRE', 'METAL', 'WOOD', 'WATER', 'EARTH'];
     const bestCoherenceResults = {};
 
     elements.forEach(element => {
-        let bestResult = { count: -1, totalGames: 0, scores: null };
-        simulationResults.forEach(res => {
-            // Prioritize the highest count of successes. If counts are equal, use totalGames as a tie-breaker.
-            if (res[element].count > bestResult.count || (res[element].count === bestResult.count && res[element].total > bestResult.totalGames)) {
-                bestResult = {
-                    count: res[element].count,
-                    totalGames: res[element].total,
-                    scores: res[element].scores
-                };
-            } else if (res[element].count === bestResult.count && res[element].total > bestResult.totalGames) {
-                bestResult = {
-                    count: res[element].count,
-                    totalGames: res[element].total,
-                    scores: res[element].scores
-                };
-            }
-        });
-        bestCoherenceResults[element] = bestResult;
+        const coherenceFilter = getCoherenceFilterCondition(DEFAULT_COHERENCE_CONFIGS[element]);
+        const coherenceResult = calculateCoherenceSuccessRate(allGamesSerieA, bestScoresFromGA, coherenceFilter);
+        bestCoherenceResults[element] = { ...coherenceResult, scores: bestScoresFromGA };
+ 
     });
 
     console.log("Calculando estatísticas finais com as melhores configurações...");
-    const teamsA_Stats = serieA.map(team => ({ ...team, ...getTeamStats(team.name, allGamesSerieA, bestOverallResult.scores) }));
-    const teamsB_Stats = serieB.map(team => ({ ...team, ...getTeamStats(team.name, allGamesSerieB, bestOverallResult.scores) }));
-
+    const teamsA_Stats = serieA.map(team => ({ ...team, ...getTeamStats(team.name, allGamesSerieA, bestScoresFromGA) }));
+    const teamsB_Stats = serieB.map(team => ({ ...team, ...getTeamStats(team.name, allGamesSerieB, bestScoresFromGA) }));
     const teamCoherenceStats = {};
     const allCoherenceStats = {
         FIRE: getFireCoherenceStats(bestCoherenceResults.FIRE.scores),
@@ -68,7 +83,9 @@ function main() {
     };
 
     for (const coherenceElement in allCoherenceStats) {
-        allCoherenceStats[coherenceElement].forEach(teamStat => {
+        console.log(coherenceElement);
+        console.log(allCoherenceStats);
+        (allCoherenceStats[coherenceElement] || []).forEach(teamStat => {
             if (!teamCoherenceStats[teamStat.team]) {
                 teamCoherenceStats[teamStat.team] = {};
             }
@@ -78,7 +95,7 @@ function main() {
 
     const finalStats = {
         bestScoresByCoherence: {
-            GENERAL: { rate: bestOverallResult.successRate, totalGames: bestOverallResult.totalGames, scores: bestOverallResult.scores },
+            GENERAL: { rate: gaResult.maxSuccessRate, totalGames: allGamesSerieA.length, scores: bestScoresFromGA },
             FIRE: bestCoherenceResults.FIRE,
             METAL: bestCoherenceResults.METAL,
             WOOD: bestCoherenceResults.WOOD,
@@ -89,8 +106,8 @@ function main() {
         defaultData: {
             teamsA: teamsA_Stats,
             teamsB: teamsB_Stats,
-            monthlyA: calculateMonthlyStatsForGames(allGamesSerieA, bestOverallResult.scores),
-            monthlyB: calculateMonthlyStatsForGames(allGamesSerieB, bestOverallResult.scores),
+          monthlyA: calculateMonthlyStatsForGames(allGamesSerieA, bestScoresFromGA),
+            monthlyB: calculateMonthlyStatsForGames(allGamesSerieB, bestScoresFromGA),
         },
         fireCoherenceStats: allCoherenceStats.FIRE,
         metalCoherenceStats: allCoherenceStats.METAL,
@@ -100,77 +117,111 @@ function main() {
         generatedAt: new Date().toISOString(),
     };
 
-    const outputPath = path.join(__dirname, '..', 'public', 'statistics.json');
-    fs.writeFileSync(outputPath, JSON.stringify(finalStats, null, 2));
+    // --- Lógica de Comparação e Salvamento Condicional ---
+    let anyImprovementFound = false;
+    const improvementMessages = [];
+    let statsToSave;
 
-    console.log(`Arquivo de estatísticas gerado com sucesso em: ${outputPath}`);
-}
+    if (!existingStats) {
+        anyImprovementFound = true;
+        statsToSave = finalStats; // Se não há arquivo antigo, o novo é o que será salvo.
+        improvementMessages.push("✨ Criado novo arquivo statistics.json com os resultados da simulação.");
+    } else {
+        statsToSave = JSON.parse(JSON.stringify(existingStats)); // Cria uma cópia profunda para modificar
 
-export const runSimulation = (games) => {
-    const NUM_ITERATIONS = 10000;
-    console.log(`Iniciando simulação de ${NUM_ITERATIONS} scores para 5 Coerências...`);
-    const results = [];
+        // Compara a categoria GERAL
+        if (finalStats.bestScoresByCoherence.GENERAL.rate > statsToSave.bestScoresByCoherence.GENERAL.rate) {
+            anyImprovementFound = true;
+            improvementMessages.push(`✨ Sucesso maior encontrado para a categoria GERAL: ${finalStats.bestScoresByCoherence.GENERAL.rate}%`);
+            statsToSave.bestScoresByCoherence.GENERAL = finalStats.bestScoresByCoherence.GENERAL;
+            // Atualiza os dados gerais se a categoria GERAL melhorar
+            statsToSave.defaultData = finalStats.defaultData;
+        }
 
-    // Obter as 5 funções de filtro
-    const coherenceFilters = {
-        FIRE: getCoherenceFilterCondition(DEFAULT_COHERENCE_CONFIGS.FIRE),
-        METAL: getCoherenceFilterCondition(DEFAULT_COHERENCE_CONFIGS.METAL),
-        WOOD: getCoherenceFilterCondition(DEFAULT_COHERENCE_CONFIGS.WOOD),
-        WATER: getCoherenceFilterCondition(DEFAULT_COHERENCE_CONFIGS.WATER),
-        EARTH: getCoherenceFilterCondition(DEFAULT_COHERENCE_CONFIGS.EARTH),
-    };
-
-    for (let i = 1; i <= NUM_ITERATIONS; i++) {
-        // --- Geração de Scores Customizados ---
-        const weights = Array.from({ length: 5 }, () => Math.random());
-        const totalWeight = weights.reduce((sum, w) => sum + w, 0);
-        const normalizedWeights = weights.map(w => (w / totalWeight) * 100);
-
-        const customScores = {
-            ...DEFAULT_ANALYZE_SCORES,
-            day_master_strength_weight: parseFloat(normalizedWeights[0].toFixed(2)),
-            branch_interactions_weight: parseFloat(normalizedWeights[1].toFixed(2)),
-            excess_deficiency_weight: parseFloat(normalizedWeights[2].toFixed(2)),
-            seasonal_dominance_weight: parseFloat(normalizedWeights[3].toFixed(2)),
-            qi_sha_penalty_weight: parseFloat(normalizedWeights[4].toFixed(2)),
-            use_day_master_strength_analysis: Math.random() < 0.5,
-            use_branch_interactions: Math.random() < 0.5,
-            use_excess_deficiency: Math.random() < 0.5,
-            use_seasonal_dominance: Math.random() < 0.5,
-            favorable_useful_element_multiplier: parseFloat((Math.random() * 1.5 + 0.5).toFixed(2)),
-            unfavorable_useful_element_multiplier: parseFloat((Math.random() * 1.5 + 0.5).toFixed(2)),
-            triades_can_be_harmfull: Math.random() < 0.5,
-            mystical_trine_bonus: parseFloat((Math.random() * 3 + 1).toFixed(2)),
-            mystical_trine_penalty: parseFloat((Math.random() * 3 + 1).toFixed(2)),
-            prediction_threshold: parseFloat((Math.random() * 70 + 10).toFixed(2)),
-        };
-        // -------------------------------------
-
-        // --- Cálculo de Acerto Geral ---
-        const successRate = calculateOverallSuccessRate(games, customScores);
-
-        // --- Cálculo de Acerto das 5 Coerências ---
-        const fireStats = calculateCoherenceSuccessRate(games, customScores, coherenceFilters.FIRE);
-        const metalStats = calculateCoherenceSuccessRate(games, customScores, coherenceFilters.METAL);
-        const woodStats = calculateCoherenceSuccessRate(games, customScores, coherenceFilters.WOOD);
-        const waterStats = calculateCoherenceSuccessRate(games, customScores, coherenceFilters.WATER);
-        const earthStats = calculateCoherenceSuccessRate(games, customScores, coherenceFilters.EARTH);
-
-        // --- Armazenamento de Resultados ---
-        results.push({
-            iteration: i,
-            successRate: successRate,
-            scores: customScores, // Salva a configuração de scores para o resultado geral
-            totalGames: games.length,
-            FIRE: { rate: fireStats.rate, total: fireStats.total, scores: customScores },
-            METAL: { rate: metalStats.rate, total: metalStats.total, scores: customScores },
-            WOOD: { rate: woodStats.rate, total: woodStats.total, scores: customScores },
-            WATER: { rate: waterStats.rate, total: waterStats.total, scores: customScores },
-            EARTH: { rate: earthStats.rate, total: earthStats.total, scores: customScores },
+        // Compara as coerências
+        elements.forEach(element => {
+            const newCoherence = finalStats.bestScoresByCoherence[element];
+            const oldCoherence = statsToSave.bestScoresByCoherence[element];
+            if (newCoherence.count > oldCoherence.count || (newCoherence.count === oldCoherence.count && newCoherence.totalGames >= oldCoherence.totalGames)) {
+                anyImprovementFound = true;
+                improvementMessages.push(`✨ Sucesso maior encontrado para a coerência ${element}: ${newCoherence.rate}% (${newCoherence.count}/${newCoherence.totalGames})`);
+                statsToSave.bestScoresByCoherence[element] = newCoherence;
+                // Atualiza os dados de coerência específicos se essa coerência melhorar
+                statsToSave[`${element.toLowerCase()}CoherenceStats`] = finalStats[`${element.toLowerCase()}CoherenceStats`];
+                statsToSave.teamCoherenceStats = finalStats.teamCoherenceStats; // Recalcula tudo para consistência
+            }
         });
     }
-    
-    console.log('Simulação concluída.');
-    return results;
+
+    if (anyImprovementFound || SOBRESCREVER_RESULTADO_PIOR) {
+        if (anyImprovementFound) {
+            console.log("\nMelhorias encontradas! Atualizando o arquivo de estatísticas.");
+            improvementMessages.forEach(msg => console.log(msg));
+        } else {
+            console.log("\nNenhuma melhoria encontrada, mas a flag 'SOBRESCREVER_RESULTADO_PIOR' está ativa. Sobrescrevendo...");
+        }
+        statsToSave.generatedAt = new Date().toISOString(); // Atualiza o timestamp
+        fs.writeFileSync(outputPath, JSON.stringify(statsToSave, null, 2));
+        console.log(`\nArquivo de estatísticas gerado com sucesso em: ${outputPath}`);
+    } else { 
+        console.log("\nNenhuma melhoria encontrada. O arquivo statistics.json não foi atualizado.");
+    }
+
+    const endTime = Date.now();
+    const totalTimeInSeconds = (endTime - startTime) / 1000;
+    console.log(`Tempo total de geração: ${totalTimeInSeconds.toFixed(2)} segundos.`);
+}
+
+/**
+ * 🧬 Executa o Algoritmo Genético para otimizar os pesos do modelo Bazi.
+ * Substitui a simulação de Monte Carlo por um processo evolutivo de convergência.
+ * * @param {Array} games - O conjunto de dados (jogos) para avaliação.
+ * @returns {Object} O melhor indivíduo (config) encontrado e seu score.
+ */
+export const runGeneticAlgorithm = async (games, DEFAULT_ANALYZE_SCORES) => {
+  console.log(`Iniciando Algoritmo Genético com 'async-genetic': População=${POPULATION_SIZE}, Gerações=${MAX_GENERATIONS}`);
+
+  clearBestResults(); // Clear previous run results
+
+  const genetic = new Genetic({
+    populationSize: POPULATION_SIZE,
+    mutationFunction: (phenotype) => mutate(phenotype, MUTATION_RATE),
+    crossoverFunction: (parentA, parentB) => {
+      // The library expects an array of two children.
+      // We can create two children from one crossover, or run it twice.
+      // For simplicity, we'll create two slightly different children.
+      const child1 = crossover(parentA, parentB);
+      const child2 = crossover(parentB, parentA); // Swap parents for variety
+      return [child1, child2];
+    },
+    fitnessFunction: async (phenotype) => {
+      const fitness = await calculateFitness(phenotype, games);
+      return { fitness, state: {phenotype}}; // The library expects an object with a 'fitness' key
+    },
+    // Using the library's built-in selection methods
+    select1: Select.Fittest,
+    select2: Select.Tournament2,
+  });
+
+  const initialPopulation = initializePopulation(POPULATION_SIZE, DEFAULT_ANALYZE_SCORES);
+  await genetic.seed(initialPopulation);
+
+  for (let i = 0; i < MAX_GENERATIONS; i++) {
+    await genetic.estimate();
+    await genetic.breed();
+    const bestArray = getBestResults();
+    if (bestArray && bestArray.length > 0) {
+      const fitness = bestArray[0].fitness || 0;
+      console.log(`[Geração ${i + 1}] Melhor Taxa: ${fitness.toFixed(2)}%`);
+    }
+  }
+
+  const best = getBestResults()[0];
+
+    console.log('Algoritmo Genético concluído.');
+    return {
+        bestConfig: best.entity,
+        maxSuccessRate: best.fitness,
+    }
 };
 main();

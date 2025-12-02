@@ -1,0 +1,360 @@
+{
+  "wrongly_analyzed_teams": [
+    {
+      "team": "Botafogo",
+      "discrepancy": {
+        "missing_beneficos": [
+          "wood"
+        ],
+        "missing_maleficos": []
+      },
+      "hardcoded": {
+        "beneficos": {
+          "wood": 4
+        },
+        "maleficos": {}
+      },
+      "calculated": {
+        "dayMaster": "earth weak",
+        "percentages": {
+          "wood": 37.6,
+          "fire": 5,
+          "earth": 32.4,
+          "metal": 6.2,
+          "water": 18.8
+        },
+        "favorable": [
+          "earth",
+          "fire"
+        ],
+        "unfavorable": [
+          "wood",
+          "water"
+        ]
+      }
+    },
+    {
+      "team": "Palmeiras",
+      "discrepancy": {
+        "missing_beneficos": [
+          "wood",
+          "metal"
+        ],
+        "missing_maleficos": []
+      },
+      "hardcoded": {
+        "beneficos": {
+          "wood": 3,
+          "fire": 3,
+          "metal": 3
+        },
+        "maleficos": {}
+      },
+      "calculated": {
+        "dayMaster": "wood extremelyStrong",
+        "percentages": {
+          "wood": 49.6,
+          "fire": 6.3,
+          "earth": 4.3,
+          "metal": 20,
+          "water": 19.8
+        },
+        "favorable": [
+          "fire",
+          "earth"
+        ],
+        "unfavorable": [
+          "wood",
+          "water",
+          "metal"
+        ]
+      }
+    },
+    {
+      "team": "Flamengo",
+      "discrepancy": {
+        "missing_beneficos": [
+          "earth"
+        ],
+        "missing_maleficos": []
+      },
+      "hardcoded": {
+        "beneficos": {
+          "wood": 4,
+          "earth": 4
+        },
+        "maleficos": {}
+      },
+      "calculated": {
+        "dayMaster": "water extremelyStrong",
+        "percentages": {
+          "wood": 12.6,
+          "fire": 16.2,
+          "earth": 17.8,
+          "metal": 29.1,
+          "water": 24.3
+        },
+        "favorable": [
+          "wood",
+          "fire"
+        ],
+        "unfavorable": [
+          "water",
+          "metal",
+          "earth"
+        ]
+      }
+    },
+    {
+      "team": "Cruzeiro",
+      "discrepancy": {
+        "missing_beneficos": [
+          "wood"
+        ],
+        "missing_maleficos": []
+      },
+      "hardcoded": {
+        "beneficos": {
+          "wood": 3,
+          "fire": 3
+        },
+        "maleficos": {}
+      },
+      "calculated": {
+        "dayMaster": "wood extremelyStrong",
+        "percentages": {
+          "wood": 14.8,
+          "fire": 0,
+          "earth": 16.9,
+          "metal": 34.2,
+          "water": 34.1
+        },
+        "favorable": [
+          "fire",
+          "earth"
+        ],
+        "unfavorable": [
+          "wood",
+          "water",
+          "metal"
+        ]
+      }
+    },
+    {
+      "team": "Bahia",
+      "discrepancy": {
+        "missing_beneficos": [],
+        "missing_maleficos": [
+          "wood"
+        ]
+      },
+      "hardcoded": {
+        "beneficos": {},
+        "maleficos": {
+          "wood": 4
+        }
+      },
+      "calculated": {
+        "dayMaster": "fire weak",
+        "percentages": {
+          "wood": 12.3,
+          "fire": 28.8,
+          "earth": 16.1,
+          "metal": 21.3,
+          "water": 21.5
+        },
+        "favorable": [
+          "fire",
+          "wood"
+        ],
+        "unfavorable": [
+          "water",
+          "metal"
+        ]
+      }
+    },
+    {
+      "team": "Corinthians",
+      "discrepancy": {
+        "missing_beneficos": [
+          "wood"
+        ],
+        "missing_maleficos": []
+      },
+      "hardcoded": {
+        "beneficos": {
+          "wood": 4
+        },
+        "maleficos": {}
+      },
+      "calculated": {
+        "dayMaster": "earth weak",
+        "percentages": {
+          "wood": 6.2,
+          "fire": 12.2,
+          "earth": 29.3,
+          "metal": 49.5,
+          "water": 2.8
+        },
+        "favorable": [
+          "earth",
+          "fire"
+        ],
+        "unfavorable": [
+          "wood",
+          "water"
+        ]
+      }
+    },
+    {
+      "team": "Vasco",
+      "discrepancy": {
+        "missing_beneficos": [],
+        "missing_maleficos": [
+          "wood"
+        ]
+      },
+      "hardcoded": {
+        "beneficos": {},
+        "maleficos": {
+          "wood": 4
+        }
+      },
+      "calculated": {
+        "dayMaster": "fire extremelyWeak",
+        "percentages": {
+          "wood": 3.9,
+          "fire": 19.8,
+          "earth": 45.4,
+          "metal": 24,
+          "water": 6.9
+        },
+        "favorable": [
+          "fire",
+          "wood"
+        ],
+        "unfavorable": [
+          "water",
+          "metal"
+        ]
+      }
+    },
+    {
+      "team": "Atlético-MG",
+      "discrepancy": {
+        "missing_beneficos": [
+          "metal"
+        ],
+        "missing_maleficos": []
+      },
+      "hardcoded": {
+        "beneficos": {
+          "metal": 3
+        },
+        "maleficos": {}
+      },
+      "calculated": {
+        "dayMaster": "earth weak",
+        "percentages": {
+          "wood": 52.1,
+          "fire": 0,
+          "earth": 32.2,
+          "metal": 10.5,
+          "water": 5.2
+        },
+        "favorable": [
+          "earth",
+          "fire"
+        ],
+        "unfavorable": [
+          "wood",
+          "water"
+        ]
+      }
+    },
+    {
+      "team": "Bragantino",
+      "discrepancy": {
+        "missing_beneficos": [],
+        "missing_maleficos": [
+          "earth"
+        ]
+      },
+      "hardcoded": {
+        "beneficos": {},
+        "maleficos": {
+          "wood": 3,
+          "earth": 3
+        }
+      },
+      "calculated": {
+        "dayMaster": "fire strong",
+        "percentages": {
+          "wood": 26.6,
+          "fire": 40.1,
+          "earth": 19.8,
+          "metal": 1.5,
+          "water": 12
+        },
+        "favorable": [
+          "earth",
+          "metal",
+          "water"
+        ],
+        "unfavorable": [
+          "fire",
+          "wood"
+        ]
+      }
+    },
+    {
+      "team": "Ceará",
+      "discrepancy": {
+        "missing_beneficos": [],
+        "missing_maleficos": [
+          "metal"
+        ]
+      },
+      "hardcoded": {
+        "beneficos": {},
+        "maleficos": {
+          "metal": 4
+        }
+      },
+      "calculated": {
+        "dayMaster": "earth extremelyStrong",
+        "percentages": {
+          "wood": 37.4,
+          "fire": 30,
+          "earth": 26.4,
+          "metal": 6.2,
+          "water": 0
+        },
+        "favorable": [
+          "metal",
+          "water"
+        ],
+        "unfavorable": [
+          "earth",
+          "fire",
+          "wood"
+        ]
+      }
+    }
+  ],
+  "all_teams": [
+    {
+      "nome": "Grêmio",
+      "img": "image018.png",
+      "elemento_ano": "癸",
+      "animal_ano": "卯",
+      "elemento_mes": "庚",
+      "animal_mes": "申",
+      "elemento_dia": "丙",
+      "animal_dia": "午",
+      "elemento_hora": "丙",
+      "animal_hora": "戌",
+      "day_master": "fire strong"
+    }
+  ]
+}

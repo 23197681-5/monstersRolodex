@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "generate-stats": "node scripts/run-generation.js"
+    "generate-stats": "node scripts/run-generation.js",
+    "gene-coherence": "node scripts/run-coherence-generation.js"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.29.0",
@@ -18,7 +19,9 @@
     "@google/generative-ai": "^0.24.1",
     "@lich-nhu-y/lunar": "^0.4.0",
     "@supabase/supabase-js": "^2.83.0",
+    "async-genetic": "^1.6.13",
     "framer-motion": "^11.2.6",
+    "genetic-search-multiprocess": "^8.5.0",
     "next": "^16.0.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
@@ -30,7 +33,9 @@
     "eslint": "^9.0.0",
     "eslint-config-next": "^16.0.3",
     "identity-obj-proxy": "^3.0.0",
-    "prettier": "^3.2.5"
+    "prettier": "^3.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   },
   "jest": {
     "testEnvironment": "jsdom",
