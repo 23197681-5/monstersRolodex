@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from './supabaseClient';
+import { getBaziForDate } from './bazi-calculator';
 
 const heavenlyStems = [
   { value: '甲', label: '甲 (jiǎ) - Madeira Yang' },
@@ -105,6 +106,25 @@ export default function CadastrarTime() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (name === 'data_fundacao' && value) {
+      // The date from input type="date" is YYYY-MM-DD.
+      // We need to adjust it to avoid timezone issues that might shift the day.
+      const date = new Date(`${value}T12:00:00`);
+      const bazi = getBaziForDate(date);
+      if (bazi) {
+        setFormData(prev => ({
+          ...prev,
+          data_fundacao: value, // ensure date is kept
+          elemento_ano: bazi.gzYear ? bazi.gzYear.charAt(0) : '',
+          animal_ano: bazi.gzYear ? bazi.gzYear.charAt(1) : '',
+          elemento_mes: bazi.gzMonth ? bazi.gzMonth.charAt(0) : '',
+          animal_mes: bazi.gzMonth ? bazi.gzMonth.charAt(1) : '',
+          elemento_dia: bazi.gzDay ? bazi.gzDay.charAt(0) : '',
+          animal_dia: bazi.gzDay ? bazi.gzDay.charAt(1) : '',
+        }));
+      }
+    }
   };
 
   const handleFileChange = (e) => {

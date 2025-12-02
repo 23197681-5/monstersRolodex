@@ -2,25 +2,33 @@ export const hardcodedTeams = [
     // Padrão de dados alinhado com o Supabase
     {
         nome: "Mirassol", img: "image001.png",
-        elemento_ano: "戊", animal_ano: "戌",
-        elemento_mes: "己", animal_mes: "未",
+        elemento_ano: "戊", animal_ano: "丑",
+        elemento_mes: "己", animal_mes: "戌",
         elemento_dia: "丙", animal_dia: "寅",
+        elementos_beneficos: {},
+        elementos_maleficos: {}
     },
     {
         nome: "Sport", img: "image002.png",
         elemento_ano: "乙", animal_ano: "巳",
         elemento_mes: "辛", animal_mes: "巳",
         elemento_dia: "壬", animal_dia: "子",
+        elementos_beneficos: {},
+        elementos_maleficos: {}
     },
     {
         nome: "Botafogo",
         img: "image003.png",
-        elemento_ano: "庚",
+        elemento_ano: "甲",
         animal_ano: "辰",
-        elemento_mes: "乙",
-        animal_mes: "酉",
+        elemento_mes: "壬",
+        animal_mes: "申",
         elemento_dia: "戊",
-        animal_dia: "寅"
+        animal_dia: "寅",
+        elementos_beneficos: {
+          "wood": 4
+        },
+        "elementos_maleficos": {}
     },
     {
         nome: "Palmeiras",
@@ -30,7 +38,13 @@ export const hardcodedTeams = [
         elemento_mes: "壬",
         animal_mes: "申",
         elemento_dia: "甲",
-        animal_dia: "申"
+        animal_dia: "申",
+        elementos_beneficos: {
+          "wood": 3,
+          "fire": 3,
+          "metal": 3
+        },
+        "elementos_maleficos": {}
     },
     {
         nome: "Fortaleza",
@@ -40,7 +54,11 @@ export const hardcodedTeams = [
         elemento_mes: "壬",
         animal_mes: "戌",
         elemento_dia: "戊",
-        animal_dia: "戌"
+        animal_dia: "戌",
+        elementos_beneficos: {},
+        elementos_maleficos: {
+          "earth": 3
+        }
     },
     {
         nome: "Internacional",
@@ -50,27 +68,26 @@ export const hardcodedTeams = [
         elemento_mes: "丁",
         animal_mes: "卯",
         elemento_dia: "甲",
-        animal_dia: "午"
+        animal_dia: "午",
+        "elementos_beneficos": {},
+        "elementos_maleficos": {
+          "metal": 4
+        }
     },
-    // {
-    //     nome: "Flamengo",
-    //     img: "image007.png",
-    //     elemento_ano: "乙",
-    //     animal_ano: "未",
-    //     elemento_mes: "丙",
-    //     animal_mes: "戌",
-    //     elemento_dia: "丙",
-    //     animal_dia: "寅"
-    // },
     {
         nome: "Flamengo",
         img: "image008.png",
-        elemento_ano: "乙",
-        animal_ano: "未",
-        elemento_mes: "丁",
-        animal_mes: "亥",
-        elemento_dia: "戊",                 
-        animal_dia: "辰"
+        elemento_ano: "辛",
+        animal_ano: "亥",
+        elemento_mes: "戊",
+        animal_mes: "戌",
+        elemento_dia: "壬",  
+        animal_dia: "午",
+        "elementos_beneficos": {
+          "wood": 4,
+          "earth": 4
+        },
+        "elementos_maleficos": {}
     },
     {
         nome: "São Paulo",
@@ -80,7 +97,9 @@ export const hardcodedTeams = [
         elemento_mes: "戊",
         animal_mes: "子",
         elemento_dia: "丙",
-        animal_dia: "寅"
+        animal_dia: "寅",
+        "elementos_beneficos": {},
+        "elementos_maleficos": {}
     },
     {
         nome: "Cruzeiro",
@@ -90,17 +109,26 @@ export const hardcodedTeams = [
         elemento_mes: "戊",
         animal_mes: "子",
         elemento_dia: "乙",
-        animal_dia: "丑"
+        animal_dia: "丑",
+        "elementos_beneficos": {
+          "wood": 3,
+          "fire": 3
+        },
+        "elementos_maleficos": {}
     },
     {
         nome: "Bahia",
         img: "image013.png",
         elemento_ano: "庚",
-        animal_ano: "未",
+        animal_ano: "午",
         elemento_mes: "戊",
         animal_mes: "子",
         elemento_dia: "丙",
-        animal_dia: "辰"
+        animal_dia: "辰",
+        "elementos_beneficos": {},
+        "elementos_maleficos": {
+          "wood": 4
+        }
     },
     {
         nome: "Corinthians",
@@ -110,7 +138,11 @@ export const hardcodedTeams = [
         elemento_mes: "甲",
         animal_mes: "申",
         elemento_dia: "己",
-        animal_dia: "巳"
+        animal_dia: "巳",
+        "elementos_beneficos": {
+          "wood": 4
+        },
+        "elementos_maleficos": {}
     },
     {
         nome: "Vitória",
@@ -120,7 +152,11 @@ export const hardcodedTeams = [
         elemento_mes: "己",
         animal_mes: "巳",
         elemento_dia: "辛",
-        animal_dia: "巳"
+        animal_dia: "巳",
+        "elementos_beneficos": {},
+        "elementos_maleficos": {
+          "earth": 3
+        }
     },
     {
         nome: "Vasco",
@@ -130,7 +166,11 @@ export const hardcodedTeams = [
         elemento_mes: "庚",
         animal_mes: "申",
         elemento_dia: "丙",
-        animal_dia: "辰"
+        animal_dia: "辰",
+        "elementos_beneficos": {},
+        "elementos_maleficos": {
+          "wood": 4
+        }
     },
     {
         nome: "Juventude",
@@ -140,7 +180,9 @@ export const hardcodedTeams = [
         elemento_mes: "戊",
         animal_mes: "午",
         elemento_dia: "辛",
-        animal_dia: "巳"
+        animal_dia: "巳",
+        elementos_beneficos: {},
+        elementos_maleficos: {}
     },
     {
         nome: "Grêmio",
@@ -151,7 +193,7 @@ export const hardcodedTeams = [
         animal_mes: "申",
         elemento_dia: "丙",
         animal_dia: "午",
-        elemento_hora: "乙",
+        elemento_hora: "丙",
         animal_hora: "戌"
     },
     {
@@ -162,7 +204,9 @@ export const hardcodedTeams = [
         elemento_mes: "丁",
         animal_mes: "未",
         elemento_dia: "乙",
-        animal_dia: "巳"
+        animal_dia: "巳",
+        elementos_beneficos: {},
+        elementos_maleficos: {}
     },
     {
         nome: "Atlético-MG",
@@ -172,7 +216,11 @@ export const hardcodedTeams = [
         elemento_mes: "乙",
         animal_mes: "卯",
         elemento_dia: "己",
-        animal_dia: "卯"
+        animal_dia: "卯",
+        elementos_beneficos: {
+          "metal": 3
+        },
+        elementos_maleficos: {}
     },
     {
         nome: "Bragantino",
@@ -182,7 +230,12 @@ export const hardcodedTeams = [
         elemento_mes: "癸",
         animal_mes: "丑",
         elemento_dia: "丁",
-        animal_dia: "未"
+        animal_dia: "未",
+        elementos_beneficos: {},
+        elementos_maleficos: {
+          "wood": 3,
+          "earth": 3
+        }
     },
     {
         nome: "Ceará",
@@ -192,7 +245,11 @@ export const hardcodedTeams = [
         elemento_mes: "庚",
         animal_mes: "午",
         elemento_dia: "己",
-        animal_dia: "未"
+        animal_dia: "未",
+        elementos_beneficos: {},
+        elementos_maleficos: {
+          "metal": 4
+        }
     },
     {
         nome: "Santos",
@@ -202,7 +259,9 @@ export const hardcodedTeams = [
         elemento_mes: "癸",
         animal_mes: "卯",
         elemento_dia: "庚",
-        animal_dia: "申"
+        animal_dia: "申",
+        "elementos_beneficos": {},
+        "elementos_maleficos": {}
     },
     {
         nome: "Atlético-GO",
@@ -252,7 +311,7 @@ export const hardcodedTeams = [
         elemento_mes: "庚",
         animal_mes: "寅",
         elemento_dia: "辛",
-        animal_dia: "卯"
+        animal_dia: "卯",
     },
     {
         nome: "Athletic",
@@ -282,7 +341,7 @@ export const hardcodedTeams = [
         elemento_mes: "己",
         animal_mes: "卯",
         elemento_dia: "丁",
-        animal_dia: "丑"
+        animal_dia: "丑",
     },
     {
         nome: "Amazonas",
@@ -306,16 +365,16 @@ export const hardcodedTeams = [
     animal_dia: "午"
   },
   // 2. Botafogo-SP (Fundado em: 1918-10-12) - Extraído de image035.png
-  {
-    nome: "Botafogo-SP",
-    img: "image035.png",
-    elemento_ano: "戊",
-    animal_ano: "午",
-    elemento_mes: "壬",
-    animal_mes: "戌",
-    elemento_dia: "壬",
-    animal_dia: "辰"
-  },
+  // {
+  //   nome: "Botafogo-SP",
+  //   img: "image035.png",
+  //   elemento_ano: "戊",
+  //   animal_ano: "午",
+  //   elemento_mes: "壬",
+  //   animal_mes: "戌",
+  //   elemento_dia: "壬",
+  //   animal_dia: "辰"
+  // },
   // 3. Operário Ferroviário EC (Fundado em: 1912-05-01) - Extraído de image041.png
   {
     nome: "Operário-PR",
@@ -358,7 +417,7 @@ export const hardcodedTeams = [
     elemento_mes: "庚",
     animal_mes: "申",
     elemento_dia: "丁",
-    animal_dia: "丑"
+    animal_dia: "丑",
   },
   // 7. CRB (Fundado em: 1912-09-20) - Extraído de image038.png
   {
@@ -369,7 +428,7 @@ export const hardcodedTeams = [
     elemento_mes: "乙",
     animal_mes: "酉",
     elemento_dia: "己",
-    animal_dia: "亥"
+    animal_dia: "亥",
   },
   // 8. Grêmio Novorizontino (Fundado em: 2010-03-01) - Extraído de image040.png
   {
@@ -380,7 +439,7 @@ export const hardcodedTeams = [
     elemento_mes: "戊",
     animal_mes: "寅",
     elemento_dia: "庚",
-    animal_dia: "戌"
+    animal_dia: "戌",
   },
   // 9. Coritiba FC (Fundado em: 1909-10-12) - Extraído de image037.png
   {
@@ -391,7 +450,7 @@ export const hardcodedTeams = [
     elemento_mes: "癸",
     animal_mes: "酉",
     elemento_dia: "乙",
-    animal_dia: "巳"
+    animal_dia: "巳",
   },
   // 10. Associação Chapecoense de Futebol (Fundado em: 1973-05-10) - Extraído de image036.png
   {
@@ -402,7 +461,7 @@ export const hardcodedTeams = [
     elemento_mes: "丁",
     animal_mes: "巳",
     elemento_dia: "丙",
-    animal_dia: "午"
+    animal_dia: "午",
   },
   {
     nome: "Vila Nova",
@@ -412,6 +471,6 @@ export const hardcodedTeams = [
     elemento_mes: "己",
     animal_mes: "未",
     elemento_dia: "戊",
-    animal_dia: "子"
+    animal_dia: "子",
   },
 ];
